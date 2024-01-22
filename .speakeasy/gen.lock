@@ -4,14 +4,17 @@ management:
   docChecksum: 4ceee81932bc3b2685969447fa208c0e
   docVersion: 0.1.0
   speakeasyVersion: internal
-  generationVersion: 2.230.1
-  releaseVersion: 0.0.1
-  configChecksum: 173a2dbe4b228f5fa5f509353452c303
+  generationVersion: 2.237.3
+  releaseVersion: 0.0.2
+  configChecksum: 2712ea260391e5b7157576e8c041c9db
+  repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
+  repoSubDirectory: .
+  published: true
 features:
   terraform:
     constsAndDefaults: 0.1.2
-    core: 3.8.1
-    globalSecurity: 2.81.2
+    core: 3.8.4
+    globalSecurity: 2.81.3
     globalServerURLs: 2.82.1
     retries: 2.81.1
 generatedFiles:
