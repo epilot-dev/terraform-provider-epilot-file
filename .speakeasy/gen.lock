@@ -1,17 +1,18 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 4ceee81932bc3b2685969447fa208c0e
+  docChecksum: 1fd713c97d45c7b42045478619cef0fd
   docVersion: 0.1.0
   speakeasyVersion: internal
   generationVersion: 2.237.3
-  releaseVersion: 0.0.2
-  configChecksum: 2712ea260391e5b7157576e8c041c9db
+  releaseVersion: 0.1.0
+  configChecksum: 6914b581da3883c7a6701e489c87b0b6
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
 features:
   terraform:
+    additionalProperties: 0.1.2
     constsAndDefaults: 0.1.2
     core: 3.8.4
     globalSecurity: 2.81.3
@@ -94,6 +95,7 @@ generatedFiles:
   - internal/sdk/pkg/models/operations/previews3fileget.go
   - internal/sdk/pkg/models/operations/revokepubliclink.go
   - internal/sdk/pkg/models/operations/savefile.go
+  - internal/sdk/pkg/models/operations/savefilev2.go
   - internal/sdk/pkg/models/operations/uploadfile.go
   - internal/sdk/pkg/models/operations/uploadfilepublic.go
   - internal/sdk/pkg/models/operations/uploadfilev2.go
@@ -105,6 +107,8 @@ generatedFiles:
   - internal/sdk/pkg/models/shared/downloadfilespayload.go
   - internal/sdk/pkg/models/shared/publiclink.go
   - internal/sdk/pkg/models/shared/fileentity.go
+  - internal/sdk/pkg/models/shared/savefilepayloadv2.go
+  - internal/sdk/pkg/models/shared/filerelationitem.go
   - internal/sdk/pkg/models/shared/uploadfilepayload.go
   - internal/sdk/pkg/models/shared/fileupload.go
   - internal/sdk/pkg/models/shared/verifycustomdownloadurlpayload.go
