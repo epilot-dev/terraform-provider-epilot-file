@@ -4,19 +4,16 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	speakeasy_int64planmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/int64planmodifier"
-	speakeasy_listplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/listplanmodifier"
-	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/stringplanmodifier"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-file/internal/validators/stringvalidators"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/models/shared"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -39,14 +36,23 @@ type FileResource struct {
 
 // FileResourceModel describes the resource data model.
 type FileResourceModel struct {
-	ID            types.String `tfsdk:"id"`
-	AccessControl types.String `tfsdk:"access_control"`
-	Filename      types.String `tfsdk:"filename"`
-	MimeType      types.String `tfsdk:"mime_type"`
-	PublicURL     types.String `tfsdk:"public_url"`
-	SizeBytes     types.Int64  `tfsdk:"size_bytes"`
-	Type          types.String `tfsdk:"type"`
-	Versions      []Versions   `tfsdk:"versions"`
+	ID                   types.String   `tfsdk:"id"`
+	AccessControl        types.String   `tfsdk:"access_control"`
+	AdditionalProperties types.String   `tfsdk:"additional_properties"`
+	Bucket               types.String   `tfsdk:"bucket"`
+	CustomDownloadURL    types.String   `tfsdk:"custom_download_url"`
+	DocumentType         types.String   `tfsdk:"document_type"`
+	EntityID             types.String   `tfsdk:"entity_id"`
+	FileEntityID         types.String   `tfsdk:"file_entity_id"`
+	Filename             types.String   `tfsdk:"filename"`
+	Key                  types.String   `tfsdk:"key"`
+	MimeType             types.String   `tfsdk:"mime_type"`
+	PublicURL            types.String   `tfsdk:"public_url"`
+	Schema               types.String   `tfsdk:"schema"`
+	SizeBytes            types.Int64    `tfsdk:"size_bytes"`
+	Tags                 []types.String `tfsdk:"tags"`
+	Type                 types.String   `tfsdk:"type"`
+	Versions             []Versions     `tfsdk:"versions"`
 }
 
 func (r *FileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -60,12 +66,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Optional:    true,
-				Description: `Requires replacement if changed. `,
 			},
 			"access_control": schema.StringAttribute{
 				Computed: true,
@@ -82,50 +82,112 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					),
 				},
 			},
+			"additional_properties": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Optional:    true,
+				Description: `Parsed as JSON.`,
+				Validators: []validator.String{
+					validators.IsValidJSON(),
+				},
+			},
+			"bucket": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Required:    true,
+				Description: `Requires replacement if changed. `,
+			},
+			"custom_download_url": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Optional:    true,
+				Description: `Custom external download url used for the file. Requires replacement if changed. `,
+			},
+			"document_type": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Optional:    true,
+				Description: `Requires replacement if changed. ; must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"document",
+						"document_template",
+						"text",
+						"image",
+						"video",
+						"audio",
+						"spreadsheet",
+						"presentation",
+						"font",
+						"archive",
+						"application",
+						"unknown",
+					),
+				},
+			},
+			"entity_id": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Required:    true,
+				Description: `Requires replacement if changed. `,
+			},
+			"file_entity_id": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Optional:    true,
+				Description: `if passed, adds a new version to existing file entity. Requires replacement if changed. `,
+			},
 			"filename": schema.StringAttribute{
-				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Optional:    true,
+				Required:    true,
+				Description: `Requires replacement if changed. `,
+			},
+			"key": schema.StringAttribute{
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Required:    true,
 				Description: `Requires replacement if changed. `,
 			},
 			"mime_type": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Optional:    true,
-				Description: `MIME type of the file. Requires replacement if changed. `,
+				Computed:    true,
+				Description: `MIME type of the file`,
 			},
 			"public_url": schema.StringAttribute{
-				Computed: true,
+				Computed:    true,
+				Description: `Direct URL for file (public only if file access control is public-read)`,
+			},
+			"schema": schema.StringAttribute{
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Optional:    true,
-				Description: `Direct URL for file (public only if file access control is public-read). Requires replacement if changed. `,
+				Description: `URL-friendly identifier for the entity schema. Requires replacement if changed. `,
 			},
 			"size_bytes": schema.Int64Attribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_int64planmodifier.SuppressDiff(speakeasy_int64planmodifier.ExplicitSuppress),
+				Computed:    true,
+				Description: `File size in bytes`,
+			},
+			"tags": schema.ListAttribute{
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Optional:    true,
-				Description: `File size in bytes. Requires replacement if changed. `,
+				ElementType: types.StringType,
+				Description: `Requires replacement if changed. `,
 			},
 			"type": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Optional:    true,
-				Description: `Human readable type for file. Requires replacement if changed. ; must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
+				Computed:    true,
+				Description: `Human readable type for file. must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"document",
@@ -145,51 +207,21 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"versions": schema.ListNestedAttribute{
 				Computed: true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-				},
-				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"s3ref": schema.SingleNestedAttribute{
 							Computed: true,
-							PlanModifiers: []planmodifier.Object{
-								objectplanmodifier.RequiresReplaceIfConfigured(),
-								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-							},
-							Optional: true,
 							Attributes: map[string]schema.Attribute{
 								"bucket": schema.StringAttribute{
 									Computed: true,
-									PlanModifiers: []planmodifier.String{
-										stringplanmodifier.RequiresReplaceIfConfigured(),
-										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-									},
-									Optional:    true,
-									Description: `Requires replacement if changed. ; Not Null`,
-									Validators: []validator.String{
-										speakeasy_stringvalidators.NotNull(),
-									},
 								},
 								"key": schema.StringAttribute{
 									Computed: true,
-									PlanModifiers: []planmodifier.String{
-										stringplanmodifier.RequiresReplaceIfConfigured(),
-										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-									},
-									Optional:    true,
-									Description: `Requires replacement if changed. ; Not Null`,
-									Validators: []validator.String{
-										speakeasy_stringvalidators.NotNull(),
-									},
 								},
 							},
-							Description: `Requires replacement if changed. `,
 						},
 					},
 				},
-				Description: `Requires replacement if changed. `,
 			},
 		},
 	}
@@ -233,8 +265,75 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	request := data.ToSharedFileEntity()
-	res, err := r.client.Files.SaveFile(ctx, request)
+	var request *shared.SaveFilePayloadV2
+	var additionalProperties interface{}
+	if !data.AdditionalProperties.IsUnknown() && !data.AdditionalProperties.IsNull() {
+		_ = json.Unmarshal([]byte(data.AdditionalProperties.ValueString()), &additionalProperties)
+	}
+	var tags []string = nil
+	for _, tagsItem := range data.Tags {
+		tags = append(tags, tagsItem.ValueString())
+	}
+	accessControl := new(shared.SaveFilePayloadV2AccessControl)
+	if !data.AccessControl.IsUnknown() && !data.AccessControl.IsNull() {
+		*accessControl = shared.SaveFilePayloadV2AccessControl(data.AccessControl.ValueString())
+	} else {
+		accessControl = nil
+	}
+	customDownloadURL := new(string)
+	if !data.CustomDownloadURL.IsUnknown() && !data.CustomDownloadURL.IsNull() {
+		*customDownloadURL = data.CustomDownloadURL.ValueString()
+	} else {
+		customDownloadURL = nil
+	}
+	documentType := new(shared.SaveFilePayloadV2DocumentType)
+	if !data.DocumentType.IsUnknown() && !data.DocumentType.IsNull() {
+		*documentType = shared.SaveFilePayloadV2DocumentType(data.DocumentType.ValueString())
+	} else {
+		documentType = nil
+	}
+	fileEntityID := new(string)
+	if !data.FileEntityID.IsUnknown() && !data.FileEntityID.IsNull() {
+		*fileEntityID = data.FileEntityID.ValueString()
+	} else {
+		fileEntityID = nil
+	}
+	filename := data.Filename.ValueString()
+	schema := new(string)
+	if !data.Schema.IsUnknown() && !data.Schema.IsNull() {
+		*schema = data.Schema.ValueString()
+	} else {
+		schema = nil
+	}
+	var tags1 []string = nil
+	for _, tagsItem1 := range data.Tags {
+		tags1 = append(tags1, tagsItem1.ValueString())
+	}
+	entityID := data.EntityID.ValueString()
+	singleton := shared.FileRelationItem{
+		Schema:   schema,
+		Tags:     tags1,
+		EntityID: entityID,
+	}
+	relations := []shared.FileRelationItem{singleton}
+	bucket := data.Bucket.ValueString()
+	key := data.Key.ValueString()
+	s3ref := shared.S3Reference{
+		Bucket: bucket,
+		Key:    key,
+	}
+	request = &shared.SaveFilePayloadV2{
+		AdditionalProperties: additionalProperties,
+		Tags:                 tags,
+		AccessControl:        accessControl,
+		CustomDownloadURL:    customDownloadURL,
+		DocumentType:         documentType,
+		FileEntityID:         fileEntityID,
+		Filename:             filename,
+		Relations:            relations,
+		S3ref:                s3ref,
+	}
+	res, err := r.client.Files.SaveFileV2(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

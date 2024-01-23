@@ -35,28 +35,28 @@ func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type DocumentType string
+type SaveFilePayloadV2DocumentType string
 
 const (
-	DocumentTypeDocument         DocumentType = "document"
-	DocumentTypeDocumentTemplate DocumentType = "document_template"
-	DocumentTypeText             DocumentType = "text"
-	DocumentTypeImage            DocumentType = "image"
-	DocumentTypeVideo            DocumentType = "video"
-	DocumentTypeAudio            DocumentType = "audio"
-	DocumentTypeSpreadsheet      DocumentType = "spreadsheet"
-	DocumentTypePresentation     DocumentType = "presentation"
-	DocumentTypeFont             DocumentType = "font"
-	DocumentTypeArchive          DocumentType = "archive"
-	DocumentTypeApplication      DocumentType = "application"
-	DocumentTypeUnknown          DocumentType = "unknown"
+	SaveFilePayloadV2DocumentTypeDocument         SaveFilePayloadV2DocumentType = "document"
+	SaveFilePayloadV2DocumentTypeDocumentTemplate SaveFilePayloadV2DocumentType = "document_template"
+	SaveFilePayloadV2DocumentTypeText             SaveFilePayloadV2DocumentType = "text"
+	SaveFilePayloadV2DocumentTypeImage            SaveFilePayloadV2DocumentType = "image"
+	SaveFilePayloadV2DocumentTypeVideo            SaveFilePayloadV2DocumentType = "video"
+	SaveFilePayloadV2DocumentTypeAudio            SaveFilePayloadV2DocumentType = "audio"
+	SaveFilePayloadV2DocumentTypeSpreadsheet      SaveFilePayloadV2DocumentType = "spreadsheet"
+	SaveFilePayloadV2DocumentTypePresentation     SaveFilePayloadV2DocumentType = "presentation"
+	SaveFilePayloadV2DocumentTypeFont             SaveFilePayloadV2DocumentType = "font"
+	SaveFilePayloadV2DocumentTypeArchive          SaveFilePayloadV2DocumentType = "archive"
+	SaveFilePayloadV2DocumentTypeApplication      SaveFilePayloadV2DocumentType = "application"
+	SaveFilePayloadV2DocumentTypeUnknown          SaveFilePayloadV2DocumentType = "unknown"
 )
 
-func (e DocumentType) ToPointer() *DocumentType {
+func (e SaveFilePayloadV2DocumentType) ToPointer() *SaveFilePayloadV2DocumentType {
 	return &e
 }
 
-func (e *DocumentType) UnmarshalJSON(data []byte) error {
+func (e *SaveFilePayloadV2DocumentType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -85,10 +85,10 @@ func (e *DocumentType) UnmarshalJSON(data []byte) error {
 	case "application":
 		fallthrough
 	case "unknown":
-		*e = DocumentType(v)
+		*e = SaveFilePayloadV2DocumentType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for DocumentType: %v", v)
+		return fmt.Errorf("invalid value for SaveFilePayloadV2DocumentType: %v", v)
 	}
 }
 
@@ -97,8 +97,8 @@ type SaveFilePayloadV2 struct {
 	Tags                 []string                        `json:"_tags,omitempty"`
 	AccessControl        *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
-	CustomDownloadURL *string       `json:"custom_download_url,omitempty"`
-	DocumentType      *DocumentType `json:"document_type,omitempty"`
+	CustomDownloadURL *string                        `json:"custom_download_url,omitempty"`
+	DocumentType      *SaveFilePayloadV2DocumentType `json:"document_type,omitempty"`
 	// if passed, adds a new version to existing file entity
 	FileEntityID *string `json:"file_entity_id,omitempty"`
 	Filename     string  `json:"filename"`
@@ -146,7 +146,7 @@ func (o *SaveFilePayloadV2) GetCustomDownloadURL() *string {
 	return o.CustomDownloadURL
 }
 
-func (o *SaveFilePayloadV2) GetDocumentType() *DocumentType {
+func (o *SaveFilePayloadV2) GetDocumentType() *SaveFilePayloadV2DocumentType {
 	if o == nil {
 		return nil
 	}

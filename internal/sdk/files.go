@@ -1125,7 +1125,7 @@ func (s *Files) RevokePublicLink(ctx context.Context, request operations.RevokeP
 // # Makes file object permanent
 //
 // Saves metadata to file entity
-func (s *Files) SaveFile(ctx context.Context, request *shared.FileEntity, opts ...operations.Option) (*operations.SaveFileResponse, error) {
+func (s *Files) SaveFile(ctx context.Context, request *shared.SaveFilePayload, opts ...operations.Option) (*operations.SaveFileResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionRetries,
