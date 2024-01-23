@@ -2,7 +2,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "2.1.1"
+      version = "2.2.2"
     }
     aws = {
       source = "hashicorp/aws"

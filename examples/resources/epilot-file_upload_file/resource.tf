@@ -23,5 +23,3 @@ resource "epilot-file_file" "my_file" {
   key            = epilot-file_upload_file.my_uploadfile.s3ref.key
   entity_id      = ""
 }
-
-
