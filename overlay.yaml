@@ -18,35 +18,12 @@ actions:
   - target: $["paths"]["/v2/files/upload"]["post"]
     update:
       x-speakeasy-entity-operation: UploadFile#create
-  - target: $["paths"]["/v1/files"]["post"]
+  - target: $["paths"]["/v2/files"]["post"]
     update:
       x-speakeasy-entity-operation: File#create
-  - target: $["paths"]["/v1/files"]["post"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
-    update: "#/components/schemas/FileEntity"
-  # - target: $["components"]["schemas"]["FileEntity"]
-  #   update:
-  #     x-speakeasy-entity: File
   - target: $["components"]["schemas"]["FileUpload"]
     update:
       x-speakeasy-entity: UploadFile
-  # - target: $["components"]["schemas"]["SaveFilePayload"]
-  #   update:
-  #     x-speakeasy-entity: SaveFile
   - target: $["components"]["schemas"]["FileEntity"]
     update:
       x-speakeasy-entity: File
-  # - target: $["components"]["schemas"]["FileEntity"]["properties"]["versions"]
-  #   update:
-  #     items: {}
-  # - target: $["components"]["schemas"]["DownloadFilesPayload"]
-  #   update:
-  #     items: {}
-  # - target: $["components"]["schemas"]["CommonSaveFilePayload"]["properties"]["_tags"]
-  #   update:
-  #     items: {}
-  # - target: $["components"]["schemas"]["CommonSaveFilePayload"]["properties"]["relations"]
-  #   update:
-  #     items: {}
-  # - target: $["components"]["schemas"]["FileRelationItem"]["properties"]["_tags"]
-  #   update:
-  #     items: {}
