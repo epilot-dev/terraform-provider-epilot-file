@@ -2,7 +2,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "2.0.2"
+      version = "2.1.1"
     }
   }
 }
