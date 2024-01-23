@@ -92,6 +92,25 @@ func (e *SaveFilePayloadV2DocumentType) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type SaveFilePayloadV2S3ref struct {
+	Bucket string `json:"bucket"`
+	Key    string `json:"key"`
+}
+
+func (o *SaveFilePayloadV2S3ref) GetBucket() string {
+	if o == nil {
+		return ""
+	}
+	return o.Bucket
+}
+
+func (o *SaveFilePayloadV2S3ref) GetKey() string {
+	if o == nil {
+		return ""
+	}
+	return o.Key
+}
+
 type SaveFilePayloadV2 struct {
 	AdditionalProperties interface{}                     `additionalProperties:"true" json:"-"`
 	Tags                 []string                        `json:"_tags,omitempty"`
@@ -100,11 +119,9 @@ type SaveFilePayloadV2 struct {
 	CustomDownloadURL *string                        `json:"custom_download_url,omitempty"`
 	DocumentType      *SaveFilePayloadV2DocumentType `json:"document_type,omitempty"`
 	// if passed, adds a new version to existing file entity
-	FileEntityID *string `json:"file_entity_id,omitempty"`
-	Filename     string  `json:"filename"`
-	// List of entities to relate the file to
-	Relations []FileRelationItem `json:"relations,omitempty"`
-	S3ref     S3Reference        `json:"s3ref"`
+	FileEntityID *string                `json:"file_entity_id,omitempty"`
+	Filename     string                 `json:"filename"`
+	S3ref        SaveFilePayloadV2S3ref `json:"s3ref"`
 }
 
 func (s SaveFilePayloadV2) MarshalJSON() ([]byte, error) {
@@ -167,16 +184,9 @@ func (o *SaveFilePayloadV2) GetFilename() string {
 	return o.Filename
 }
 
-func (o *SaveFilePayloadV2) GetRelations() []FileRelationItem {
+func (o *SaveFilePayloadV2) GetS3ref() SaveFilePayloadV2S3ref {
 	if o == nil {
-		return nil
-	}
-	return o.Relations
-}
-
-func (o *SaveFilePayloadV2) GetS3ref() S3Reference {
-	if o == nil {
-		return S3Reference{}
+		return SaveFilePayloadV2S3ref{}
 	}
 	return o.S3ref
 }

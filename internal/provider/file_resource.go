@@ -42,13 +42,11 @@ type FileResourceModel struct {
 	Bucket               types.String   `tfsdk:"bucket"`
 	CustomDownloadURL    types.String   `tfsdk:"custom_download_url"`
 	DocumentType         types.String   `tfsdk:"document_type"`
-	EntityID             types.String   `tfsdk:"entity_id"`
 	FileEntityID         types.String   `tfsdk:"file_entity_id"`
 	Filename             types.String   `tfsdk:"filename"`
 	Key                  types.String   `tfsdk:"key"`
 	MimeType             types.String   `tfsdk:"mime_type"`
 	PublicURL            types.String   `tfsdk:"public_url"`
-	Schema               types.String   `tfsdk:"schema"`
 	SizeBytes            types.Int64    `tfsdk:"size_bytes"`
 	Tags                 []types.String `tfsdk:"tags"`
 	Type                 types.String   `tfsdk:"type"`
@@ -129,13 +127,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					),
 				},
 			},
-			"entity_id": schema.StringAttribute{
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Required:    true,
-				Description: `Requires replacement if changed. `,
-			},
 			"file_entity_id": schema.StringAttribute{
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
@@ -165,13 +156,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"public_url": schema.StringAttribute{
 				Computed:    true,
 				Description: `Direct URL for file (public only if file access control is public-read)`,
-			},
-			"schema": schema.StringAttribute{
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Optional:    true,
-				Description: `URL-friendly identifier for the entity schema. Requires replacement if changed. `,
 			},
 			"size_bytes": schema.Int64Attribute{
 				Computed:    true,
@@ -299,26 +283,9 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		fileEntityID = nil
 	}
 	filename := data.Filename.ValueString()
-	schema := new(string)
-	if !data.Schema.IsUnknown() && !data.Schema.IsNull() {
-		*schema = data.Schema.ValueString()
-	} else {
-		schema = nil
-	}
-	var tags1 []string = nil
-	for _, tagsItem1 := range data.Tags {
-		tags1 = append(tags1, tagsItem1.ValueString())
-	}
-	entityID := data.EntityID.ValueString()
-	singleton := shared.FileRelationItem{
-		Schema:   schema,
-		Tags:     tags1,
-		EntityID: entityID,
-	}
-	relations := []shared.FileRelationItem{singleton}
 	bucket := data.Bucket.ValueString()
 	key := data.Key.ValueString()
-	s3ref := shared.S3Reference{
+	s3ref := shared.SaveFilePayloadV2S3ref{
 		Bucket: bucket,
 		Key:    key,
 	}
@@ -330,7 +297,6 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		DocumentType:         documentType,
 		FileEntityID:         fileEntityID,
 		Filename:             filename,
-		Relations:            relations,
 		S3ref:                s3ref,
 	}
 	res, err := r.client.Files.SaveFileV2(ctx, request)

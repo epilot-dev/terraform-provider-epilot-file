@@ -19,11 +19,9 @@ resource "epilot-file_file" "my_file" {
   bucket                = "epilot-files-prod"
   custom_download_url   = "https://both-legging.net"
   document_type         = "archive"
-  entity_id             = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
   file_entity_id        = "...my_file_entity_id..."
   filename              = "document.pdf"
   key                   = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
-  schema                = "contact"
   tags = [
     "...",
   ]
@@ -36,7 +34,6 @@ resource "epilot-file_file" "my_file" {
 ### Required
 
 - `bucket` (String) Requires replacement if changed.
-- `entity_id` (String) Requires replacement if changed.
 - `filename` (String) Requires replacement if changed.
 - `key` (String) Requires replacement if changed.
 
@@ -47,7 +44,6 @@ resource "epilot-file_file" "my_file" {
 - `custom_download_url` (String) Custom external download url used for the file. Requires replacement if changed.
 - `document_type` (String) Requires replacement if changed. ; must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]
 - `file_entity_id` (String) if passed, adds a new version to existing file entity. Requires replacement if changed.
-- `schema` (String) URL-friendly identifier for the entity schema. Requires replacement if changed.
 - `tags` (List of String) Requires replacement if changed.
 
 ### Read-Only
