@@ -4,6 +4,10 @@ terraform {
       source  = "epilot-dev/epilot-file"
       version = "2.1.1"
     }
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.33.0"
+    }
   }
 }
 
@@ -16,4 +20,8 @@ variable epilot_auth {
 provider "epilot-file" {
   # Configuration options
   epilot_auth = var.epilot_auth
+}
+
+provider "aws" {
+  # Configuration options
 }
