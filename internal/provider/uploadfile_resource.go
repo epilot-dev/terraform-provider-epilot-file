@@ -66,7 +66,7 @@ func (r *UploadFileResource) Schema(ctx context.Context, req resource.SchemaRequ
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Optional:    true,
-				Description: `MIME type of file. Requires replacement if changed. ; Default: "application/octet-stream"`,
+				Description: `MIME type of file. Requires replacement if changed. `,
 			},
 			"public_url": schema.StringAttribute{
 				Computed:    true,
