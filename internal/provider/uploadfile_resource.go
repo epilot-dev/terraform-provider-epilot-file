@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -62,10 +63,12 @@ func (r *UploadFileResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: `Requires replacement if changed. `,
 			},
 			"mime_type": schema.StringAttribute{
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Optional:    true,
+				Default:     stringdefault.StaticString("application/octet-stream"),
 				Description: `MIME type of file. Requires replacement if changed. ; Default: "application/octet-stream"`,
 			},
 			"public_url": schema.StringAttribute{
