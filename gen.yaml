@@ -6,6 +6,7 @@ generation:
   fixes:
     nameResolutionDec2023: false
     parameterOrderingFeb2024: false
+    requestResponseComponentNamesFeb2024: false
   telemetryEnabled: false
 go:
   version: 0.0.1
@@ -24,7 +25,7 @@ go:
   outputModelSuffix: output
   packageName: openapi
 terraform:
-  version: 0.2.1
+  version: 0.2.2
   author: epilot-dev
   imports:
     option: openapi

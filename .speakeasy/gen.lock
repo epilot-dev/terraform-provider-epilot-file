@@ -4,9 +4,9 @@ management:
   docChecksum: 3780fdcf1eaa7ff90e168c8860933918
   docVersion: 0.1.0
   speakeasyVersion: internal
-  generationVersion: 2.250.2
-  releaseVersion: 0.2.1
-  configChecksum: fcdc4cafeba4a13194c10d270307905e
+  generationVersion: 2.252.2
+  releaseVersion: 0.2.2
+  configChecksum: ca6cb53081eb9f211569c328295b1d57
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -18,7 +18,7 @@ features:
     globalSecurity: 2.81.3
     globalServerURLs: 2.82.1
     retries: 2.81.1
-    unions: 2.81.7
+    unions: 2.81.8
 generatedFiles:
   - internal/sdk/files.go
   - internal/sdk/session.go
