@@ -25,7 +25,7 @@ type GeneratePublicLinkResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Returns the public link which can be used to access the file later
-	Res *string
+	String *string
 }
 
 func (o *GeneratePublicLinkResponse) GetContentType() string {
@@ -49,9 +49,9 @@ func (o *GeneratePublicLinkResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *GeneratePublicLinkResponse) GetRes() *string {
+func (o *GeneratePublicLinkResponse) GetString() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Res
+	return o.String
 }

@@ -25,7 +25,7 @@ type RevokePublicLinkResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Revokes a public link successfully.
-	Res *string
+	String *string
 }
 
 func (o *RevokePublicLinkResponse) GetContentType() string {
@@ -49,9 +49,9 @@ func (o *RevokePublicLinkResponse) GetRawResponse() *http.Response {
 	return o.RawResponse
 }
 
-func (o *RevokePublicLinkResponse) GetRes() *string {
+func (o *RevokePublicLinkResponse) GetString() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Res
+	return o.String
 }

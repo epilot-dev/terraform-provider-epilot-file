@@ -8,37 +8,39 @@ import (
 )
 
 func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
-	r.ID = types.StringPointerValue(resp.ID)
-	if resp.AccessControl != nil {
-		r.AccessControl = types.StringValue(string(*resp.AccessControl))
-	} else {
-		r.AccessControl = types.StringNull()
-	}
-	r.Filename = types.StringPointerValue(resp.Filename)
-	r.MimeType = types.StringPointerValue(resp.MimeType)
-	r.PublicURL = types.StringPointerValue(resp.PublicURL)
-	r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
-	if resp.Type != nil {
-		r.Type = types.StringValue(string(*resp.Type))
-	} else {
-		r.Type = types.StringNull()
-	}
-	if len(r.Versions) > len(resp.Versions) {
-		r.Versions = r.Versions[:len(resp.Versions)]
-	}
-	for versionsCount, versionsItem := range resp.Versions {
-		var versions1 Versions
-		if versionsItem.S3ref == nil {
-			versions1.S3ref = nil
+	if resp != nil {
+		r.ID = types.StringPointerValue(resp.ID)
+		if resp.AccessControl != nil {
+			r.AccessControl = types.StringValue(string(*resp.AccessControl))
 		} else {
-			versions1.S3ref = &S3Reference{}
-			versions1.S3ref.Bucket = types.StringValue(versionsItem.S3ref.Bucket)
-			versions1.S3ref.Key = types.StringValue(versionsItem.S3ref.Key)
+			r.AccessControl = types.StringNull()
 		}
-		if versionsCount+1 > len(r.Versions) {
-			r.Versions = append(r.Versions, versions1)
+		r.Filename = types.StringPointerValue(resp.Filename)
+		r.MimeType = types.StringPointerValue(resp.MimeType)
+		r.PublicURL = types.StringPointerValue(resp.PublicURL)
+		r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
+		if resp.Type != nil {
+			r.Type = types.StringValue(string(*resp.Type))
 		} else {
-			r.Versions[versionsCount].S3ref = versions1.S3ref
+			r.Type = types.StringNull()
+		}
+		if len(r.Versions) > len(resp.Versions) {
+			r.Versions = r.Versions[:len(resp.Versions)]
+		}
+		for versionsCount, versionsItem := range resp.Versions {
+			var versions1 Versions
+			if versionsItem.S3ref == nil {
+				versions1.S3ref = nil
+			} else {
+				versions1.S3ref = &S3Reference{}
+				versions1.S3ref.Bucket = types.StringValue(versionsItem.S3ref.Bucket)
+				versions1.S3ref.Key = types.StringValue(versionsItem.S3ref.Key)
+			}
+			if versionsCount+1 > len(r.Versions) {
+				r.Versions = append(r.Versions, versions1)
+			} else {
+				r.Versions[versionsCount].S3ref = versions1.S3ref
+			}
 		}
 	}
 }
