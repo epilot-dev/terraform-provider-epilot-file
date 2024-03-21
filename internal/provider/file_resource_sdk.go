@@ -3,7 +3,8 @@
 package provider
 
 import (
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/models/shared"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,11 +29,11 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 			r.Versions = r.Versions[:len(resp.Versions)]
 		}
 		for versionsCount, versionsItem := range resp.Versions {
-			var versions1 Versions
+			var versions1 tfTypes.Versions
 			if versionsItem.S3ref == nil {
 				versions1.S3ref = nil
 			} else {
-				versions1.S3ref = &S3Reference{}
+				versions1.S3ref = &tfTypes.S3Reference{}
 				versions1.S3ref.Bucket = types.StringValue(versionsItem.S3ref.Bucket)
 				versions1.S3ref.Key = types.StringValue(versionsItem.S3ref.Key)
 			}

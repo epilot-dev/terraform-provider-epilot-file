@@ -7,8 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/stringplanmodifier"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/models/shared"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -37,21 +38,21 @@ type FileResource struct {
 
 // FileResourceModel describes the resource data model.
 type FileResourceModel struct {
-	ID                   types.String   `tfsdk:"id"`
-	AccessControl        types.String   `tfsdk:"access_control"`
-	AdditionalProperties types.String   `tfsdk:"additional_properties"`
-	Bucket               types.String   `tfsdk:"bucket"`
-	CustomDownloadURL    types.String   `tfsdk:"custom_download_url"`
-	DocumentType         types.String   `tfsdk:"document_type"`
-	FileEntityID         types.String   `tfsdk:"file_entity_id"`
-	Filename             types.String   `tfsdk:"filename"`
-	Key                  types.String   `tfsdk:"key"`
-	MimeType             types.String   `tfsdk:"mime_type"`
-	PublicURL            types.String   `tfsdk:"public_url"`
-	SizeBytes            types.Int64    `tfsdk:"size_bytes"`
-	Tags                 []types.String `tfsdk:"tags"`
-	Type                 types.String   `tfsdk:"type"`
-	Versions             []Versions     `tfsdk:"versions"`
+	ID                   types.String       `tfsdk:"id"`
+	AccessControl        types.String       `tfsdk:"access_control"`
+	AdditionalProperties types.String       `tfsdk:"additional_properties"`
+	Bucket               types.String       `tfsdk:"bucket"`
+	CustomDownloadURL    types.String       `tfsdk:"custom_download_url"`
+	DocumentType         types.String       `tfsdk:"document_type"`
+	FileEntityID         types.String       `tfsdk:"file_entity_id"`
+	Filename             types.String       `tfsdk:"filename"`
+	Key                  types.String       `tfsdk:"key"`
+	MimeType             types.String       `tfsdk:"mime_type"`
+	PublicURL            types.String       `tfsdk:"public_url"`
+	SizeBytes            types.Int64        `tfsdk:"size_bytes"`
+	Tags                 []types.String     `tfsdk:"tags"`
+	Type                 types.String       `tfsdk:"type"`
+	Versions             []tfTypes.Versions `tfsdk:"versions"`
 }
 
 func (r *FileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
