@@ -3,5 +3,5 @@
 package types
 
 type Versions struct {
-	S3ref *S3Reference `tfsdk:"s3ref"`
+	S3ref *SaveFilePayloadV2S3ref `tfsdk:"s3ref"`
 }

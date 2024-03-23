@@ -3,10 +3,64 @@
 package provider
 
 import (
+	"encoding/json"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
+
+func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+	var additionalProperties interface{}
+	if !r.AdditionalProperties.IsUnknown() && !r.AdditionalProperties.IsNull() {
+		_ = json.Unmarshal([]byte(r.AdditionalProperties.ValueString()), &additionalProperties)
+	}
+	var tags []string = nil
+	for _, tagsItem := range r.Tags {
+		tags = append(tags, tagsItem.ValueString())
+	}
+	accessControl := new(shared.SaveFilePayloadV2AccessControl)
+	if !r.AccessControl.IsUnknown() && !r.AccessControl.IsNull() {
+		*accessControl = shared.SaveFilePayloadV2AccessControl(r.AccessControl.ValueString())
+	} else {
+		accessControl = nil
+	}
+	customDownloadURL := new(string)
+	if !r.CustomDownloadURL.IsUnknown() && !r.CustomDownloadURL.IsNull() {
+		*customDownloadURL = r.CustomDownloadURL.ValueString()
+	} else {
+		customDownloadURL = nil
+	}
+	documentType := new(shared.SaveFilePayloadV2DocumentType)
+	if !r.DocumentType.IsUnknown() && !r.DocumentType.IsNull() {
+		*documentType = shared.SaveFilePayloadV2DocumentType(r.DocumentType.ValueString())
+	} else {
+		documentType = nil
+	}
+	fileEntityID := new(string)
+	if !r.FileEntityID.IsUnknown() && !r.FileEntityID.IsNull() {
+		*fileEntityID = r.FileEntityID.ValueString()
+	} else {
+		fileEntityID = nil
+	}
+	filename := r.Filename.ValueString()
+	bucket := r.S3ref.Bucket.ValueString()
+	key := r.S3ref.Key.ValueString()
+	s3ref := shared.SaveFilePayloadV2S3ref{
+		Bucket: bucket,
+		Key:    key,
+	}
+	out := shared.SaveFilePayloadV2{
+		AdditionalProperties: additionalProperties,
+		Tags:                 tags,
+		AccessControl:        accessControl,
+		CustomDownloadURL:    customDownloadURL,
+		DocumentType:         documentType,
+		FileEntityID:         fileEntityID,
+		Filename:             filename,
+		S3ref:                s3ref,
+	}
+	return &out
+}
 
 func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
 	if resp != nil {
@@ -33,7 +87,7 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 			if versionsItem.S3ref == nil {
 				versions1.S3ref = nil
 			} else {
-				versions1.S3ref = &tfTypes.S3Reference{}
+				versions1.S3ref = &tfTypes.SaveFilePayloadV2S3ref{}
 				versions1.S3ref.Bucket = types.StringValue(versionsItem.S3ref.Bucket)
 				versions1.S3ref.Key = types.StringValue(versionsItem.S3ref.Key)
 			}

@@ -4,17 +4,16 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/validators"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -38,21 +37,20 @@ type FileResource struct {
 
 // FileResourceModel describes the resource data model.
 type FileResourceModel struct {
-	ID                   types.String       `tfsdk:"id"`
-	AccessControl        types.String       `tfsdk:"access_control"`
-	AdditionalProperties types.String       `tfsdk:"additional_properties"`
-	Bucket               types.String       `tfsdk:"bucket"`
-	CustomDownloadURL    types.String       `tfsdk:"custom_download_url"`
-	DocumentType         types.String       `tfsdk:"document_type"`
-	FileEntityID         types.String       `tfsdk:"file_entity_id"`
-	Filename             types.String       `tfsdk:"filename"`
-	Key                  types.String       `tfsdk:"key"`
-	MimeType             types.String       `tfsdk:"mime_type"`
-	PublicURL            types.String       `tfsdk:"public_url"`
-	SizeBytes            types.Int64        `tfsdk:"size_bytes"`
-	Tags                 []types.String     `tfsdk:"tags"`
-	Type                 types.String       `tfsdk:"type"`
-	Versions             []tfTypes.Versions `tfsdk:"versions"`
+	ID                   types.String                   `tfsdk:"id"`
+	Tags                 []types.String                 `tfsdk:"tags"`
+	AccessControl        types.String                   `tfsdk:"access_control"`
+	AdditionalProperties types.String                   `tfsdk:"additional_properties"`
+	CustomDownloadURL    types.String                   `tfsdk:"custom_download_url"`
+	DocumentType         types.String                   `tfsdk:"document_type"`
+	FileEntityID         types.String                   `tfsdk:"file_entity_id"`
+	Filename             types.String                   `tfsdk:"filename"`
+	MimeType             types.String                   `tfsdk:"mime_type"`
+	PublicURL            types.String                   `tfsdk:"public_url"`
+	S3ref                tfTypes.SaveFilePayloadV2S3ref `tfsdk:"s3ref"`
+	SizeBytes            types.Int64                    `tfsdk:"size_bytes"`
+	Type                 types.String                   `tfsdk:"type"`
+	Versions             []tfTypes.Versions             `tfsdk:"versions"`
 }
 
 func (r *FileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -66,6 +64,14 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed: true,
+			},
+			"tags": schema.ListAttribute{
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Requires replacement if changed. `,
 			},
 			"access_control": schema.StringAttribute{
 				Computed: true,
@@ -92,13 +98,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Validators: []validator.String{
 					validators.IsValidJSON(),
 				},
-			},
-			"bucket": schema.StringAttribute{
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Required:    true,
-				Description: `Requires replacement if changed. `,
 			},
 			"custom_download_url": schema.StringAttribute{
 				PlanModifiers: []planmodifier.String{
@@ -145,13 +144,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Required:    true,
 				Description: `Requires replacement if changed. `,
 			},
-			"key": schema.StringAttribute{
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Required:    true,
-				Description: `Requires replacement if changed. `,
-			},
 			"mime_type": schema.StringAttribute{
 				Computed:    true,
 				Description: `MIME type of the file`,
@@ -160,17 +152,32 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:    true,
 				Description: `Direct URL for file (public only if file access control is public-read)`,
 			},
+			"s3ref": schema.SingleNestedAttribute{
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Required: true,
+				Attributes: map[string]schema.Attribute{
+					"bucket": schema.StringAttribute{
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplaceIfConfigured(),
+						},
+						Required:    true,
+						Description: `Requires replacement if changed. `,
+					},
+					"key": schema.StringAttribute{
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.RequiresReplaceIfConfigured(),
+						},
+						Required:    true,
+						Description: `Requires replacement if changed. `,
+					},
+				},
+				Description: `Requires replacement if changed. `,
+			},
 			"size_bytes": schema.Int64Attribute{
 				Computed:    true,
 				Description: `File size in bytes`,
-			},
-			"tags": schema.ListAttribute{
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Optional:    true,
-				ElementType: types.StringType,
-				Description: `Requires replacement if changed. `,
 			},
 			"type": schema.StringAttribute{
 				Computed:    true,
@@ -252,56 +259,7 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	var request *shared.SaveFilePayloadV2
-	var additionalProperties interface{}
-	if !data.AdditionalProperties.IsUnknown() && !data.AdditionalProperties.IsNull() {
-		_ = json.Unmarshal([]byte(data.AdditionalProperties.ValueString()), &additionalProperties)
-	}
-	var tags []string = nil
-	for _, tagsItem := range data.Tags {
-		tags = append(tags, tagsItem.ValueString())
-	}
-	accessControl := new(shared.SaveFilePayloadV2AccessControl)
-	if !data.AccessControl.IsUnknown() && !data.AccessControl.IsNull() {
-		*accessControl = shared.SaveFilePayloadV2AccessControl(data.AccessControl.ValueString())
-	} else {
-		accessControl = nil
-	}
-	customDownloadURL := new(string)
-	if !data.CustomDownloadURL.IsUnknown() && !data.CustomDownloadURL.IsNull() {
-		*customDownloadURL = data.CustomDownloadURL.ValueString()
-	} else {
-		customDownloadURL = nil
-	}
-	documentType := new(shared.SaveFilePayloadV2DocumentType)
-	if !data.DocumentType.IsUnknown() && !data.DocumentType.IsNull() {
-		*documentType = shared.SaveFilePayloadV2DocumentType(data.DocumentType.ValueString())
-	} else {
-		documentType = nil
-	}
-	fileEntityID := new(string)
-	if !data.FileEntityID.IsUnknown() && !data.FileEntityID.IsNull() {
-		*fileEntityID = data.FileEntityID.ValueString()
-	} else {
-		fileEntityID = nil
-	}
-	filename := data.Filename.ValueString()
-	bucket := data.Bucket.ValueString()
-	key := data.Key.ValueString()
-	s3ref := shared.SaveFilePayloadV2S3ref{
-		Bucket: bucket,
-		Key:    key,
-	}
-	request = &shared.SaveFilePayloadV2{
-		AdditionalProperties: additionalProperties,
-		Tags:                 tags,
-		AccessControl:        accessControl,
-		CustomDownloadURL:    customDownloadURL,
-		DocumentType:         documentType,
-		FileEntityID:         fileEntityID,
-		Filename:             filename,
-		S3ref:                s3ref,
-	}
+	request := data.ToSharedSaveFilePayloadV2()
 	res, err := r.client.Files.SaveFileV2(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
