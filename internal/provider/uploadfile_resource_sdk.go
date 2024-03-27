@@ -3,7 +3,8 @@
 package provider
 
 import (
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/models/shared"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,13 +24,15 @@ func (r *UploadFileResourceModel) ToSharedUploadFilePayload() *shared.UploadFile
 }
 
 func (r *UploadFileResourceModel) RefreshFromSharedFileUpload(resp *shared.FileUpload) {
-	r.PublicURL = types.StringPointerValue(resp.PublicURL)
-	if resp.S3ref == nil {
-		r.S3ref = nil
-	} else {
-		r.S3ref = &S3Reference{}
-		r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
-		r.S3ref.Key = types.StringValue(resp.S3ref.Key)
+	if resp != nil {
+		r.PublicURL = types.StringPointerValue(resp.PublicURL)
+		if resp.S3ref == nil {
+			r.S3ref = nil
+		} else {
+			r.S3ref = &tfTypes.SaveFilePayloadV2S3ref{}
+			r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
+			r.S3ref.Key = types.StringValue(resp.S3ref.Key)
+		}
+		r.UploadURL = types.StringPointerValue(resp.UploadURL)
 	}
-	r.UploadURL = types.StringPointerValue(resp.UploadURL)
 }

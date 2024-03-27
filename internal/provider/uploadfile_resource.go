@@ -5,11 +5,13 @@ package provider
 import (
 	"context"
 	"fmt"
+	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/models/operations"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -30,12 +32,12 @@ type UploadFileResource struct {
 
 // UploadFileResourceModel describes the resource data model.
 type UploadFileResourceModel struct {
-	FileEntityID types.String `tfsdk:"file_entity_id"`
-	Filename     types.String `tfsdk:"filename"`
-	MimeType     types.String `tfsdk:"mime_type"`
-	PublicURL    types.String `tfsdk:"public_url"`
-	S3ref        *S3Reference `tfsdk:"s3ref"`
-	UploadURL    types.String `tfsdk:"upload_url"`
+	FileEntityID types.String                    `tfsdk:"file_entity_id"`
+	Filename     types.String                    `tfsdk:"filename"`
+	MimeType     types.String                    `tfsdk:"mime_type"`
+	PublicURL    types.String                    `tfsdk:"public_url"`
+	S3ref        *tfTypes.SaveFilePayloadV2S3ref `tfsdk:"s3ref"`
+	UploadURL    types.String                    `tfsdk:"upload_url"`
 }
 
 func (r *UploadFileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -62,10 +64,12 @@ func (r *UploadFileResource) Schema(ctx context.Context, req resource.SchemaRequ
 				Description: `Requires replacement if changed. `,
 			},
 			"mime_type": schema.StringAttribute{
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
 				Optional:    true,
+				Default:     stringdefault.StaticString("application/octet-stream"),
 				Description: `MIME type of file. Requires replacement if changed. ; Default: "application/octet-stream"`,
 			},
 			"public_url": schema.StringAttribute{
