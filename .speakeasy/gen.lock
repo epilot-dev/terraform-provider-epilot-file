@@ -1,28 +1,86 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 3780fdcf1eaa7ff90e168c8860933918
+  docChecksum: 736c220b492a65d4d87128d9bc9eb8dd
   docVersion: 0.1.0
-  speakeasyVersion: internal
-  generationVersion: 2.230.1
-  releaseVersion: 0.1.1
-  configChecksum: 93783df6f159019bb6bc9e23462019c4
+  speakeasyVersion: 1.355.0
+  generationVersion: 2.387.0
+  releaseVersion: 0.2.0
+  configChecksum: 374853a08921b22338241591459b4172
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
 features:
   terraform:
+    additionalDependencies: 0.1.0
     additionalProperties: 0.1.2
-    constsAndDefaults: 0.1.2
-    core: 3.8.1
-    globalSecurity: 2.81.2
+    constsAndDefaults: 0.1.4
+    core: 3.24.6
+    envVarSecurityUsage: 0.1.0
+    globalSecurity: 2.81.8
     globalServerURLs: 2.82.1
     retries: 2.81.1
-    unions: 2.81.7
+    unions: 2.81.15
 generatedFiles:
   - internal/sdk/files.go
   - internal/sdk/session.go
   - internal/sdk/sdk.go
+  - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/retry/config.go
+  - internal/sdk/types/bigint.go
+  - internal/sdk/types/date.go
+  - internal/sdk/types/datetime.go
+  - internal/sdk/types/decimal.go
+  - internal/sdk/types/pointers.go
+  - internal/sdk/internal/utils/contenttype.go
+  - internal/sdk/internal/utils/form.go
+  - internal/sdk/internal/utils/headers.go
+  - internal/sdk/internal/utils/json.go
+  - internal/sdk/internal/utils/pathparams.go
+  - internal/sdk/internal/utils/queryparams.go
+  - internal/sdk/internal/utils/requestbody.go
+  - internal/sdk/internal/utils/retries.go
+  - internal/sdk/internal/utils/security.go
+  - internal/sdk/internal/utils/utils.go
+  - internal/sdk/models/operations/accesspubliclink.go
+  - internal/sdk/models/operations/deletefile.go
+  - internal/sdk/models/operations/downloadfile.go
+  - internal/sdk/models/operations/downloadfiles.go
+  - internal/sdk/models/operations/downloads3file.go
+  - internal/sdk/models/operations/generatepubliclink.go
+  - internal/sdk/models/operations/getallpubliclinksforfile.go
+  - internal/sdk/models/operations/previewfile.go
+  - internal/sdk/models/operations/previewpublicfile.go
+  - internal/sdk/models/operations/previews3file.go
+  - internal/sdk/models/operations/previews3fileget.go
+  - internal/sdk/models/operations/revokepubliclink.go
+  - internal/sdk/models/operations/savefile.go
+  - internal/sdk/models/operations/savefilev2.go
+  - internal/sdk/models/operations/uploadfile.go
+  - internal/sdk/models/operations/uploadfilepublic.go
+  - internal/sdk/models/operations/uploadfilev2.go
+  - internal/sdk/models/operations/verifycustomdownloadurl.go
+  - internal/sdk/models/operations/deletesession.go
+  - internal/sdk/models/operations/getsession.go
+  - internal/sdk/models/shared/deletefilepayload.go
+  - internal/sdk/models/shared/s3reference.go
+  - internal/sdk/models/shared/downloadfilespayload.go
+  - internal/sdk/models/shared/publiclink.go
+  - internal/sdk/models/shared/fileentity.go
+  - internal/sdk/models/shared/savefilepayload.go
+  - internal/sdk/models/shared/saves3filepayload.go
+  - internal/sdk/models/shared/filerelationitem.go
+  - internal/sdk/models/shared/savecustomfilepayload.go
+  - internal/sdk/models/shared/savefilepayloadv2.go
+  - internal/sdk/models/shared/uploadfilepayload.go
+  - internal/sdk/models/shared/fileupload.go
+  - internal/sdk/models/shared/verifycustomdownloadurlpayload.go
+  - internal/sdk/models/shared/security.go
+  - internal/sdk/.gitignore
+  - internal/sdk/models/operations/options.go
+  - internal/sdk/.gitattributes
+  - internal/sdk/internal/hooks/hooks.go
+  - internal/sdk/CONTRIBUTING.md
   - examples/README.md
   - go.mod
   - go.sum
@@ -51,22 +109,6 @@ generatedFiles:
   - internal/provider/reflect/slice.go
   - internal/provider/reflect/struct.go
   - internal/provider/utils.go
-  - internal/sdk/pkg/models/sdkerrors/sdkerror.go
-  - internal/sdk/pkg/types/bigint.go
-  - internal/sdk/pkg/types/date.go
-  - internal/sdk/pkg/types/datetime.go
-  - internal/sdk/pkg/types/decimal.go
-  - internal/sdk/pkg/types/pointers.go
-  - internal/sdk/pkg/utils/contenttype.go
-  - internal/sdk/pkg/utils/form.go
-  - internal/sdk/pkg/utils/headers.go
-  - internal/sdk/pkg/utils/json.go
-  - internal/sdk/pkg/utils/pathparams.go
-  - internal/sdk/pkg/utils/queryparams.go
-  - internal/sdk/pkg/utils/requestbody.go
-  - internal/sdk/pkg/utils/retries.go
-  - internal/sdk/pkg/utils/security.go
-  - internal/sdk/pkg/utils/utils.go
   - internal/validators/DateValidator.go
   - internal/validators/ExactlyOneChild.go
   - internal/validators/JSONParseValidator.go
@@ -83,42 +125,8 @@ generatedFiles:
   - main.go
   - terraform-registry-manifest.json
   - tools/tools.go
-  - internal/sdk/pkg/models/operations/accesspubliclink.go
-  - internal/sdk/pkg/models/operations/deletefile.go
-  - internal/sdk/pkg/models/operations/downloadfile.go
-  - internal/sdk/pkg/models/operations/downloadfiles.go
-  - internal/sdk/pkg/models/operations/downloads3file.go
-  - internal/sdk/pkg/models/operations/generatepubliclink.go
-  - internal/sdk/pkg/models/operations/getallpubliclinksforfile.go
-  - internal/sdk/pkg/models/operations/previewfile.go
-  - internal/sdk/pkg/models/operations/previewpublicfile.go
-  - internal/sdk/pkg/models/operations/previews3file.go
-  - internal/sdk/pkg/models/operations/previews3fileget.go
-  - internal/sdk/pkg/models/operations/revokepubliclink.go
-  - internal/sdk/pkg/models/operations/savefile.go
-  - internal/sdk/pkg/models/operations/savefilev2.go
-  - internal/sdk/pkg/models/operations/uploadfile.go
-  - internal/sdk/pkg/models/operations/uploadfilepublic.go
-  - internal/sdk/pkg/models/operations/uploadfilev2.go
-  - internal/sdk/pkg/models/operations/verifycustomdownloadurl.go
-  - internal/sdk/pkg/models/operations/deletesession.go
-  - internal/sdk/pkg/models/operations/getsession.go
-  - internal/sdk/pkg/models/shared/deletefilepayload.go
-  - internal/sdk/pkg/models/shared/s3reference.go
-  - internal/sdk/pkg/models/shared/downloadfilespayload.go
-  - internal/sdk/pkg/models/shared/publiclink.go
-  - internal/sdk/pkg/models/shared/fileentity.go
-  - internal/sdk/pkg/models/shared/savefilepayload.go
-  - internal/sdk/pkg/models/shared/saves3filepayload.go
-  - internal/sdk/pkg/models/shared/filerelationitem.go
-  - internal/sdk/pkg/models/shared/savecustomfilepayload.go
-  - internal/sdk/pkg/models/shared/savefilepayloadv2.go
-  - internal/sdk/pkg/models/shared/uploadfilepayload.go
-  - internal/sdk/pkg/models/shared/fileupload.go
-  - internal/sdk/pkg/models/shared/verifycustomdownloadurlpayload.go
-  - internal/sdk/pkg/models/shared/security.go
-  - internal/provider/type_s3_reference.go
-  - internal/provider/type_versions.go
+  - internal/provider/types/save_file_payload_v2_s3ref.go
+  - internal/provider/types/versions.go
   - USAGE.md
   - internal/provider/provider.go
   - examples/provider/provider.tf
@@ -128,5 +136,5 @@ generatedFiles:
   - internal/provider/uploadfile_resource.go
   - internal/provider/uploadfile_resource_sdk.go
   - examples/resources/epilot-file_upload_file/resource.tf
-  - internal/sdk/pkg/models/operations/options.go
   - .gitattributes
+  - CONTRIBUTING.md
