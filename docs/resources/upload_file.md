@@ -13,30 +13,15 @@ UploadFile Resource
 ## Example Usage
 
 ```terraform
-# Upload file to S3
 resource "epilot-file_upload_file" "my_uploadfile" {
-  filename       = "NishuGoel.png"
-  mime_type      = "image/png"
-}
-
-output "uploaded_file" {
-  value = epilot-file_upload_file.my_uploadfile
-}
-
-
-resource "aws_s3_object" "s3_file_upload" {
-  bucket = epilot-file_upload_file.my_uploadfile.s3ref.bucket
-  key    = epilot-file_upload_file.my_uploadfile.s3ref.key
-  source = "/Users/nishugoel/epilot/terraform blueprints/terraform-provider-epilot-file/examples/resources/epilot-file_upload_file/NishuGoel.png"
-}
-
-#  Save uploaded file
-resource "epilot-file_file" "my_file" {
-  access_control = "private"
-  filename       = epilot-file_upload_file.my_uploadfile.filename
-  bucket         = epilot-file_upload_file.my_uploadfile.s3ref.bucket
-  key            = epilot-file_upload_file.my_uploadfile.s3ref.key
-  entity_id      = ""
+  file_entity_id = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  filename       = "document.pdf"
+  index_tag      = "2f6a377c8e78"
+  metadata = {
+    "id"      = "..."
+    "Jamaica" = "..."
+  }
+  mime_type = "application/pdf"
 }
 ```
 
@@ -50,6 +35,8 @@ resource "epilot-file_file" "my_file" {
 ### Optional
 
 - `file_entity_id` (String) file entity id. Requires replacement if changed.
+- `index_tag` (String) Used to index the file at the storage layer, which helps when browsing for this file. Requires replacement if changed.
+- `metadata` (Map of String) Allows passing in custom metadata for the file, expects key-value pairs of string type. Requires replacement if changed.
 - `mime_type` (String) MIME type of file. Requires replacement if changed. ; Default: "application/octet-stream"
 
 ### Read-Only
@@ -65,5 +52,3 @@ Read-Only:
 
 - `bucket` (String)
 - `key` (String)
-
-

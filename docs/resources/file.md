@@ -14,17 +14,19 @@ File Resource
 
 ```terraform
 resource "epilot-file_file" "my_file" {
+  tags = [
+    "...",
+  ]
   access_control        = "public-read"
   additional_properties = "{ \"see\": \"documentation\" }"
-  bucket                = "epilot-files-prod"
   custom_download_url   = "https://both-legging.net"
   document_type         = "archive"
   file_entity_id        = "...my_file_entity_id..."
   filename              = "document.pdf"
-  key                   = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
-  tags = [
-    "...",
-  ]
+  s3ref = {
+    bucket = "epilot-files-prod"
+    key    = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
+  }
 }
 ```
 
@@ -33,9 +35,8 @@ resource "epilot-file_file" "my_file" {
 
 ### Required
 
-- `bucket` (String) Requires replacement if changed.
 - `filename` (String) Requires replacement if changed.
-- `key` (String) Requires replacement if changed.
+- `s3ref` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--s3ref))
 
 ### Optional
 
@@ -55,6 +56,15 @@ resource "epilot-file_file" "my_file" {
 - `type` (String) Human readable type for file. must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
+<a id="nestedatt--s3ref"></a>
+### Nested Schema for `s3ref`
+
+Required:
+
+- `bucket` (String) Requires replacement if changed.
+- `key` (String) Requires replacement if changed.
+
+
 <a id="nestedatt--versions"></a>
 ### Nested Schema for `versions`
 
@@ -69,5 +79,3 @@ Read-Only:
 
 - `bucket` (String)
 - `key` (String)
-
-

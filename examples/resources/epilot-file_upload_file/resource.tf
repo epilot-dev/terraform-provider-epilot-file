@@ -1,25 +1,10 @@
-# Upload file to S3
 resource "epilot-file_upload_file" "my_uploadfile" {
-  filename       = "NishuGoel.png"
-  mime_type      = "image/png"
-}
-
-output "uploaded_file" {
-  value = epilot-file_upload_file.my_uploadfile
-}
-
-
-resource "aws_s3_object" "s3_file_upload" {
-  bucket = epilot-file_upload_file.my_uploadfile.s3ref.bucket
-  key    = epilot-file_upload_file.my_uploadfile.s3ref.key
-  source = "/Users/nishugoel/epilot/terraform blueprints/terraform-provider-epilot-file/examples/resources/epilot-file_upload_file/NishuGoel.png"
-}
-
-#  Save uploaded file
-resource "epilot-file_file" "my_file" {
-  access_control = "private"
-  filename       = epilot-file_upload_file.my_uploadfile.filename
-  bucket         = epilot-file_upload_file.my_uploadfile.s3ref.bucket
-  key            = epilot-file_upload_file.my_uploadfile.s3ref.key
-  entity_id      = ""
+  file_entity_id = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  filename       = "document.pdf"
+  index_tag      = "2f6a377c8e78"
+  metadata = {
+    "id"      = "..."
+    "Jamaica" = "..."
+  }
+  mime_type = "application/pdf"
 }
