@@ -23,7 +23,7 @@ go:
   outputModelSuffix: output
   packageName: openapi
 terraform:
-  version: 0.1.1
+  version: 0.2.0
   author: epilot-dev
   imports:
     option: openapi

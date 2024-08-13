@@ -15,15 +15,22 @@ actions:
         statusCodes:
           - 5XX
         retryConnectionErrors: true
-  - target: $["paths"]["/v2/files/upload"]["post"]
+  - target: $["paths"]["/v2/files/{id}"]["get"]
     update:
-      x-speakeasy-entity-operation: UploadFile#create
+      x-speakeasy-entity-operation: File#get
+  - target: $["paths"]["/v2/files/{id}"]["get"]["parameters"][1]
+    remove: yes
+  - target: $["paths"]["/v2/files/{id}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: File#delete
   - target: $["paths"]["/v2/files"]["post"]
     update:
-      x-speakeasy-entity-operation: File#create
-  - target: $["components"]["schemas"]["FileUpload"]
-    update:
-      x-speakeasy-entity: UploadFile
+      x-speakeasy-entity-operation: File#create,update
   - target: $["components"]["schemas"]["FileEntity"]
     update:
       x-speakeasy-entity: File
+  - target: $["components"]["schemas"]["SaveFilePayloadV2"]
+    update:
+      $ref: "#/components/schemas/FileEntity"
+  - target: $["components"]["schemas"]["SaveFilePayloadV2"]["anyOf"]
+    remove: yes

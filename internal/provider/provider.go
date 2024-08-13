@@ -36,7 +36,7 @@ func (p *EpilotFileProvider) Metadata(ctx context.Context, req provider.Metadata
 
 func (p *EpilotFileProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: `File API: Upload and manage all files stored in epilot`,
+		Description: `File API: Upload and manage epilot Files`,
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				MarkdownDescription: "Server URL (defaults to https://file.sls.epilot.io)",
@@ -100,12 +100,13 @@ func (p *EpilotFileProvider) Configure(ctx context.Context, req provider.Configu
 func (p *EpilotFileProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewFileResource,
-		NewUploadFileResource,
 	}
 }
 
 func (p *EpilotFileProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		NewFileDataSource,
+	}
 }
 
 func New(version string) func() provider.Provider {

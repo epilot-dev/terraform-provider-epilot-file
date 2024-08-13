@@ -35,74 +35,24 @@ func (e *SaveS3FilePayloadAccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type SaveS3FilePayloadDocumentType string
-
-const (
-	SaveS3FilePayloadDocumentTypeDocument         SaveS3FilePayloadDocumentType = "document"
-	SaveS3FilePayloadDocumentTypeDocumentTemplate SaveS3FilePayloadDocumentType = "document_template"
-	SaveS3FilePayloadDocumentTypeText             SaveS3FilePayloadDocumentType = "text"
-	SaveS3FilePayloadDocumentTypeImage            SaveS3FilePayloadDocumentType = "image"
-	SaveS3FilePayloadDocumentTypeVideo            SaveS3FilePayloadDocumentType = "video"
-	SaveS3FilePayloadDocumentTypeAudio            SaveS3FilePayloadDocumentType = "audio"
-	SaveS3FilePayloadDocumentTypeSpreadsheet      SaveS3FilePayloadDocumentType = "spreadsheet"
-	SaveS3FilePayloadDocumentTypePresentation     SaveS3FilePayloadDocumentType = "presentation"
-	SaveS3FilePayloadDocumentTypeFont             SaveS3FilePayloadDocumentType = "font"
-	SaveS3FilePayloadDocumentTypeArchive          SaveS3FilePayloadDocumentType = "archive"
-	SaveS3FilePayloadDocumentTypeApplication      SaveS3FilePayloadDocumentType = "application"
-	SaveS3FilePayloadDocumentTypeUnknown          SaveS3FilePayloadDocumentType = "unknown"
-)
-
-func (e SaveS3FilePayloadDocumentType) ToPointer() *SaveS3FilePayloadDocumentType {
-	return &e
-}
-
-func (e *SaveS3FilePayloadDocumentType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "document":
-		fallthrough
-	case "document_template":
-		fallthrough
-	case "text":
-		fallthrough
-	case "image":
-		fallthrough
-	case "video":
-		fallthrough
-	case "audio":
-		fallthrough
-	case "spreadsheet":
-		fallthrough
-	case "presentation":
-		fallthrough
-	case "font":
-		fallthrough
-	case "archive":
-		fallthrough
-	case "application":
-		fallthrough
-	case "unknown":
-		*e = SaveS3FilePayloadDocumentType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for SaveS3FilePayloadDocumentType: %v", v)
-	}
-}
-
 type SaveS3FilePayload struct {
 	AdditionalProperties interface{}                     `additionalProperties:"true" json:"-"`
+	ID                   *string                         `json:"_id,omitempty"`
 	Tags                 []string                        `json:"_tags,omitempty"`
 	AccessControl        *SaveS3FilePayloadAccessControl `default:"private" json:"access_control"`
-	DocumentType         *SaveS3FilePayloadDocumentType  `json:"document_type,omitempty"`
-	// if passed, adds a new version to existing file entity
+	// Custom external download url used for the file
+	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	// Deprecated, use _id instead
+	//
+	// Deprecated field: This will be removed in a future release, please migrate away from it as soon as possible.
 	FileEntityID *string `json:"file_entity_id,omitempty"`
 	Filename     *string `json:"filename,omitempty"`
+	// MIME type of the file
+	MimeType *string `json:"mime_type,omitempty"`
 	// List of entities to relate the file to
 	Relations []FileRelationItem `json:"relations,omitempty"`
-	S3ref     S3Reference        `json:"s3ref"`
+	S3ref     *S3Ref             `json:"s3ref,omitempty"`
+	Type      *FileType          `json:"type,omitempty"`
 }
 
 func (s SaveS3FilePayload) MarshalJSON() ([]byte, error) {
@@ -123,6 +73,13 @@ func (o *SaveS3FilePayload) GetAdditionalProperties() interface{} {
 	return o.AdditionalProperties
 }
 
+func (o *SaveS3FilePayload) GetID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ID
+}
+
 func (o *SaveS3FilePayload) GetTags() []string {
 	if o == nil {
 		return nil
@@ -137,11 +94,11 @@ func (o *SaveS3FilePayload) GetAccessControl() *SaveS3FilePayloadAccessControl {
 	return o.AccessControl
 }
 
-func (o *SaveS3FilePayload) GetDocumentType() *SaveS3FilePayloadDocumentType {
+func (o *SaveS3FilePayload) GetCustomDownloadURL() *string {
 	if o == nil {
 		return nil
 	}
-	return o.DocumentType
+	return o.CustomDownloadURL
 }
 
 func (o *SaveS3FilePayload) GetFileEntityID() *string {
@@ -158,6 +115,13 @@ func (o *SaveS3FilePayload) GetFilename() *string {
 	return o.Filename
 }
 
+func (o *SaveS3FilePayload) GetMimeType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.MimeType
+}
+
 func (o *SaveS3FilePayload) GetRelations() []FileRelationItem {
 	if o == nil {
 		return nil
@@ -165,9 +129,16 @@ func (o *SaveS3FilePayload) GetRelations() []FileRelationItem {
 	return o.Relations
 }
 
-func (o *SaveS3FilePayload) GetS3ref() S3Reference {
+func (o *SaveS3FilePayload) GetS3ref() *S3Ref {
 	if o == nil {
-		return S3Reference{}
+		return nil
 	}
 	return o.S3ref
+}
+
+func (o *SaveS3FilePayload) GetType() *FileType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }

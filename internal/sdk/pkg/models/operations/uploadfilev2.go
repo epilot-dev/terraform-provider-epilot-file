@@ -9,7 +9,10 @@ import (
 
 type UploadFileV2Request struct {
 	UploadFilePayload *shared.UploadFilePayload `request:"mediaType=application/json"`
-	// file entity id
+	// Use this parameter when uploading a file directly to an existing file entity.
+	//
+	// Note: still requires calling saveFileV2 to save the file permanently.
+	//
 	FileEntityID *string `queryParam:"style=form,explode=true,name=file_entity_id"`
 }
 

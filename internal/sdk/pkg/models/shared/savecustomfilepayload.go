@@ -35,75 +35,23 @@ func (e *SaveCustomFilePayloadAccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type DocumentType string
-
-const (
-	DocumentTypeDocument         DocumentType = "document"
-	DocumentTypeDocumentTemplate DocumentType = "document_template"
-	DocumentTypeText             DocumentType = "text"
-	DocumentTypeImage            DocumentType = "image"
-	DocumentTypeVideo            DocumentType = "video"
-	DocumentTypeAudio            DocumentType = "audio"
-	DocumentTypeSpreadsheet      DocumentType = "spreadsheet"
-	DocumentTypePresentation     DocumentType = "presentation"
-	DocumentTypeFont             DocumentType = "font"
-	DocumentTypeArchive          DocumentType = "archive"
-	DocumentTypeApplication      DocumentType = "application"
-	DocumentTypeUnknown          DocumentType = "unknown"
-)
-
-func (e DocumentType) ToPointer() *DocumentType {
-	return &e
-}
-
-func (e *DocumentType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "document":
-		fallthrough
-	case "document_template":
-		fallthrough
-	case "text":
-		fallthrough
-	case "image":
-		fallthrough
-	case "video":
-		fallthrough
-	case "audio":
-		fallthrough
-	case "spreadsheet":
-		fallthrough
-	case "presentation":
-		fallthrough
-	case "font":
-		fallthrough
-	case "archive":
-		fallthrough
-	case "application":
-		fallthrough
-	case "unknown":
-		*e = DocumentType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for DocumentType: %v", v)
-	}
-}
-
 type SaveCustomFilePayload struct {
 	AdditionalProperties interface{}                         `additionalProperties:"true" json:"-"`
+	ID                   *string                             `json:"_id,omitempty"`
 	Tags                 []string                            `json:"_tags,omitempty"`
 	AccessControl        *SaveCustomFilePayloadAccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
-	CustomDownloadURL string        `json:"custom_download_url"`
-	DocumentType      *DocumentType `json:"document_type,omitempty"`
-	// if passed, adds a new version to existing file entity
+	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	// Deprecated, use _id instead
+	//
+	// Deprecated field: This will be removed in a future release, please migrate away from it as soon as possible.
 	FileEntityID *string `json:"file_entity_id,omitempty"`
 	Filename     *string `json:"filename,omitempty"`
+	// MIME type of the file
+	MimeType *string `json:"mime_type,omitempty"`
 	// List of entities to relate the file to
 	Relations []FileRelationItem `json:"relations,omitempty"`
+	Type      *FileType          `json:"type,omitempty"`
 }
 
 func (s SaveCustomFilePayload) MarshalJSON() ([]byte, error) {
@@ -124,6 +72,13 @@ func (o *SaveCustomFilePayload) GetAdditionalProperties() interface{} {
 	return o.AdditionalProperties
 }
 
+func (o *SaveCustomFilePayload) GetID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ID
+}
+
 func (o *SaveCustomFilePayload) GetTags() []string {
 	if o == nil {
 		return nil
@@ -138,18 +93,11 @@ func (o *SaveCustomFilePayload) GetAccessControl() *SaveCustomFilePayloadAccessC
 	return o.AccessControl
 }
 
-func (o *SaveCustomFilePayload) GetCustomDownloadURL() string {
-	if o == nil {
-		return ""
-	}
-	return o.CustomDownloadURL
-}
-
-func (o *SaveCustomFilePayload) GetDocumentType() *DocumentType {
+func (o *SaveCustomFilePayload) GetCustomDownloadURL() *string {
 	if o == nil {
 		return nil
 	}
-	return o.DocumentType
+	return o.CustomDownloadURL
 }
 
 func (o *SaveCustomFilePayload) GetFileEntityID() *string {
@@ -166,9 +114,23 @@ func (o *SaveCustomFilePayload) GetFilename() *string {
 	return o.Filename
 }
 
+func (o *SaveCustomFilePayload) GetMimeType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.MimeType
+}
+
 func (o *SaveCustomFilePayload) GetRelations() []FileRelationItem {
 	if o == nil {
 		return nil
 	}
 	return o.Relations
+}
+
+func (o *SaveCustomFilePayload) GetType() *FileType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }

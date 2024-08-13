@@ -7,21 +7,21 @@ import (
 	"net/http"
 )
 
-type DeleteFileRequest struct {
+type GetFileRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *DeleteFileRequest) GetID() string {
+func (o *GetFileRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-type DeleteFileResponse struct {
+type GetFileResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
-	// The deleted file
+	// File Entity
 	FileEntity *shared.FileEntity
 	// HTTP response status code for this operation
 	StatusCode int
@@ -29,28 +29,28 @@ type DeleteFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *DeleteFileResponse) GetContentType() string {
+func (o *GetFileResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *DeleteFileResponse) GetFileEntity() *shared.FileEntity {
+func (o *GetFileResponse) GetFileEntity() *shared.FileEntity {
 	if o == nil {
 		return nil
 	}
 	return o.FileEntity
 }
 
-func (o *DeleteFileResponse) GetStatusCode() int {
+func (o *GetFileResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *DeleteFileResponse) GetRawResponse() *http.Response {
+func (o *GetFileResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}

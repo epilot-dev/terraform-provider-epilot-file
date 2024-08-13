@@ -10,13 +10,15 @@ import (
 type SaveFilePayloadType string
 
 const (
-	SaveFilePayloadTypeSaveS3FilePayload     SaveFilePayloadType = "SaveS3FilePayload"
-	SaveFilePayloadTypeSaveCustomFilePayload SaveFilePayloadType = "SaveCustomFilePayload"
+	SaveFilePayloadTypeSaveS3FilePayload            SaveFilePayloadType = "SaveS3FilePayload"
+	SaveFilePayloadTypeSaveFileFromSourceURLPayload SaveFilePayloadType = "SaveFileFromSourceURLPayload"
+	SaveFilePayloadTypeSaveCustomFilePayload        SaveFilePayloadType = "SaveCustomFilePayload"
 )
 
 type SaveFilePayload struct {
-	SaveS3FilePayload     *SaveS3FilePayload
-	SaveCustomFilePayload *SaveCustomFilePayload
+	SaveS3FilePayload            *SaveS3FilePayload
+	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload
+	SaveCustomFilePayload        *SaveCustomFilePayload
 
 	Type SaveFilePayloadType
 }
@@ -27,6 +29,15 @@ func CreateSaveFilePayloadSaveS3FilePayload(saveS3FilePayload SaveS3FilePayload)
 	return SaveFilePayload{
 		SaveS3FilePayload: &saveS3FilePayload,
 		Type:              typ,
+	}
+}
+
+func CreateSaveFilePayloadSaveFileFromSourceURLPayload(saveFileFromSourceURLPayload SaveFileFromSourceURLPayload) SaveFilePayload {
+	typ := SaveFilePayloadTypeSaveFileFromSourceURLPayload
+
+	return SaveFilePayload{
+		SaveFileFromSourceURLPayload: &saveFileFromSourceURLPayload,
+		Type:                         typ,
 	}
 }
 
@@ -41,6 +52,13 @@ func CreateSaveFilePayloadSaveCustomFilePayload(saveCustomFilePayload SaveCustom
 
 func (u *SaveFilePayload) UnmarshalJSON(data []byte) error {
 
+	saveCustomFilePayload := new(SaveCustomFilePayload)
+	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, true); err == nil {
+		u.SaveCustomFilePayload = saveCustomFilePayload
+		u.Type = SaveFilePayloadTypeSaveCustomFilePayload
+		return nil
+	}
+
 	saveS3FilePayload := new(SaveS3FilePayload)
 	if err := utils.UnmarshalJSON(data, &saveS3FilePayload, "", true, true); err == nil {
 		u.SaveS3FilePayload = saveS3FilePayload
@@ -48,10 +66,10 @@ func (u *SaveFilePayload) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	saveCustomFilePayload := new(SaveCustomFilePayload)
-	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, true); err == nil {
-		u.SaveCustomFilePayload = saveCustomFilePayload
-		u.Type = SaveFilePayloadTypeSaveCustomFilePayload
+	saveFileFromSourceURLPayload := new(SaveFileFromSourceURLPayload)
+	if err := utils.UnmarshalJSON(data, &saveFileFromSourceURLPayload, "", true, true); err == nil {
+		u.SaveFileFromSourceURLPayload = saveFileFromSourceURLPayload
+		u.Type = SaveFilePayloadTypeSaveFileFromSourceURLPayload
 		return nil
 	}
 
@@ -61,6 +79,10 @@ func (u *SaveFilePayload) UnmarshalJSON(data []byte) error {
 func (u SaveFilePayload) MarshalJSON() ([]byte, error) {
 	if u.SaveS3FilePayload != nil {
 		return utils.MarshalJSON(u.SaveS3FilePayload, "", true)
+	}
+
+	if u.SaveFileFromSourceURLPayload != nil {
+		return utils.MarshalJSON(u.SaveFileFromSourceURLPayload, "", true)
 	}
 
 	if u.SaveCustomFilePayload != nil {

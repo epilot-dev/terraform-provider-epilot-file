@@ -6,7 +6,60 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/pkg/utils"
+	"time"
 )
+
+// ACL - Access control list for file entity (readonly)
+type ACL struct {
+	Delete []string `json:"delete,omitempty"`
+	Edit   []string `json:"edit,omitempty"`
+	View   []string `json:"view,omitempty"`
+}
+
+func (o *ACL) GetDelete() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Delete
+}
+
+func (o *ACL) GetEdit() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Edit
+}
+
+func (o *ACL) GetView() []string {
+	if o == nil {
+		return nil
+	}
+	return o.View
+}
+
+type Schema string
+
+const (
+	SchemaFile Schema = "file"
+)
+
+func (e Schema) ToPointer() *Schema {
+	return &e
+}
+
+func (e *Schema) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "file":
+		*e = Schema(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Schema: %v", v)
+	}
+}
 
 type AccessControl string
 
@@ -35,88 +88,33 @@ func (e *AccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Type - Human readable type for file
-type Type string
-
-const (
-	TypeDocument         Type = "document"
-	TypeDocumentTemplate Type = "document_template"
-	TypeText             Type = "text"
-	TypeImage            Type = "image"
-	TypeVideo            Type = "video"
-	TypeAudio            Type = "audio"
-	TypeSpreadsheet      Type = "spreadsheet"
-	TypePresentation     Type = "presentation"
-	TypeFont             Type = "font"
-	TypeArchive          Type = "archive"
-	TypeApplication      Type = "application"
-	TypeUnknown          Type = "unknown"
-)
-
-func (e Type) ToPointer() *Type {
-	return &e
-}
-
-func (e *Type) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "document":
-		fallthrough
-	case "document_template":
-		fallthrough
-	case "text":
-		fallthrough
-	case "image":
-		fallthrough
-	case "video":
-		fallthrough
-	case "audio":
-		fallthrough
-	case "spreadsheet":
-		fallthrough
-	case "presentation":
-		fallthrough
-	case "font":
-		fallthrough
-	case "archive":
-		fallthrough
-	case "application":
-		fallthrough
-	case "unknown":
-		*e = Type(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Type: %v", v)
-	}
-}
-
-type Versions struct {
-	S3ref *S3Reference `json:"s3ref,omitempty"`
-}
-
-func (o *Versions) GetS3ref() *S3Reference {
-	if o == nil {
-		return nil
-	}
-	return o.S3ref
-}
-
 type FileEntity struct {
-	ID            *string        `json:"_id,omitempty"`
+	// Access control list for file entity (readonly)
+	ACL           *ACL           `json:"_acl,omitempty"`
+	CreatedAt     *time.Time     `json:"_created_at,omitempty"`
+	ID            string         `json:"_id"`
+	Org           string         `json:"_org"`
+	Schema        Schema         `json:"_schema"`
+	Tags          []string       `json:"_tags,omitempty"`
+	Title         string         `json:"_title"`
+	UpdatedAt     *time.Time     `json:"_updated_at,omitempty"`
 	AccessControl *AccessControl `default:"private" json:"access_control"`
-	Filename      *string        `json:"filename,omitempty"`
+	// Custom external download url used for the file
+	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	Filename          string  `json:"filename"`
 	// MIME type of the file
 	MimeType *string `json:"mime_type,omitempty"`
 	// Direct URL for file (public only if file access control is public-read)
 	PublicURL *string `json:"public_url,omitempty"`
+	// Human readable file size
+	ReadableSize *string `json:"readable_size,omitempty"`
+	S3ref        *S3Ref  `json:"s3ref,omitempty"`
 	// File size in bytes
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
-	// Human readable type for file
-	Type     *Type      `json:"type,omitempty"`
-	Versions []Versions `json:"versions,omitempty"`
+	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
+	SourceURL *string    `json:"source_url,omitempty"`
+	Type      FileType   `json:"type"`
+	Versions  []FileItem `json:"versions"`
 }
 
 func (f FileEntity) MarshalJSON() ([]byte, error) {
@@ -130,11 +128,60 @@ func (f *FileEntity) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FileEntity) GetID() *string {
+func (o *FileEntity) GetACL() *ACL {
 	if o == nil {
 		return nil
 	}
+	return o.ACL
+}
+
+func (o *FileEntity) GetCreatedAt() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.CreatedAt
+}
+
+func (o *FileEntity) GetID() string {
+	if o == nil {
+		return ""
+	}
 	return o.ID
+}
+
+func (o *FileEntity) GetOrg() string {
+	if o == nil {
+		return ""
+	}
+	return o.Org
+}
+
+func (o *FileEntity) GetSchema() Schema {
+	if o == nil {
+		return Schema("")
+	}
+	return o.Schema
+}
+
+func (o *FileEntity) GetTags() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Tags
+}
+
+func (o *FileEntity) GetTitle() string {
+	if o == nil {
+		return ""
+	}
+	return o.Title
+}
+
+func (o *FileEntity) GetUpdatedAt() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.UpdatedAt
 }
 
 func (o *FileEntity) GetAccessControl() *AccessControl {
@@ -144,9 +191,16 @@ func (o *FileEntity) GetAccessControl() *AccessControl {
 	return o.AccessControl
 }
 
-func (o *FileEntity) GetFilename() *string {
+func (o *FileEntity) GetCustomDownloadURL() *string {
 	if o == nil {
 		return nil
+	}
+	return o.CustomDownloadURL
+}
+
+func (o *FileEntity) GetFilename() string {
+	if o == nil {
+		return ""
 	}
 	return o.Filename
 }
@@ -165,6 +219,20 @@ func (o *FileEntity) GetPublicURL() *string {
 	return o.PublicURL
 }
 
+func (o *FileEntity) GetReadableSize() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ReadableSize
+}
+
+func (o *FileEntity) GetS3ref() *S3Ref {
+	if o == nil {
+		return nil
+	}
+	return o.S3ref
+}
+
 func (o *FileEntity) GetSizeBytes() *int64 {
 	if o == nil {
 		return nil
@@ -172,16 +240,23 @@ func (o *FileEntity) GetSizeBytes() *int64 {
 	return o.SizeBytes
 }
 
-func (o *FileEntity) GetType() *Type {
+func (o *FileEntity) GetSourceURL() *string {
 	if o == nil {
 		return nil
+	}
+	return o.SourceURL
+}
+
+func (o *FileEntity) GetType() FileType {
+	if o == nil {
+		return FileType("")
 	}
 	return o.Type
 }
 
-func (o *FileEntity) GetVersions() []Versions {
+func (o *FileEntity) GetVersions() []FileItem {
 	if o == nil {
-		return nil
+		return []FileItem{}
 	}
 	return o.Versions
 }

@@ -8,18 +8,18 @@ import (
 )
 
 type PreviewS3FileRequest struct {
-	S3Reference *shared.S3Reference `request:"mediaType=application/json"`
+	S3Ref *shared.S3Ref `request:"mediaType=application/json"`
 	// height
 	H *int64 `queryParam:"style=form,explode=true,name=h"`
 	// width
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
-func (o *PreviewS3FileRequest) GetS3Reference() *shared.S3Reference {
+func (o *PreviewS3FileRequest) GetS3Ref() *shared.S3Ref {
 	if o == nil {
 		return nil
 	}
-	return o.S3Reference
+	return o.S3Ref
 }
 
 func (o *PreviewS3FileRequest) GetH() *int64 {

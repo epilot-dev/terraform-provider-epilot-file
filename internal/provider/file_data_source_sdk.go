@@ -8,64 +8,7 @@ import (
 	"time"
 )
 
-func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
-	id := r.ID.ValueString()
-	var tags []string = nil
-	for _, tagsItem := range r.Tags {
-		tags = append(tags, tagsItem.ValueString())
-	}
-	title := r.Title.ValueString()
-	accessControl := new(shared.SaveFilePayloadV2AccessControl)
-	if !r.AccessControl.IsUnknown() && !r.AccessControl.IsNull() {
-		*accessControl = shared.SaveFilePayloadV2AccessControl(r.AccessControl.ValueString())
-	} else {
-		accessControl = nil
-	}
-	customDownloadURL := new(string)
-	if !r.CustomDownloadURL.IsUnknown() && !r.CustomDownloadURL.IsNull() {
-		*customDownloadURL = r.CustomDownloadURL.ValueString()
-	} else {
-		customDownloadURL = nil
-	}
-	filename := r.Filename.ValueString()
-	mimeType := new(string)
-	if !r.MimeType.IsUnknown() && !r.MimeType.IsNull() {
-		*mimeType = r.MimeType.ValueString()
-	} else {
-		mimeType = nil
-	}
-	var s3ref *shared.S3Ref
-	if r.S3ref != nil {
-		bucket := r.S3ref.Bucket.ValueString()
-		key := r.S3ref.Key.ValueString()
-		s3ref = &shared.S3Ref{
-			Bucket: bucket,
-			Key:    key,
-		}
-	}
-	sourceURL := new(string)
-	if !r.SourceURL.IsUnknown() && !r.SourceURL.IsNull() {
-		*sourceURL = r.SourceURL.ValueString()
-	} else {
-		sourceURL = nil
-	}
-	typeVar := shared.FileType(r.Type.ValueString())
-	out := shared.SaveFilePayloadV2{
-		ID:                id,
-		Tags:              tags,
-		Title:             title,
-		AccessControl:     accessControl,
-		CustomDownloadURL: customDownloadURL,
-		Filename:          filename,
-		MimeType:          mimeType,
-		S3ref:             s3ref,
-		SourceURL:         sourceURL,
-		Type:              typeVar,
-	}
-	return &out
-}
-
-func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
+func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
 	if resp.ACL == nil {
 		r.ACL = nil
 	} else {
@@ -88,7 +31,6 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	} else {
 		r.CreatedAt = types.StringNull()
 	}
-	r.ID = types.StringValue(resp.ID)
 	r.Org = types.StringValue(resp.Org)
 	r.Schema = types.StringValue(string(resp.Schema))
 	r.Tags = nil
@@ -108,6 +50,7 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	}
 	r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
 	r.Filename = types.StringValue(resp.Filename)
+	r.ID = types.StringValue(resp.ID)
 	r.MimeType = types.StringPointerValue(resp.MimeType)
 	r.PublicURL = types.StringPointerValue(resp.PublicURL)
 	r.ReadableSize = types.StringPointerValue(resp.ReadableSize)

@@ -4,7 +4,7 @@ package provider
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type S3Reference struct {
+type S3Ref struct {
 	Bucket types.String `tfsdk:"bucket"`
 	Key    types.String `tfsdk:"key"`
 }
