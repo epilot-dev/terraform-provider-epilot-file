@@ -29,6 +29,8 @@ actions:
   - target: $["components"]["schemas"]["FileEntity"]
     update:
       x-speakeasy-entity: File
+  - target: $["components"]["schemas"]["FileEntity"]["allOf"][2]["required"]
+    remove: yes
   - target: $["components"]["schemas"]["SaveFilePayloadV2"]
     update:
       $ref: "#/components/schemas/FileEntity"

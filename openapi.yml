@@ -779,7 +779,9 @@ components:
               example: "123"
               readOnly: true
             _id:
-              $ref: "#/components/schemas/FileEntityId"
+              allOf:
+                - $ref: "#/components/schemas/FileEntityId"
+                - readOnly: true
         - $ref: "#/components/schemas/FileAttributes"
         - type: object
           properties:
@@ -823,15 +825,6 @@ components:
                   items:
                     type: string
                     example: org_123
-          required:
-            - _title
-            - _schema
-            - _org
-            - _id
-            - filename
-            - type
-            - access_control
-            - versions
     CommonSaveFilePayload:
       type: object
       properties:

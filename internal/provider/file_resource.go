@@ -88,7 +88,8 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Computed: true,
+				Optional: true,
 			},
 			"org": schema.StringAttribute{
 				Computed: true,
@@ -108,7 +109,8 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				ElementType: types.StringType,
 			},
 			"title": schema.StringAttribute{
-				Required: true,
+				Computed: true,
+				Optional: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
@@ -133,7 +135,8 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `Custom external download url used for the file`,
 			},
 			"filename": schema.StringAttribute{
-				Required: true,
+				Computed: true,
+				Optional: true,
 			},
 			"mime_type": schema.StringAttribute{
 				Computed:    true,
@@ -180,7 +183,8 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true`,
 			},
 			"type": schema.StringAttribute{
-				Required:    true,
+				Computed:    true,
+				Optional:    true,
 				Description: `must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(

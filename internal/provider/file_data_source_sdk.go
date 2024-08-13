@@ -31,13 +31,17 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 	} else {
 		r.CreatedAt = types.StringNull()
 	}
-	r.Org = types.StringValue(resp.Org)
-	r.Schema = types.StringValue(string(resp.Schema))
+	r.Org = types.StringPointerValue(resp.Org)
+	if resp.Schema != nil {
+		r.Schema = types.StringValue(string(*resp.Schema))
+	} else {
+		r.Schema = types.StringNull()
+	}
 	r.Tags = nil
 	for _, v := range resp.Tags {
 		r.Tags = append(r.Tags, types.StringValue(v))
 	}
-	r.Title = types.StringValue(resp.Title)
+	r.Title = types.StringPointerValue(resp.Title)
 	if resp.UpdatedAt != nil {
 		r.UpdatedAt = types.StringValue(resp.UpdatedAt.Format(time.RFC3339Nano))
 	} else {
@@ -49,8 +53,8 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 		r.AccessControl = types.StringNull()
 	}
 	r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
-	r.Filename = types.StringValue(resp.Filename)
-	r.ID = types.StringValue(resp.ID)
+	r.Filename = types.StringPointerValue(resp.Filename)
+	r.ID = types.StringPointerValue(resp.ID)
 	r.MimeType = types.StringPointerValue(resp.MimeType)
 	r.PublicURL = types.StringPointerValue(resp.PublicURL)
 	r.ReadableSize = types.StringPointerValue(resp.ReadableSize)
@@ -63,7 +67,11 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 	}
 	r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
 	r.SourceURL = types.StringPointerValue(resp.SourceURL)
-	r.Type = types.StringValue(string(resp.Type))
+	if resp.Type != nil {
+		r.Type = types.StringValue(string(*resp.Type))
+	} else {
+		r.Type = types.StringNull()
+	}
 	if len(r.Versions) > len(resp.Versions) {
 		r.Versions = r.Versions[:len(resp.Versions)]
 	}

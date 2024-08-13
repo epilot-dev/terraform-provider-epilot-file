@@ -92,16 +92,16 @@ type FileEntity struct {
 	// Access control list for file entity (readonly)
 	ACL           *ACL           `json:"_acl,omitempty"`
 	CreatedAt     *time.Time     `json:"_created_at,omitempty"`
-	ID            string         `json:"_id"`
-	Org           string         `json:"_org"`
-	Schema        Schema         `json:"_schema"`
+	ID            *string        `json:"_id,omitempty"`
+	Org           *string        `json:"_org,omitempty"`
+	Schema        *Schema        `json:"_schema,omitempty"`
 	Tags          []string       `json:"_tags,omitempty"`
-	Title         string         `json:"_title"`
+	Title         *string        `json:"_title,omitempty"`
 	UpdatedAt     *time.Time     `json:"_updated_at,omitempty"`
 	AccessControl *AccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
-	Filename          string  `json:"filename"`
+	Filename          *string `json:"filename,omitempty"`
 	// MIME type of the file
 	MimeType *string `json:"mime_type,omitempty"`
 	// Direct URL for file (public only if file access control is public-read)
@@ -113,8 +113,8 @@ type FileEntity struct {
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
 	SourceURL *string    `json:"source_url,omitempty"`
-	Type      FileType   `json:"type"`
-	Versions  []FileItem `json:"versions"`
+	Type      *FileType  `json:"type,omitempty"`
+	Versions  []FileItem `json:"versions,omitempty"`
 }
 
 func (f FileEntity) MarshalJSON() ([]byte, error) {
@@ -142,23 +142,23 @@ func (o *FileEntity) GetCreatedAt() *time.Time {
 	return o.CreatedAt
 }
 
-func (o *FileEntity) GetID() string {
+func (o *FileEntity) GetID() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.ID
 }
 
-func (o *FileEntity) GetOrg() string {
+func (o *FileEntity) GetOrg() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Org
 }
 
-func (o *FileEntity) GetSchema() Schema {
+func (o *FileEntity) GetSchema() *Schema {
 	if o == nil {
-		return Schema("")
+		return nil
 	}
 	return o.Schema
 }
@@ -170,9 +170,9 @@ func (o *FileEntity) GetTags() []string {
 	return o.Tags
 }
 
-func (o *FileEntity) GetTitle() string {
+func (o *FileEntity) GetTitle() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Title
 }
@@ -198,9 +198,9 @@ func (o *FileEntity) GetCustomDownloadURL() *string {
 	return o.CustomDownloadURL
 }
 
-func (o *FileEntity) GetFilename() string {
+func (o *FileEntity) GetFilename() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Filename
 }
@@ -247,16 +247,16 @@ func (o *FileEntity) GetSourceURL() *string {
 	return o.SourceURL
 }
 
-func (o *FileEntity) GetType() FileType {
+func (o *FileEntity) GetType() *FileType {
 	if o == nil {
-		return FileType("")
+		return nil
 	}
 	return o.Type
 }
 
 func (o *FileEntity) GetVersions() []FileItem {
 	if o == nil {
-		return []FileItem{}
+		return nil
 	}
 	return o.Versions
 }

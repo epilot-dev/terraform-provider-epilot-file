@@ -9,12 +9,22 @@ import (
 )
 
 func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
-	id := r.ID.ValueString()
+	id := new(string)
+	if !r.ID.IsUnknown() && !r.ID.IsNull() {
+		*id = r.ID.ValueString()
+	} else {
+		id = nil
+	}
 	var tags []string = nil
 	for _, tagsItem := range r.Tags {
 		tags = append(tags, tagsItem.ValueString())
 	}
-	title := r.Title.ValueString()
+	title := new(string)
+	if !r.Title.IsUnknown() && !r.Title.IsNull() {
+		*title = r.Title.ValueString()
+	} else {
+		title = nil
+	}
 	accessControl := new(shared.SaveFilePayloadV2AccessControl)
 	if !r.AccessControl.IsUnknown() && !r.AccessControl.IsNull() {
 		*accessControl = shared.SaveFilePayloadV2AccessControl(r.AccessControl.ValueString())
@@ -27,7 +37,12 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		customDownloadURL = nil
 	}
-	filename := r.Filename.ValueString()
+	filename := new(string)
+	if !r.Filename.IsUnknown() && !r.Filename.IsNull() {
+		*filename = r.Filename.ValueString()
+	} else {
+		filename = nil
+	}
 	mimeType := new(string)
 	if !r.MimeType.IsUnknown() && !r.MimeType.IsNull() {
 		*mimeType = r.MimeType.ValueString()
@@ -49,7 +64,12 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		sourceURL = nil
 	}
-	typeVar := shared.FileType(r.Type.ValueString())
+	typeVar := new(shared.FileType)
+	if !r.Type.IsUnknown() && !r.Type.IsNull() {
+		*typeVar = shared.FileType(r.Type.ValueString())
+	} else {
+		typeVar = nil
+	}
 	out := shared.SaveFilePayloadV2{
 		ID:                id,
 		Tags:              tags,
@@ -88,14 +108,18 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	} else {
 		r.CreatedAt = types.StringNull()
 	}
-	r.ID = types.StringValue(resp.ID)
-	r.Org = types.StringValue(resp.Org)
-	r.Schema = types.StringValue(string(resp.Schema))
+	r.ID = types.StringPointerValue(resp.ID)
+	r.Org = types.StringPointerValue(resp.Org)
+	if resp.Schema != nil {
+		r.Schema = types.StringValue(string(*resp.Schema))
+	} else {
+		r.Schema = types.StringNull()
+	}
 	r.Tags = nil
 	for _, v := range resp.Tags {
 		r.Tags = append(r.Tags, types.StringValue(v))
 	}
-	r.Title = types.StringValue(resp.Title)
+	r.Title = types.StringPointerValue(resp.Title)
 	if resp.UpdatedAt != nil {
 		r.UpdatedAt = types.StringValue(resp.UpdatedAt.Format(time.RFC3339Nano))
 	} else {
@@ -107,7 +131,7 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 		r.AccessControl = types.StringNull()
 	}
 	r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
-	r.Filename = types.StringValue(resp.Filename)
+	r.Filename = types.StringPointerValue(resp.Filename)
 	r.MimeType = types.StringPointerValue(resp.MimeType)
 	r.PublicURL = types.StringPointerValue(resp.PublicURL)
 	r.ReadableSize = types.StringPointerValue(resp.ReadableSize)
@@ -120,7 +144,11 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	}
 	r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
 	r.SourceURL = types.StringPointerValue(resp.SourceURL)
-	r.Type = types.StringValue(string(resp.Type))
+	if resp.Type != nil {
+		r.Type = types.StringValue(string(*resp.Type))
+	} else {
+		r.Type = types.StringNull()
+	}
 	if len(r.Versions) > len(resp.Versions) {
 		r.Versions = r.Versions[:len(resp.Versions)]
 	}

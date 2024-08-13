@@ -36,19 +36,19 @@ func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
 }
 
 type SaveFilePayloadV2 struct {
-	ID            string                          `json:"_id"`
+	ID            *string                         `json:"_id,omitempty"`
 	Tags          []string                        `json:"_tags,omitempty"`
-	Title         string                          `json:"_title"`
+	Title         *string                         `json:"_title,omitempty"`
 	AccessControl *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
-	Filename          string  `json:"filename"`
+	Filename          *string `json:"filename,omitempty"`
 	// MIME type of the file
 	MimeType *string `json:"mime_type,omitempty"`
 	S3ref    *S3Ref  `json:"s3ref,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
-	SourceURL *string  `json:"source_url,omitempty"`
-	Type      FileType `json:"type"`
+	SourceURL *string   `json:"source_url,omitempty"`
+	Type      *FileType `json:"type,omitempty"`
 }
 
 func (s SaveFilePayloadV2) MarshalJSON() ([]byte, error) {
@@ -62,9 +62,9 @@ func (s *SaveFilePayloadV2) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFilePayloadV2) GetID() string {
+func (o *SaveFilePayloadV2) GetID() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.ID
 }
@@ -76,9 +76,9 @@ func (o *SaveFilePayloadV2) GetTags() []string {
 	return o.Tags
 }
 
-func (o *SaveFilePayloadV2) GetTitle() string {
+func (o *SaveFilePayloadV2) GetTitle() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Title
 }
@@ -97,9 +97,9 @@ func (o *SaveFilePayloadV2) GetCustomDownloadURL() *string {
 	return o.CustomDownloadURL
 }
 
-func (o *SaveFilePayloadV2) GetFilename() string {
+func (o *SaveFilePayloadV2) GetFilename() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Filename
 }
@@ -125,9 +125,9 @@ func (o *SaveFilePayloadV2) GetSourceURL() *string {
 	return o.SourceURL
 }
 
-func (o *SaveFilePayloadV2) GetType() FileType {
+func (o *SaveFilePayloadV2) GetType() *FileType {
 	if o == nil {
-		return FileType("")
+		return nil
 	}
 	return o.Type
 }
