@@ -3,12 +3,12 @@
 page_title: "epilot-file Provider"
 subcategory: ""
 description: |-
-  File API: Upload and manage all files stored in epilot
+  File API: Upload and manage epilot Files
 ---
 
 # epilot-file Provider
 
-File API: Upload and manage all files stored in epilot
+File API: Upload and manage epilot Files
 
 ## Example Usage
 
@@ -17,7 +17,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.1.1"
+      version = "0.3.0"
     }
   }
 }
