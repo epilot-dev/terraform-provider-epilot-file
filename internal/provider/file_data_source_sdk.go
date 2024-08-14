@@ -8,84 +8,7 @@ import (
 	"time"
 )
 
-func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
-	id := new(string)
-	if !r.ID.IsUnknown() && !r.ID.IsNull() {
-		*id = r.ID.ValueString()
-	} else {
-		id = nil
-	}
-	var tags []string = nil
-	for _, tagsItem := range r.Tags {
-		tags = append(tags, tagsItem.ValueString())
-	}
-	title := new(string)
-	if !r.Title.IsUnknown() && !r.Title.IsNull() {
-		*title = r.Title.ValueString()
-	} else {
-		title = nil
-	}
-	accessControl := new(shared.SaveFilePayloadV2AccessControl)
-	if !r.AccessControl.IsUnknown() && !r.AccessControl.IsNull() {
-		*accessControl = shared.SaveFilePayloadV2AccessControl(r.AccessControl.ValueString())
-	} else {
-		accessControl = nil
-	}
-	customDownloadURL := new(string)
-	if !r.CustomDownloadURL.IsUnknown() && !r.CustomDownloadURL.IsNull() {
-		*customDownloadURL = r.CustomDownloadURL.ValueString()
-	} else {
-		customDownloadURL = nil
-	}
-	filename := new(string)
-	if !r.Filename.IsUnknown() && !r.Filename.IsNull() {
-		*filename = r.Filename.ValueString()
-	} else {
-		filename = nil
-	}
-	mimeType := new(string)
-	if !r.MimeType.IsUnknown() && !r.MimeType.IsNull() {
-		*mimeType = r.MimeType.ValueString()
-	} else {
-		mimeType = nil
-	}
-	var s3ref *shared.S3Ref
-	if r.S3ref != nil {
-		bucket := r.S3ref.Bucket.ValueString()
-		key := r.S3ref.Key.ValueString()
-		s3ref = &shared.S3Ref{
-			Bucket: bucket,
-			Key:    key,
-		}
-	}
-	sourceURL := new(string)
-	if !r.SourceURL.IsUnknown() && !r.SourceURL.IsNull() {
-		*sourceURL = r.SourceURL.ValueString()
-	} else {
-		sourceURL = nil
-	}
-	typeVar := new(shared.FileType)
-	if !r.Type.IsUnknown() && !r.Type.IsNull() {
-		*typeVar = shared.FileType(r.Type.ValueString())
-	} else {
-		typeVar = nil
-	}
-	out := shared.SaveFilePayloadV2{
-		ID:                id,
-		Tags:              tags,
-		Title:             title,
-		AccessControl:     accessControl,
-		CustomDownloadURL: customDownloadURL,
-		Filename:          filename,
-		MimeType:          mimeType,
-		S3ref:             s3ref,
-		SourceURL:         sourceURL,
-		Type:              typeVar,
-	}
-	return &out
-}
-
-func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
+func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
 	if resp.ACL == nil {
 		r.ACL = nil
 	} else {
@@ -108,7 +31,6 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	} else {
 		r.CreatedAt = types.StringNull()
 	}
-	r.ID = types.StringPointerValue(resp.ID)
 	r.Org = types.StringPointerValue(resp.Org)
 	if resp.Schema != nil {
 		r.Schema = types.StringValue(string(*resp.Schema))
@@ -132,6 +54,7 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 	}
 	r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
 	r.Filename = types.StringPointerValue(resp.Filename)
+	r.ID = types.StringPointerValue(resp.ID)
 	r.MimeType = types.StringPointerValue(resp.MimeType)
 	r.PublicURL = types.StringPointerValue(resp.PublicURL)
 	r.ReadableSize = types.StringPointerValue(resp.ReadableSize)

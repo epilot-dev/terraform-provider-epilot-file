@@ -35,93 +35,20 @@ func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type SaveFilePayloadV2DocumentType string
-
-const (
-	SaveFilePayloadV2DocumentTypeDocument         SaveFilePayloadV2DocumentType = "document"
-	SaveFilePayloadV2DocumentTypeDocumentTemplate SaveFilePayloadV2DocumentType = "document_template"
-	SaveFilePayloadV2DocumentTypeText             SaveFilePayloadV2DocumentType = "text"
-	SaveFilePayloadV2DocumentTypeImage            SaveFilePayloadV2DocumentType = "image"
-	SaveFilePayloadV2DocumentTypeVideo            SaveFilePayloadV2DocumentType = "video"
-	SaveFilePayloadV2DocumentTypeAudio            SaveFilePayloadV2DocumentType = "audio"
-	SaveFilePayloadV2DocumentTypeSpreadsheet      SaveFilePayloadV2DocumentType = "spreadsheet"
-	SaveFilePayloadV2DocumentTypePresentation     SaveFilePayloadV2DocumentType = "presentation"
-	SaveFilePayloadV2DocumentTypeFont             SaveFilePayloadV2DocumentType = "font"
-	SaveFilePayloadV2DocumentTypeArchive          SaveFilePayloadV2DocumentType = "archive"
-	SaveFilePayloadV2DocumentTypeApplication      SaveFilePayloadV2DocumentType = "application"
-	SaveFilePayloadV2DocumentTypeUnknown          SaveFilePayloadV2DocumentType = "unknown"
-)
-
-func (e SaveFilePayloadV2DocumentType) ToPointer() *SaveFilePayloadV2DocumentType {
-	return &e
-}
-
-func (e *SaveFilePayloadV2DocumentType) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "document":
-		fallthrough
-	case "document_template":
-		fallthrough
-	case "text":
-		fallthrough
-	case "image":
-		fallthrough
-	case "video":
-		fallthrough
-	case "audio":
-		fallthrough
-	case "spreadsheet":
-		fallthrough
-	case "presentation":
-		fallthrough
-	case "font":
-		fallthrough
-	case "archive":
-		fallthrough
-	case "application":
-		fallthrough
-	case "unknown":
-		*e = SaveFilePayloadV2DocumentType(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for SaveFilePayloadV2DocumentType: %v", v)
-	}
-}
-
-type SaveFilePayloadV2S3ref struct {
-	Bucket string `json:"bucket"`
-	Key    string `json:"key"`
-}
-
-func (o *SaveFilePayloadV2S3ref) GetBucket() string {
-	if o == nil {
-		return ""
-	}
-	return o.Bucket
-}
-
-func (o *SaveFilePayloadV2S3ref) GetKey() string {
-	if o == nil {
-		return ""
-	}
-	return o.Key
-}
-
 type SaveFilePayloadV2 struct {
-	AdditionalProperties interface{}                     `additionalProperties:"true" json:"-"`
-	Tags                 []string                        `json:"_tags,omitempty"`
-	AccessControl        *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
+	ID            *string                         `json:"_id,omitempty"`
+	Tags          []string                        `json:"_tags,omitempty"`
+	Title         *string                         `json:"_title,omitempty"`
+	AccessControl *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
-	CustomDownloadURL *string                        `json:"custom_download_url,omitempty"`
-	DocumentType      *SaveFilePayloadV2DocumentType `json:"document_type,omitempty"`
-	// if passed, adds a new version to existing file entity
-	FileEntityID *string                `json:"file_entity_id,omitempty"`
-	Filename     string                 `json:"filename"`
-	S3ref        SaveFilePayloadV2S3ref `json:"s3ref"`
+	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	Filename          *string `json:"filename,omitempty"`
+	// MIME type of the file
+	MimeType *string `json:"mime_type,omitempty"`
+	S3ref    *S3Ref  `json:"s3ref,omitempty"`
+	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
+	SourceURL *string   `json:"source_url,omitempty"`
+	Type      *FileType `json:"type,omitempty"`
 }
 
 func (s SaveFilePayloadV2) MarshalJSON() ([]byte, error) {
@@ -135,11 +62,11 @@ func (s *SaveFilePayloadV2) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFilePayloadV2) GetAdditionalProperties() interface{} {
+func (o *SaveFilePayloadV2) GetID() *string {
 	if o == nil {
 		return nil
 	}
-	return o.AdditionalProperties
+	return o.ID
 }
 
 func (o *SaveFilePayloadV2) GetTags() []string {
@@ -147,6 +74,13 @@ func (o *SaveFilePayloadV2) GetTags() []string {
 		return nil
 	}
 	return o.Tags
+}
+
+func (o *SaveFilePayloadV2) GetTitle() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Title
 }
 
 func (o *SaveFilePayloadV2) GetAccessControl() *SaveFilePayloadV2AccessControl {
@@ -163,30 +97,37 @@ func (o *SaveFilePayloadV2) GetCustomDownloadURL() *string {
 	return o.CustomDownloadURL
 }
 
-func (o *SaveFilePayloadV2) GetDocumentType() *SaveFilePayloadV2DocumentType {
+func (o *SaveFilePayloadV2) GetFilename() *string {
 	if o == nil {
 		return nil
-	}
-	return o.DocumentType
-}
-
-func (o *SaveFilePayloadV2) GetFileEntityID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.FileEntityID
-}
-
-func (o *SaveFilePayloadV2) GetFilename() string {
-	if o == nil {
-		return ""
 	}
 	return o.Filename
 }
 
-func (o *SaveFilePayloadV2) GetS3ref() SaveFilePayloadV2S3ref {
+func (o *SaveFilePayloadV2) GetMimeType() *string {
 	if o == nil {
-		return SaveFilePayloadV2S3ref{}
+		return nil
+	}
+	return o.MimeType
+}
+
+func (o *SaveFilePayloadV2) GetS3ref() *S3Ref {
+	if o == nil {
+		return nil
 	}
 	return o.S3ref
+}
+
+func (o *SaveFilePayloadV2) GetSourceURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.SourceURL
+}
+
+func (o *SaveFilePayloadV2) GetType() *FileType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }

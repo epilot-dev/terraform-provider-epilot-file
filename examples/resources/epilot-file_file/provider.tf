@@ -16,4 +16,5 @@ variable "epilot_auth" {
 provider "epilot-file" {
   # Configuration options
   epilot_auth = var.epilot_auth
+  server_url  = "https://file.dev.sls.epilot.io"
 }

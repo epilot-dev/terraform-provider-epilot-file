@@ -61,10 +61,16 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 	return ServerList[c.ServerIndex], nil
 }
 
-// SDK - File API: Upload and manage all files stored in epilot
+// SDK - File API: Upload and manage epilot Files
 type SDK struct {
-	// Files API
-	Files *Files
+	// Deprecated APIs
+	Deprecated *Deprecated
+	// Upload and Manage File Entities
+	File *File
+	// Create and Manage Public Links for Files
+	PublicLinks *PublicLinks
+	// Preview APIs
+	Preview *Preview
 	// Session API for cookie authentication
 	Session *Session
 
@@ -142,10 +148,10 @@ func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
-			OpenAPIDocVersion: "0.1.0",
-			SDKVersion:        "0.1.1",
+			OpenAPIDocVersion: "0.2.0",
+			SDKVersion:        "0.2.2",
 			GenVersion:        "2.230.1",
-			UserAgent:         "speakeasy-sdk/go 0.1.1 2.230.1 0.1.0 epilot-file",
+			UserAgent:         "speakeasy-sdk/go 0.2.2 2.230.1 0.2.0 epilot-file",
 		},
 	}
 	for _, opt := range opts {
@@ -164,7 +170,13 @@ func New(opts ...SDKOption) *SDK {
 		}
 	}
 
-	sdk.Files = newFiles(sdk.sdkConfiguration)
+	sdk.Deprecated = newDeprecated(sdk.sdkConfiguration)
+
+	sdk.File = newFile(sdk.sdkConfiguration)
+
+	sdk.PublicLinks = newPublicLinks(sdk.sdkConfiguration)
+
+	sdk.Preview = newPreview(sdk.sdkConfiguration)
 
 	sdk.Session = newSession(sdk.sdkConfiguration)
 

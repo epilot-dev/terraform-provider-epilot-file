@@ -2,19 +2,19 @@
 
 package shared
 
-type S3ref struct {
+type FileUploadS3ref struct {
 	Bucket string `json:"bucket"`
 	Key    string `json:"key"`
 }
 
-func (o *S3ref) GetBucket() string {
+func (o *FileUploadS3ref) GetBucket() string {
 	if o == nil {
 		return ""
 	}
 	return o.Bucket
 }
 
-func (o *S3ref) GetKey() string {
+func (o *FileUploadS3ref) GetKey() string {
 	if o == nil {
 		return ""
 	}
@@ -23,9 +23,9 @@ func (o *S3ref) GetKey() string {
 
 type FileUpload struct {
 	// Returned only if file is permanent i.e. file_entity_id is passed
-	PublicURL *string `json:"public_url,omitempty"`
-	S3ref     *S3ref  `json:"s3ref,omitempty"`
-	UploadURL *string `json:"upload_url,omitempty"`
+	PublicURL *string          `json:"public_url,omitempty"`
+	S3ref     *FileUploadS3ref `json:"s3ref,omitempty"`
+	UploadURL *string          `json:"upload_url,omitempty"`
 }
 
 func (o *FileUpload) GetPublicURL() *string {
@@ -35,7 +35,7 @@ func (o *FileUpload) GetPublicURL() *string {
 	return o.PublicURL
 }
 
-func (o *FileUpload) GetS3ref() *S3ref {
+func (o *FileUpload) GetS3ref() *FileUploadS3ref {
 	if o == nil {
 		return nil
 	}

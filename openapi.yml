@@ -1,0 +1,1004 @@
+openapi: 3.0.3
+info:
+  title: File API
+  version: 0.2.0
+  description: Upload and manage epilot Files
+tags:
+  - name: File
+    description: Upload and Manage File Entities
+  - name: Preview
+    description: Preview APIs
+  - name: Public Links
+    description: Create and Manage Public Links for Files
+  - name: Session
+    description: Session API for cookie authentication
+  - name: Deprecated
+    description: Deprecated APIs
+security:
+  - EpilotAuth: []
+  - CookieAuth: []
+paths:
+  /v2/files/upload:
+    post:
+      operationId: uploadFileV2
+      summary: uploadFileV2
+      description: |
+        Create pre-signed S3 URL to upload a file to keep temporarily (one week).
+
+        Use the saveFileV2 operation to store file file permanently.
+      tags:
+        - File
+      parameters:
+        - name: file_entity_id
+          in: query
+          description: |
+            Use this parameter when uploading a file directly to an existing file entity.
+
+            Note: still requires calling saveFileV2 to save the file permanently.
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadFilePayload"
+            examples:
+              Upload an image file:
+                description: Upload an image file
+                value: { "filename": "image.png", "mime_type": "image/png" }
+              Upload a document:
+                description: Upload an image file
+                value:
+                  { "filename": "document.pdf", "mime_type": "application/pdf" }
+      responses:
+        201:
+          description: Pre-signed URL for POST / PUT upload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileUpload"
+  /v2/files:
+    post:
+      operationId: saveFileV2
+      summary: saveFileV2
+      description: |
+        Saves a permanent file entity. Updates an existing file entity when `_id` is passed.
+
+        Saves metadata to file entity and stores a version when `s3ref` or `source_url` is passed.
+      tags:
+        - File
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveFilePayloadV2"
+            examples:
+              New file from s3ref:
+                description: Standard epilot file entity with S3 Ref
+                value:
+                  {
+                    "type": "document",
+                    "filename": "document.pdf",
+                    "_tags": ["string"],
+                    "access_control": "private",
+                    "s3ref":
+                      {
+                        "bucket": "epilot-prod-user-content",
+                        "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf",
+                      },
+                  }
+              Update existing file with relations:
+                description: Update existing file entity with _id
+                value:
+                  {
+                    "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8",
+                    "filename": "document.pdf",
+                    "access_control": "private",
+                    "custom_download_url": "https://some-api-url.com/download?file_id=123",
+                    "shared_with_end_customer": true,
+                    "relations":
+                      [
+                        {
+                          "entity_id": "77a1e0cc-7b92-4d41-8cce-eefd317ec004",
+                          "_schema": "contact",
+                        },
+                      ],
+                  }
+              New file from source_url:
+                description: New epilot file entity from a source_url
+                value:
+                  {
+                    "type": "document",
+                    "filename": "document.pdf",
+                    "_tags": ["string"],
+                    "access_control": "private",
+                    "source_url": "https://docs.epilot.io/document.pdf",
+                  }
+              File with custom download URL (external):
+                description: Custom file entity with custom download url
+                value:
+                  {
+                    "type": "document",
+                    "filename": "document.pdf",
+                    "_tags": ["string"],
+                    "access_control": "private",
+                    "custom_download_url": "https://some-api-url.com/download?file_id=123",
+                    "shared_with_end_customer": true,
+                  }
+      responses:
+        201:
+          description: Created File Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileEntity"
+  /v1/files/upload:
+    post:
+      operationId: uploadFile
+      summary: uploadFile
+      deprecated: true
+      description: |
+        Create pre-signed S3 URL to upload a file to keep temporarily (one week).
+
+        Use the saveFile operation to store file file permanently.
+      tags:
+        - Deprecated
+      parameters:
+        - name: file_entity_id
+          in: query
+          description: file entity id
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadFilePayload"
+      responses:
+        201:
+          description: Pre-signed URL for POST / PUT upload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  s3ref:
+                    allOf:
+                      - $ref: "#/components/schemas/S3Ref"
+                      - example:
+                          bucket: epilot-prod-user-content
+                          key: 123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+                  upload_url:
+                    type: string
+                    format: url
+                    example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+                  public_url:
+                    description: Returned only if file is permanent i.e. file_entity_id is passed
+                    type: string
+                    format: url
+                    example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+  /v1/files:
+    post:
+      operationId: saveFile
+      summary: saveFile
+      deprecated: true
+      description: |
+        Create / Update a permanent File entity
+
+        Makes file object permanent
+
+        Saves metadata to file entity
+
+      tags:
+        - Deprecated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveFilePayload"
+      responses:
+        201:
+          description: Created File Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileEntity"
+  /v2/files/{id}:
+    get:
+      operationId: getFile
+      summary: getFile
+      description: Get a file entity by id
+      tags:
+        - File
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+        - name: source_url
+          in: query
+          schema:
+            type: boolean
+            default: false
+            description: Generate a source_url for the file entity, if it doesn't have one
+      responses:
+        200:
+          description: File Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileEntity"
+    delete:
+      operationId: deleteFile
+      summary: deleteFile
+      description: Delete a file entity by id
+      tags:
+        - File
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+      responses:
+        200:
+          description: The deleted file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileEntity"
+  /v1/files/{id}/download:
+    get:
+      operationId: downloadFile
+      summary: downloadFile
+      description: Generate pre-signed download S3 url for a file
+      tags:
+        - File
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+        - name: version
+          in: query
+          description: index of file version
+          schema:
+            type: integer
+            default: 0
+        - name: attachment
+          in: query
+          description: Controls the Content-Disposition header to control browser behaviour. Set to true to trigger download.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        200:
+          description: Generated thumbnail image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  download_url:
+                    type: string
+                    format: uri
+                    example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+  /v1/files:downloadS3:
+    post:
+      operationId: downloadS3File
+      summary: downloadS3File
+      description: Generate pre-signed download S3 url for a file
+      tags:
+        - File
+      parameters:
+        - name: s3_key
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: s3_bucket
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: attachment
+          in: query
+          description: Controls the Content-Disposition header to control browser behaviour. Set to true to trigger download.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        200:
+          description: Generated thumbnail image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  download_url:
+                    type: string
+                    format: uri
+                    example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+  /v1/files:downloadFiles:
+    post:
+      operationId: downloadFiles
+      summary: downloadFiles
+      description: Bulk generate pre-signed download S3 urls for multiple files
+      tags:
+        - File
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DownloadFilesPayload"
+      responses:
+        200:
+          description: Generated download urls
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    download_url:
+                      type: string
+                      format: uri
+                      example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+                    file_entity_id:
+                      type: string
+                      format: uuid
+  /v1/files/{id}/preview:
+    get:
+      operationId: previewFile
+      summary: previewFile
+      description: Generate thumbnail preview for a file entity
+      tags:
+        - Preview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+        - name: version
+          in: query
+          description: index of file version
+          schema:
+            type: integer
+            default: 0
+        - name: w
+          in: query
+          description: width
+          schema:
+            type: integer
+        - name: h
+          in: query
+          description: height
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Generated thumbnail image
+          content:
+            image/png: {}
+            image/jpeg: {}
+  /v1/files:previewS3:
+    post:
+      operationId: previewS3File
+      summary: previewS3File
+      description: Generate thumbnail preview from an s3 reference for a file entity
+      tags:
+        - Preview
+      parameters:
+        - name: w
+          in: query
+          description: width
+          schema:
+            type: integer
+        - name: h
+          in: query
+          description: height
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/S3Ref"
+      responses:
+        200:
+          description: Generated thumbnail image
+          content:
+            image/png: {}
+            image/jpeg: {}
+    get:
+      operationId: previewS3FileGet
+      summary: previewS3FileGet
+      description: Get thumbnail preview from an s3 reference for a file entity
+      tags:
+        - Preview
+      parameters:
+        - name: key
+          in: query
+          description: s3 key
+          required: true
+          schema:
+            type: string
+        - name: bucket
+          in: query
+          description: s3 bucket
+          required: true
+          schema:
+            type: string
+        - name: w
+          in: query
+          description: width
+          schema:
+            type: integer
+        - name: h
+          in: query
+          description: height
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Generated thumbnail image
+          content:
+            image/png: {}
+            image/jpeg: {}
+  /v1/files/public/{id}/preview:
+    get:
+      operationId: previewPublicFile
+      summary: previewPublicFile
+      description: Generate thumbnail preview for a public file entity
+      security: []
+      tags:
+        - Preview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+        - name: version
+          in: query
+          description: index of file version
+          schema:
+            type: integer
+            default: 0
+        - name: w
+          in: query
+          description: width
+          schema:
+            type: integer
+        - name: h
+          in: query
+          description: height
+          schema:
+            type: integer
+        - name: org_id
+          in: query
+          description: Org id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Generated thumbnail image for a public file
+          content:
+            image/png: {}
+            image/jpeg: {}
+  /v1/files/session:
+    get:
+      operationId: getSession
+      summary: getSession
+      description: |
+        Start a browser session by setting passed Authorization token in a server side cookie.
+
+        Allows using preview urls directly in img src for private files using cookie authentication.
+      tags:
+        - Session
+      responses:
+        200:
+          description: Session started successfully
+    delete:
+      operationId: deleteSession
+      summary: deleteSession
+      description: End browser session by deleting token cookie
+      tags:
+        - Session
+      responses:
+        200:
+          description: Session deleted successfully
+  /v1/files/{id}/public/links:
+    post:
+      operationId: generatePublicLink
+      summary: generatePublicLink
+      description: |
+        Generates a public link to access a private file
+      tags:
+        - Public Links
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/FileEntityId"
+      responses:
+        201:
+          description: "Returns the public link which can be used to access the file later"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "https://file.sls.epilot.io/v1/files/public/links/3ef5c6d9-818d-45e6-8efb-b1de59079a1c/invoice-2023-12.pdf"
+    get:
+      operationId: listPublicLinksForFile
+      summary: listPublicLinksForFile
+      description: "Not yet implemented; This API would fetch all the public links that are previously generated for a file"
+      x-not-implemented: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: ID of the file entity
+            example: "13d22918-36bd-4227-9ad4-2cb978788c8d"
+      tags:
+        - Public Links
+      responses:
+        200:
+          description: "Public links of a file retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PublicLink"
+  /v1/files/public/links/{id}/{filename}:
+    get:
+      operationId: accessPublicLink
+      summary: accessPublicLink
+      security: []
+      tags:
+        - Public Links
+      description: "Redirects to a accessible signed url for the respective file associated to the public link"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "Id of the publicly generated link"
+            example: "13d22918-36bd-4227-9ad4-2cb978788c8d"
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "Name of the file"
+            example: "invoice-2023-12.pdf"
+
+      responses:
+        302:
+          description: "Redirect to signed URL where the caller can access the file"
+  /v1/files/public/links/{id}:
+    delete:
+      operationId: revokePublicLink
+      summary: revokePublicLink
+      description: "Not yet implemented; This operation would revoke a given public link by ID"
+      x-not-implemented: true
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: "Id of the publicly generated link"
+            example: "13d22918-36bd-4227-9ad4-2cb978788c8d"
+      tags:
+        - Public Links
+      responses:
+        204:
+          description: "Revokes a public link successfully."
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "https://file.sls.epilot.io/v1/files/public/links/3ef5c6d9-818d-45e6-8efb-b1de59079a1c"
+  /v1/files/download:verify:
+    post:
+      operationId: verifyCustomDownloadUrl
+      summary: verifyCustomDownloadUrl
+      description: Verify a pre-signed custom download url for a file
+      tags:
+        - File
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCustomDownloadUrlPayload"
+      responses:
+        200:
+          description: Download Url matches signature and has not expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+
+  /v1/files/public/upload:
+    post:
+      operationId: uploadFilePublic
+      summary: uploadFilePublic
+      security: []
+      description: |
+        Create pre-signed S3 URL to upload a file to keep temporarily (one week).
+
+        Use the saveFileV2 operation to store file file permanently.
+      tags:
+        - File
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadFilePayload"
+            examples:
+              Upload an image file:
+                description: Upload an image file
+                value: { "filename": "image.png", "mime_type": "image/png" }
+              Upload a document:
+                description: Upload an image file
+                value:
+                  { "filename": "document.pdf", "mime_type": "application/pdf" }
+      responses:
+        201:
+          description: Pre-signed URL for POST / PUT upload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  s3ref:
+                    allOf:
+                      - $ref: "#/components/schemas/S3Ref"
+                      - example:
+                          bucket: epilot-prod-user-content
+                          key: 123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+                  upload_url:
+                    type: string
+                    format: url
+                    example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+
+components:
+  securitySchemes:
+    EpilotAuth:
+      type: http
+      scheme: bearer
+      description: Authorization header with epilot OAuth2 bearer token
+      bearerFormat: JWT
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+      description: Cookie with epilot OAuth2 token
+  schemas:
+    EntityId:
+      type: string
+      example: ef7d985c-2385-44f4-9c71-ae06a52264f8
+    EntitySlug:
+      description: URL-friendly identifier for the entity schema
+      type: string
+      example: contact
+    FileEntityId:
+      type: string
+      example: ef7d985c-2385-44f4-9c71-ae06a52264f8
+    FileAttributes:
+      type: object
+      properties:
+        _tags:
+          type: array
+          items:
+            type: string
+          example: ["tag1", "tag2"]
+        filename:
+          type: string
+          example: document.pdf
+        type:
+          $ref: "#/components/schemas/FileType"
+        mime_type:
+          type: string
+          description: MIME type of the file
+          example: application/pdf
+        size_bytes:
+          type: integer
+          minimum: 0
+          description: File size in bytes
+          example: 1234
+          readOnly: true
+        readable_size:
+          type: string
+          example: 1.2 MB
+          description: Human readable file size
+          readOnly: true
+        access_control:
+          type: string
+          default: private
+          enum:
+            - private
+            - public-read
+        public_url:
+          description: Direct URL for file (public only if file access control is public-read)
+          type: string
+          format: url
+          example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+          readOnly: true
+        custom_download_url:
+          $ref: "#/components/schemas/CustomDownloadUrl"
+    FileType:
+      type: string
+      enum:
+        - document
+        - document_template
+        - text
+        - image
+        - video
+        - audio
+        - spreadsheet
+        - presentation
+        - font
+        - archive
+        - application
+        - unknown
+    CustomDownloadUrl:
+      description: Custom external download url used for the file
+      type: string
+      format: uri
+      example: https://some-api-url.com/download?file_id=123
+    FileEntity:
+      allOf:
+        - type: object
+          properties:
+            _title:
+              type: string
+              example: document.pdf
+            _schema:
+              type: string
+              enum: ["file"]
+              readOnly: true
+            _org:
+              type: string
+              example: "123"
+              readOnly: true
+            _id:
+              allOf:
+                - $ref: "#/components/schemas/FileEntityId"
+                - readOnly: true
+        - $ref: "#/components/schemas/FileAttributes"
+        - type: object
+          properties:
+            source_url:
+              type: string
+              description: Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
+              example: https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf
+            s3ref:
+              $ref: "#/components/schemas/S3Ref"
+              readOnly: true
+            versions:
+              type: array
+              items:
+                $ref: "#/components/schemas/FileItem"
+              readOnly: true
+            _updated_at:
+              type: string
+              format: date-time
+              readOnly: true
+            _created_at:
+              type: string
+              format: date-time
+              readOnly: true
+            _acl:
+              type: object
+              description: Access control list for file entity (readonly)
+              readOnly: true
+              properties:
+                view:
+                  type: array
+                  items:
+                    type: string
+                    example: org_123
+                edit:
+                  type: array
+                  items:
+                    type: string
+                    example: org_123
+                delete:
+                  type: array
+                  items:
+                    type: string
+                    example: org_123
+    CommonSaveFilePayload:
+      type: object
+      properties:
+        _id:
+          allOf:
+            - $ref: "#/components/schemas/FileEntityId"
+            - description: if passed, adds a new version to existing file entity
+        file_entity_id:
+          type: string
+          description: Deprecated, use _id instead
+          deprecated: true
+        relations:
+          type: array
+          description: List of entities to relate the file to
+          items:
+            $ref: "#/components/schemas/FileRelationItem"
+      additionalProperties: true
+    SaveS3FilePayload:
+      allOf:
+        - $ref: "#/components/schemas/CommonSaveFilePayload"
+        - $ref: "#/components/schemas/FileAttributes"
+        - type: object
+          properties:
+            s3ref:
+              $ref: "#/components/schemas/S3Ref"
+    SaveFileFromSourceURLPayload:
+      allOf:
+        - $ref: "#/components/schemas/CommonSaveFilePayload"
+        - $ref: "#/components/schemas/FileAttributes"
+        - type: object
+          properties:
+            source_url:
+              $ref: "#/components/schemas/CustomDownloadUrl"
+    SaveCustomFilePayload:
+      allOf:
+        - $ref: "#/components/schemas/CommonSaveFilePayload"
+        - $ref: "#/components/schemas/FileAttributes"
+        - type: object
+          properties:
+            custom_download_url:
+              $ref: "#/components/schemas/CustomDownloadUrl"
+    SaveFilePayload:
+      anyOf:
+        - $ref: "#/components/schemas/SaveS3FilePayload"
+        - $ref: "#/components/schemas/SaveFileFromSourceURLPayload"
+        - $ref: "#/components/schemas/SaveCustomFilePayload"
+    SaveFilePayloadV2:
+      anyOf:
+        - $ref: "#/components/schemas/SaveS3FilePayload"
+        - $ref: "#/components/schemas/SaveFileFromSourceURLPayload"
+        - $ref: "#/components/schemas/SaveCustomFilePayload"
+    UploadFilePayload:
+      type: object
+      properties:
+        filename:
+          type: string
+          example: document.pdf
+        mime_type:
+          description: MIME type of file
+          type: string
+          example: application/pdf
+          default: application/octet-stream
+        index_tag:
+          type: string
+          example: 2f6a377c8e78
+          maxLength: 64
+          description: Used to index the file at the storage layer, which helps when browsing for this file
+        metadata:
+          type: object
+          additionalProperties:
+            anyOf:
+              - type: string
+          example: { "color": "blue" }
+          description: Allows passing in custom metadata for the file, expects key-value pairs of string type
+      required:
+        - filename
+    FileUpload:
+      type: object
+      properties:
+        s3ref:
+          allOf:
+            - $ref: "#/components/schemas/S3Ref"
+            - example:
+                bucket: epilot-prod-user-content
+                key: 123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+        upload_url:
+          type: string
+          format: url
+          example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123
+        public_url:
+          description: Returned only if file is permanent i.e. file_entity_id is passed
+          type: string
+          format: url
+          example: https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+    DownloadFilesPayload:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            $ref: "#/components/schemas/FileEntityId"
+          version:
+            type: integer
+            description: File version
+            example: 0
+        required:
+          - id
+    VerifyCustomDownloadUrlPayload:
+      type: object
+      properties:
+        custom_download_url:
+          description: Custom external download url with signature and expiration time
+          type: string
+          format: uri
+          example: https://some-api-url.com?file_id=123&expires_at=1699273500029&signature=abcdefg
+      required:
+        - custom_download_url
+    S3Reference:
+      type: object
+      properties:
+        bucket:
+          type: string
+          example: epilot-prod-user-content
+        key:
+          type: string
+          example: 123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf
+      required:
+        - bucket
+        - key
+    S3Ref:
+      $ref: "#/components/schemas/S3Reference"
+    FileItem:
+      type: object
+      properties:
+        s3ref:
+          $ref: "#/components/schemas/S3Ref"
+        filename:
+          type: string
+          example: document.pdf
+        size_bytes:
+          type: integer
+          example: 1234
+        readable_size:
+          type: string
+          example: 1.2 MB
+        mime_type:
+          type: string
+          example: image/jpeg
+    FileRelationItem:
+      type: object
+      properties:
+        entity_id:
+          $ref: "#/components/schemas/EntityId"
+        _schema:
+          $ref: "#/components/schemas/EntitySlug"
+        _tags:
+          type: array
+          items:
+            type: string
+      required:
+        - entity_id
+    PublicLink:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "ID of the public link"
+          example: "3ef5c6d9-818d-45e6-8efb-b1de59079a1c"
+        link:
+          type: string
+          description: "Public link of the file"
+          example: "https://file.sls.epilot.io/v1/files/public/links/3ef5c6d9-818d-45e6-8efb-b1de59079a1c"
+        last_accessed_at:
+          type: string
+          description: "The most recent timestamp when the file was accessed"
+servers:
+  - url: https://file.sls.epilot.io
