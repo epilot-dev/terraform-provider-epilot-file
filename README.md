@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.3.0"
+      version = "0.3.1"
     }
   }
 }
@@ -90,12 +90,6 @@ TF_REATTACH_PROVIDERS=... terraform init
 TF_REATTACH_PROVIDERS=... terraform apply
 ```
 <!-- End SDK Example Usage [usage] -->
-
-<!-- Start Available Resources and Operations [operations] -->
-## Available Resources and Operations
-
-
-<!-- End Available Resources and Operations [operations] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 

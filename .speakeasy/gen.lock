@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 61c8bb4165fe2eb2f84a56e8fc26126c
+  docChecksum: a6dc8f1f410255a028ce9658c9f1e930
   docVersion: 0.2.0
-  speakeasyVersion: 1.366.0
-  generationVersion: 2.396.0
-  releaseVersion: 0.3.0
-  configChecksum: 96c32e2d81f59c38a7f96dc352e6effd
+  speakeasyVersion: 1.374.2
+  generationVersion: 2.401.2
+  releaseVersion: 0.3.1
+  configChecksum: 65f613c701790505d581747b9bee0581
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -15,7 +15,7 @@ features:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.2
     constsAndDefaults: 0.1.4
-    core: 3.24.6
+    core: 3.24.7
     deprecations: 2.81.1
     envVarSecurityUsage: 0.1.0
     globalSecurity: 2.81.8
