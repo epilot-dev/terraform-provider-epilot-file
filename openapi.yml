@@ -126,6 +126,12 @@ paths:
                     "shared_with_end_customer": true,
                   }
       responses:
+        200:
+          description: Updated File Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileEntity"
         201:
           description: Created File Entity
           content:
@@ -825,6 +831,15 @@ components:
                   items:
                     type: string
                     example: org_123
+          required:
+            - _title
+            - _schema
+            - _org
+            - _id
+            - filename
+            - type
+            - access_control
+            - versions
     CommonSaveFilePayload:
       type: object
       properties:
