@@ -127,12 +127,6 @@ paths:
                   }
       responses:
         200:
-          description: Updated File Entity
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FileEntity"
-        201:
           description: Created File Entity
           content:
             application/json:
