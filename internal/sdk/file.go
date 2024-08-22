@@ -1082,8 +1082,6 @@ func (s *File) SaveFileV2(ctx context.Context, request *shared.SaveFilePayloadV2
 
 	switch {
 	case httpRes.StatusCode == 200:
-		fallthrough
-	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
 			var out shared.FileEntity

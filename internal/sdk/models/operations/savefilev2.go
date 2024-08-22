@@ -10,7 +10,7 @@ import (
 type SaveFileV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
-	// Updated File Entity
+	// Created File Entity
 	FileEntity *shared.FileEntity
 	// HTTP response status code for this operation
 	StatusCode int
