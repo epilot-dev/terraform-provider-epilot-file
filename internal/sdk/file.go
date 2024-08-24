@@ -1081,7 +1081,7 @@ func (s *File) SaveFileV2(ctx context.Context, request *shared.SaveFilePayloadV2
 	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
-	case httpRes.StatusCode == 201:
+	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
 			var out shared.FileEntity
