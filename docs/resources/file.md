@@ -34,6 +34,7 @@ resource "epilot-file_file" "my_file" {
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
 - `mime_type` (String) MIME type of the file
+- `purpose` (List of String)
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
 - `source_url` (String) Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
 - `tags` (List of String)

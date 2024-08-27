@@ -37,6 +37,7 @@ func (e *SaveFileFromSourceURLPayloadAccessControl) UnmarshalJSON(data []byte) e
 type SaveFileFromSourceURLPayload struct {
 	AdditionalProperties any                                        `additionalProperties:"true" json:"-"`
 	ID                   *string                                    `json:"_id,omitempty"`
+	Purpose              []string                                   `json:"_purpose,omitempty"`
 	Tags                 []string                                   `json:"_tags,omitempty"`
 	AccessControl        *SaveFileFromSourceURLPayloadAccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
@@ -78,6 +79,13 @@ func (o *SaveFileFromSourceURLPayload) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *SaveFileFromSourceURLPayload) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
 }
 
 func (o *SaveFileFromSourceURLPayload) GetTags() []string {

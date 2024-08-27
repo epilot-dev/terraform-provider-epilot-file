@@ -38,6 +38,7 @@ type FileDataSourceModel struct {
 	MimeType          types.String       `tfsdk:"mime_type"`
 	Org               types.String       `tfsdk:"org"`
 	PublicURL         types.String       `tfsdk:"public_url"`
+	Purpose           []types.String     `tfsdk:"purpose"`
 	ReadableSize      types.String       `tfsdk:"readable_size"`
 	S3ref             *tfTypes.S3Ref     `tfsdk:"s3ref"`
 	Schema            types.String       `tfsdk:"schema"`
@@ -106,6 +107,10 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			"public_url": schema.StringAttribute{
 				Computed:    true,
 				Description: `Direct URL for file (public only if file access control is public-read)`,
+			},
+			"purpose": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
 			},
 			"readable_size": schema.StringAttribute{
 				Computed:    true,

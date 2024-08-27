@@ -32,6 +32,7 @@ data "epilot-file_file" "my_file" {
 - `mime_type` (String) MIME type of the file
 - `org` (String)
 - `public_url` (String) Direct URL for file (public only if file access control is public-read)
+- `purpose` (List of String)
 - `readable_size` (String) Human readable file size
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
 - `schema` (String) must be one of ["file"]

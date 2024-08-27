@@ -709,6 +709,11 @@ components:
           items:
             type: string
           example: ["tag1", "tag2"]
+        _purpose:
+          type: array
+          items:
+            type: string
+          example: ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"]
         filename:
           type: string
           example: document.pdf

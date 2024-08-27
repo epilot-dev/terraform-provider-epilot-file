@@ -92,6 +92,7 @@ type FileEntity struct {
 	CreatedAt     *time.Time     `json:"_created_at,omitempty"`
 	ID            *string        `json:"_id,omitempty"`
 	Org           *string        `json:"_org,omitempty"`
+	Purpose       []string       `json:"_purpose,omitempty"`
 	Schema        *Schema        `json:"_schema,omitempty"`
 	Tags          []string       `json:"_tags,omitempty"`
 	Title         *string        `json:"_title,omitempty"`
@@ -152,6 +153,13 @@ func (o *FileEntity) GetOrg() *string {
 		return nil
 	}
 	return o.Org
+}
+
+func (o *FileEntity) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
 }
 
 func (o *FileEntity) GetSchema() *Schema {

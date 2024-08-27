@@ -36,6 +36,7 @@ func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
 
 type SaveFilePayloadV2 struct {
 	ID            *string                         `json:"_id,omitempty"`
+	Purpose       []string                        `json:"_purpose,omitempty"`
 	Tags          []string                        `json:"_tags,omitempty"`
 	Title         *string                         `json:"_title,omitempty"`
 	AccessControl *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
@@ -66,6 +67,13 @@ func (o *SaveFilePayloadV2) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *SaveFilePayloadV2) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
 }
 
 func (o *SaveFilePayloadV2) GetTags() []string {

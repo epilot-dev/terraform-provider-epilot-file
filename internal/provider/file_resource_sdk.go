@@ -16,6 +16,10 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		id = nil
 	}
+	var purpose []string = []string{}
+	for _, purposeItem := range r.Purpose {
+		purpose = append(purpose, purposeItem.ValueString())
+	}
 	var tags []string = []string{}
 	for _, tagsItem := range r.Tags {
 		tags = append(tags, tagsItem.ValueString())
@@ -77,6 +81,7 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	}
 	out := shared.SaveFilePayloadV2{
 		ID:                id,
+		Purpose:           purpose,
 		Tags:              tags,
 		Title:             title,
 		AccessControl:     accessControl,
@@ -116,6 +121,10 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 		}
 		r.ID = types.StringPointerValue(resp.ID)
 		r.Org = types.StringPointerValue(resp.Org)
+		r.Purpose = []types.String{}
+		for _, v := range resp.Purpose {
+			r.Purpose = append(r.Purpose, types.StringValue(v))
+		}
 		if resp.Schema != nil {
 			r.Schema = types.StringValue(string(*resp.Schema))
 		} else {

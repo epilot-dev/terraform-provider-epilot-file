@@ -34,6 +34,10 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 			r.CreatedAt = types.StringNull()
 		}
 		r.Org = types.StringPointerValue(resp.Org)
+		r.Purpose = []types.String{}
+		for _, v := range resp.Purpose {
+			r.Purpose = append(r.Purpose, types.StringValue(v))
+		}
 		if resp.Schema != nil {
 			r.Schema = types.StringValue(string(*resp.Schema))
 		} else {
