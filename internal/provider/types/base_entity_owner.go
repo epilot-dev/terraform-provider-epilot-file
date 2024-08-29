@@ -4,8 +4,7 @@ package types
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type ACL struct {
-	Delete []types.String `tfsdk:"delete"`
-	Edit   []types.String `tfsdk:"edit"`
-	View   []types.String `tfsdk:"view"`
+type BaseEntityOwner struct {
+	OrgID  types.String `tfsdk:"org_id"`
+	UserID types.String `tfsdk:"user_id"`
 }

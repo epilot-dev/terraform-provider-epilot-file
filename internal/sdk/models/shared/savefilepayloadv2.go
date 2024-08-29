@@ -35,6 +35,10 @@ func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
 }
 
 type SaveFilePayloadV2 struct {
+	// Additional fields that are not part of the schema
+	Additional map[string]any `json:"__additional,omitempty"`
+	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
+	ACL           *BaseEntityACL                  `json:"_acl,omitempty"`
 	ID            *string                         `json:"_id,omitempty"`
 	Purpose       []string                        `json:"_purpose,omitempty"`
 	Tags          []string                        `json:"_tags,omitempty"`
@@ -60,6 +64,20 @@ func (s *SaveFilePayloadV2) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (o *SaveFilePayloadV2) GetAdditional() map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.Additional
+}
+
+func (o *SaveFilePayloadV2) GetACL() *BaseEntityACL {
+	if o == nil {
+		return nil
+	}
+	return o.ACL
 }
 
 func (o *SaveFilePayloadV2) GetID() *string {

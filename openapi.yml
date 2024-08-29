@@ -17,6 +17,8 @@ tags:
 security:
   - EpilotAuth: []
   - CookieAuth: []
+servers:
+  - url: https://file.sls.epilot.io
 paths:
   /v2/files/upload:
     post:
@@ -67,6 +69,8 @@ paths:
         Saves metadata to file entity and stores a version when `s3ref` or `source_url` is passed.
       tags:
         - File
+      parameters:
+        - $ref: "#/components/parameters/StrictQueryParam"
       requestBody:
         content:
           application/json:
@@ -222,6 +226,7 @@ paths:
             type: boolean
             default: false
             description: Generate a source_url for the file entity, if it doesn't have one
+        - $ref: "#/components/parameters/StrictQueryParam"
       responses:
         200:
           description: File Entity
@@ -241,6 +246,7 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/FileEntityId"
+        - $ref: "#/components/parameters/StrictQueryParam"
       responses:
         200:
           description: The deleted file
@@ -784,9 +790,7 @@ components:
               example: "123"
               readOnly: true
             _id:
-              allOf:
-                - $ref: "#/components/schemas/FileEntityId"
-                - readOnly: true
+              $ref: "#/components/schemas/FileEntityId"
         - $ref: "#/components/schemas/FileAttributes"
         - type: object
           properties:
@@ -811,25 +815,17 @@ components:
               format: date-time
               readOnly: true
             _acl:
-              type: object
-              description: Access control list for file entity (readonly)
+              $ref: "#/components/schemas/BaseEntityAcl"
+            _owners:
+              type: array
               readOnly: true
-              properties:
-                view:
-                  type: array
-                  items:
-                    type: string
-                    example: org_123
-                edit:
-                  type: array
-                  items:
-                    type: string
-                    example: org_123
-                delete:
-                  type: array
-                  items:
-                    type: string
-                    example: org_123
+              items:
+                $ref: "#/components/schemas/BaseEntityOwner"
+            __additional:
+              type: object
+              description: Additional fields that are not part of the schema
+              additionalProperties: true
+              nullable: true
           required:
             - _title
             - _schema
@@ -1014,5 +1010,46 @@ components:
         last_accessed_at:
           type: string
           description: "The most recent timestamp when the file was accessed"
-servers:
-  - url: https://file.sls.epilot.io
+    BaseEntityOwner:
+      description: |
+        The user / organization owning this entity.
+
+        Note: Owner implicitly has access to the entity regardless of ACLs.
+      type: object
+      properties:
+        org_id:
+          type: string
+          example: "123"
+        user_id:
+          type: string
+          example: "123"
+      required:
+        - org_id
+    BaseEntityAcl:
+      type: object
+      description: Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
+      properties:
+        view:
+          type: array
+          items:
+            type: string
+            example: org:456
+        edit:
+          type: array
+          items:
+            type: string
+            example: org:456
+        delete:
+          type: array
+          items:
+            type: string
+            example: org:456
+  parameters:
+    StrictQueryParam:
+      name: strict
+      in: query
+      required: false
+      description: When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
+      schema:
+        type: boolean
+        default: false

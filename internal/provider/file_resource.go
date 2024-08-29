@@ -10,10 +10,12 @@ import (
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/validators"
 	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-file/internal/validators/stringvalidators"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -35,26 +37,29 @@ type FileResource struct {
 
 // FileResourceModel describes the resource data model.
 type FileResourceModel struct {
-	AccessControl     types.String       `tfsdk:"access_control"`
-	ACL               *tfTypes.ACL       `tfsdk:"acl"`
-	CreatedAt         types.String       `tfsdk:"created_at"`
-	CustomDownloadURL types.String       `tfsdk:"custom_download_url"`
-	Filename          types.String       `tfsdk:"filename"`
-	ID                types.String       `tfsdk:"id"`
-	MimeType          types.String       `tfsdk:"mime_type"`
-	Org               types.String       `tfsdk:"org"`
-	PublicURL         types.String       `tfsdk:"public_url"`
-	Purpose           []types.String     `tfsdk:"purpose"`
-	ReadableSize      types.String       `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref     `tfsdk:"s3ref"`
-	Schema            types.String       `tfsdk:"schema"`
-	SizeBytes         types.Int64        `tfsdk:"size_bytes"`
-	SourceURL         types.String       `tfsdk:"source_url"`
-	Tags              []types.String     `tfsdk:"tags"`
-	Title             types.String       `tfsdk:"title"`
-	Type              types.String       `tfsdk:"type"`
-	UpdatedAt         types.String       `tfsdk:"updated_at"`
-	Versions          []tfTypes.FileItem `tfsdk:"versions"`
+	AccessControl     types.String              `tfsdk:"access_control"`
+	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
+	Additional        map[string]types.String   `tfsdk:"additional"`
+	CreatedAt         types.String              `tfsdk:"created_at"`
+	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
+	Filename          types.String              `tfsdk:"filename"`
+	ID                types.String              `tfsdk:"id"`
+	MimeType          types.String              `tfsdk:"mime_type"`
+	Org               types.String              `tfsdk:"org"`
+	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
+	PublicURL         types.String              `tfsdk:"public_url"`
+	Purpose           []types.String            `tfsdk:"purpose"`
+	ReadableSize      types.String              `tfsdk:"readable_size"`
+	S3ref             *tfTypes.S3Ref            `tfsdk:"s3ref"`
+	Schema            types.String              `tfsdk:"schema"`
+	SizeBytes         types.Int64               `tfsdk:"size_bytes"`
+	SourceURL         types.String              `tfsdk:"source_url"`
+	Strict            types.Bool                `tfsdk:"strict"`
+	Tags              []types.String            `tfsdk:"tags"`
+	Title             types.String              `tfsdk:"title"`
+	Type              types.String              `tfsdk:"type"`
+	UpdatedAt         types.String              `tfsdk:"updated_at"`
+	Versions          []tfTypes.FileItem        `tfsdk:"versions"`
 }
 
 func (r *FileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -79,21 +84,34 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"acl": schema.SingleNestedAttribute{
 				Computed: true,
+				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"delete": schema.ListAttribute{
 						Computed:    true,
+						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"edit": schema.ListAttribute{
 						Computed:    true,
+						Optional:    true,
 						ElementType: types.StringType,
 					},
 					"view": schema.ListAttribute{
 						Computed:    true,
+						Optional:    true,
 						ElementType: types.StringType,
 					},
 				},
-				Description: `Access control list for file entity (readonly)`,
+				Description: `Access control list (ACL) for an entity. Defines sharing access to external orgs or users.`,
+			},
+			"additional": schema.MapAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Additional fields that are not part of the schema`,
+				Validators: []validator.Map{
+					mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+				},
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
@@ -121,6 +139,19 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"org": schema.StringAttribute{
 				Computed: true,
+			},
+			"owners": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"org_id": schema.StringAttribute{
+							Computed: true,
+						},
+						"user_id": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
 			},
 			"public_url": schema.StringAttribute{
 				Computed:    true,
@@ -174,6 +205,12 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:    true,
 				Optional:    true,
 				Description: `Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true`,
+			},
+			"strict": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: `When passed true, the response will contain only fields that match the schema, with non-matching fields included in ` + "`" + `__additional` + "`" + `. Default: false`,
 			},
 			"tags": schema.ListAttribute{
 				Computed:    true,
@@ -283,7 +320,17 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	request := data.ToSharedSaveFilePayloadV2()
+	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
+	strict := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict = data.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
+	request := operations.SaveFileV2Request{
+		SaveFilePayloadV2: saveFilePayloadV2,
+		Strict:            strict,
+	}
 	res, err := r.client.File.SaveFileV2(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
@@ -332,8 +379,15 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	var id string
 	id = data.ID.ValueString()
 
+	strict := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict = data.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
 	request := operations.GetFileRequest{
-		ID: id,
+		ID:     id,
+		Strict: strict,
 	}
 	res, err := r.client.File.GetFile(ctx, request)
 	if err != nil {
@@ -379,7 +433,17 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	request := data.ToSharedSaveFilePayloadV2()
+	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
+	strict := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict = data.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
+	request := operations.SaveFileV2Request{
+		SaveFilePayloadV2: saveFilePayloadV2,
+		Strict:            strict,
+	}
 	res, err := r.client.File.SaveFileV2(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
@@ -428,8 +492,15 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	var id string
 	id = data.ID.ValueString()
 
+	strict := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict = data.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
 	request := operations.DeleteFileRequest{
-		ID: id,
+		ID:     id,
+		Strict: strict,
 	}
 	res, err := r.client.File.DeleteFile(ctx, request)
 	if err != nil {

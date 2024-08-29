@@ -29,26 +29,29 @@ type FileDataSource struct {
 
 // FileDataSourceModel describes the data model.
 type FileDataSourceModel struct {
-	AccessControl     types.String       `tfsdk:"access_control"`
-	ACL               *tfTypes.ACL       `tfsdk:"acl"`
-	CreatedAt         types.String       `tfsdk:"created_at"`
-	CustomDownloadURL types.String       `tfsdk:"custom_download_url"`
-	Filename          types.String       `tfsdk:"filename"`
-	ID                types.String       `tfsdk:"id"`
-	MimeType          types.String       `tfsdk:"mime_type"`
-	Org               types.String       `tfsdk:"org"`
-	PublicURL         types.String       `tfsdk:"public_url"`
-	Purpose           []types.String     `tfsdk:"purpose"`
-	ReadableSize      types.String       `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref     `tfsdk:"s3ref"`
-	Schema            types.String       `tfsdk:"schema"`
-	SizeBytes         types.Int64        `tfsdk:"size_bytes"`
-	SourceURL         types.String       `tfsdk:"source_url"`
-	Tags              []types.String     `tfsdk:"tags"`
-	Title             types.String       `tfsdk:"title"`
-	Type              types.String       `tfsdk:"type"`
-	UpdatedAt         types.String       `tfsdk:"updated_at"`
-	Versions          []tfTypes.FileItem `tfsdk:"versions"`
+	AccessControl     types.String              `tfsdk:"access_control"`
+	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
+	Additional        map[string]types.String   `tfsdk:"additional"`
+	CreatedAt         types.String              `tfsdk:"created_at"`
+	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
+	Filename          types.String              `tfsdk:"filename"`
+	ID                types.String              `tfsdk:"id"`
+	MimeType          types.String              `tfsdk:"mime_type"`
+	Org               types.String              `tfsdk:"org"`
+	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
+	PublicURL         types.String              `tfsdk:"public_url"`
+	Purpose           []types.String            `tfsdk:"purpose"`
+	ReadableSize      types.String              `tfsdk:"readable_size"`
+	S3ref             *tfTypes.S3Ref            `tfsdk:"s3ref"`
+	Schema            types.String              `tfsdk:"schema"`
+	SizeBytes         types.Int64               `tfsdk:"size_bytes"`
+	SourceURL         types.String              `tfsdk:"source_url"`
+	Strict            types.Bool                `tfsdk:"strict"`
+	Tags              []types.String            `tfsdk:"tags"`
+	Title             types.String              `tfsdk:"title"`
+	Type              types.String              `tfsdk:"type"`
+	UpdatedAt         types.String              `tfsdk:"updated_at"`
+	Versions          []tfTypes.FileItem        `tfsdk:"versions"`
 }
 
 // Metadata returns the data source type name.
@@ -82,7 +85,12 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						ElementType: types.StringType,
 					},
 				},
-				Description: `Access control list for file entity (readonly)`,
+				Description: `Access control list (ACL) for an entity. Defines sharing access to external orgs or users.`,
+			},
+			"additional": schema.MapAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: `Additional fields that are not part of the schema`,
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
@@ -103,6 +111,19 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"org": schema.StringAttribute{
 				Computed: true,
+			},
+			"owners": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"org_id": schema.StringAttribute{
+							Computed: true,
+						},
+						"user_id": schema.StringAttribute{
+							Computed: true,
+						},
+					},
+				},
 			},
 			"public_url": schema.StringAttribute{
 				Computed:    true,
@@ -138,6 +159,11 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			"source_url": schema.StringAttribute{
 				Computed:    true,
 				Description: `Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true`,
+			},
+			"strict": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `When passed true, the response will contain only fields that match the schema, with non-matching fields included in ` + "`" + `__additional` + "`" + ``,
 			},
 			"tags": schema.ListAttribute{
 				Computed:    true,
@@ -228,8 +254,15 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	var id string
 	id = data.ID.ValueString()
 
+	strict := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict = data.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
 	request := operations.GetFileRequest{
-		ID: id,
+		ID:     id,
+		Strict: strict,
 	}
 	res, err := r.client.File.GetFile(ctx, request)
 	if err != nil {

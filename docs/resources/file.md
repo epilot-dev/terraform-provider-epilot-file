@@ -21,7 +21,8 @@ resource "epilot-file_file" "my_file" {
   filename            = "document.pdf"
   mime_type           = "application/pdf"
   source_url          = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  type                = "unknown"
+  strict              = true
+  type                = "application"
 }
 ```
 
@@ -31,28 +32,41 @@ resource "epilot-file_file" "my_file" {
 ### Optional
 
 - `access_control` (String) must be one of ["private", "public-read"]; Default: "private"
+- `acl` (Attributes) Access control list (ACL) for an entity. Defines sharing access to external orgs or users. (see [below for nested schema](#nestedatt--acl))
+- `additional` (Map of String) Additional fields that are not part of the schema
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
 - `mime_type` (String) MIME type of the file
 - `purpose` (List of String)
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
 - `source_url` (String) Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
+- `strict` (Boolean) When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`. Default: false
 - `tags` (List of String)
 - `title` (String)
 - `type` (String) must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]
 
 ### Read-Only
 
-- `acl` (Attributes) Access control list for file entity (readonly) (see [below for nested schema](#nestedatt--acl))
 - `created_at` (String)
 - `id` (String) The ID of this resource.
 - `org` (String)
+- `owners` (Attributes List) (see [below for nested schema](#nestedatt--owners))
 - `public_url` (String) Direct URL for file (public only if file access control is public-read)
 - `readable_size` (String) Human readable file size
 - `schema` (String) must be one of ["file"]
 - `size_bytes` (Number) File size in bytes
 - `updated_at` (String)
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
+
+<a id="nestedatt--acl"></a>
+### Nested Schema for `acl`
+
+Optional:
+
+- `delete` (List of String)
+- `edit` (List of String)
+- `view` (List of String)
+
 
 <a id="nestedatt--s3ref"></a>
 ### Nested Schema for `s3ref`
@@ -63,14 +77,13 @@ Optional:
 - `key` (String) Not Null
 
 
-<a id="nestedatt--acl"></a>
-### Nested Schema for `acl`
+<a id="nestedatt--owners"></a>
+### Nested Schema for `owners`
 
 Read-Only:
 
-- `delete` (List of String)
-- `edit` (List of String)
-- `view` (List of String)
+- `org_id` (String)
+- `user_id` (String)
 
 
 <a id="nestedatt--versions"></a>
