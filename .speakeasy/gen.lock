@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 645f4825464a7b5f9f335ba4341684df
+  docChecksum: 6f4fa916fbe329d911d646e3d6bc9fc3
   docVersion: 0.2.0
-  speakeasyVersion: 1.378.0
-  generationVersion: 2.404.3
-  releaseVersion: 0.3.2
-  configChecksum: 548423f365245b7e1c5d53a8ed3cc0d1
+  speakeasyVersion: 1.383.2
+  generationVersion: 2.407.0
+  releaseVersion: 0.4.0
+  configChecksum: 600f6651c2bf8d84881581eb2d476d86
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -21,6 +21,7 @@ features:
     globalSecurity: 2.81.8
     globalServerURLs: 2.82.1
     inputOutputModels: 2.83.0
+    nullables: 0.0.0
     retries: 2.81.1
     unions: 2.81.16
 generatedFiles:
@@ -72,6 +73,8 @@ generatedFiles:
   - internal/sdk/models/shared/fileitem.go
   - internal/sdk/models/shared/s3ref.go
   - internal/sdk/models/shared/filetype.go
+  - internal/sdk/models/shared/baseentityowner.go
+  - internal/sdk/models/shared/baseentityacl.go
   - internal/sdk/models/shared/savefilepayload.go
   - internal/sdk/models/shared/saves3filepayload.go
   - internal/sdk/models/shared/filerelationitem.go
@@ -131,7 +134,8 @@ generatedFiles:
   - main.go
   - terraform-registry-manifest.json
   - tools/tools.go
-  - internal/provider/types/acl.go
+  - internal/provider/types/base_entity_acl.go
+  - internal/provider/types/base_entity_owner.go
   - internal/provider/types/s3_ref.go
   - internal/provider/types/file_item.go
   - USAGE.md

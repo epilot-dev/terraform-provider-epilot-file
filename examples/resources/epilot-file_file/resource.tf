@@ -6,5 +6,6 @@ resource "epilot-file_file" "my_file" {
   filename            = "document.pdf"
   mime_type           = "application/pdf"
   source_url          = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  type                = "unknown"
+  strict              = true
+  type                = "application"
 }

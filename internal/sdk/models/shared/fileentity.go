@@ -9,34 +9,6 @@ import (
 	"time"
 )
 
-// ACL - Access control list for file entity (readonly)
-type ACL struct {
-	Delete []string `json:"delete,omitempty"`
-	Edit   []string `json:"edit,omitempty"`
-	View   []string `json:"view,omitempty"`
-}
-
-func (o *ACL) GetDelete() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Delete
-}
-
-func (o *ACL) GetEdit() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Edit
-}
-
-func (o *ACL) GetView() []string {
-	if o == nil {
-		return nil
-	}
-	return o.View
-}
-
 type Schema string
 
 const (
@@ -87,16 +59,20 @@ func (e *AccessControl) UnmarshalJSON(data []byte) error {
 }
 
 type FileEntity struct {
-	// Access control list for file entity (readonly)
-	ACL           *ACL           `json:"_acl,omitempty"`
-	CreatedAt     *time.Time     `json:"_created_at,omitempty"`
-	ID            *string        `json:"_id,omitempty"`
-	Org           *string        `json:"_org,omitempty"`
-	Schema        *Schema        `json:"_schema,omitempty"`
-	Tags          []string       `json:"_tags,omitempty"`
-	Title         *string        `json:"_title,omitempty"`
-	UpdatedAt     *time.Time     `json:"_updated_at,omitempty"`
-	AccessControl *AccessControl `default:"private" json:"access_control"`
+	// Additional fields that are not part of the schema
+	Additional map[string]any `json:"__additional,omitempty"`
+	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
+	ACL           *BaseEntityACL    `json:"_acl,omitempty"`
+	CreatedAt     *time.Time        `json:"_created_at,omitempty"`
+	ID            *string           `json:"_id,omitempty"`
+	Org           *string           `json:"_org,omitempty"`
+	Owners        []BaseEntityOwner `json:"_owners,omitempty"`
+	Purpose       []string          `json:"_purpose,omitempty"`
+	Schema        *Schema           `json:"_schema,omitempty"`
+	Tags          []string          `json:"_tags,omitempty"`
+	Title         *string           `json:"_title,omitempty"`
+	UpdatedAt     *time.Time        `json:"_updated_at,omitempty"`
+	AccessControl *AccessControl    `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
 	Filename          *string `json:"filename,omitempty"`
@@ -126,7 +102,14 @@ func (f *FileEntity) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FileEntity) GetACL() *ACL {
+func (o *FileEntity) GetAdditional() map[string]any {
+	if o == nil {
+		return nil
+	}
+	return o.Additional
+}
+
+func (o *FileEntity) GetACL() *BaseEntityACL {
 	if o == nil {
 		return nil
 	}
@@ -152,6 +135,20 @@ func (o *FileEntity) GetOrg() *string {
 		return nil
 	}
 	return o.Org
+}
+
+func (o *FileEntity) GetOwners() []BaseEntityOwner {
+	if o == nil {
+		return nil
+	}
+	return o.Owners
+}
+
+func (o *FileEntity) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
 }
 
 func (o *FileEntity) GetSchema() *Schema {

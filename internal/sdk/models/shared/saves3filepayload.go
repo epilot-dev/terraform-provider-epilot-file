@@ -37,6 +37,7 @@ func (e *SaveS3FilePayloadAccessControl) UnmarshalJSON(data []byte) error {
 type SaveS3FilePayload struct {
 	AdditionalProperties any                             `additionalProperties:"true" json:"-"`
 	ID                   *string                         `json:"_id,omitempty"`
+	Purpose              []string                        `json:"_purpose,omitempty"`
 	Tags                 []string                        `json:"_tags,omitempty"`
 	AccessControl        *SaveS3FilePayloadAccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
@@ -77,6 +78,13 @@ func (o *SaveS3FilePayload) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *SaveS3FilePayload) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
 }
 
 func (o *SaveS3FilePayload) GetTags() []string {

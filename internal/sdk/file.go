@@ -75,6 +75,10 @@ func (s *File) DeleteFile(ctx context.Context, request operations.DeleteFileRequ
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err
 	}
@@ -789,6 +793,10 @@ func (s *File) GetFile(ctx context.Context, request operations.GetFileRequest, o
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err
 	}
@@ -922,7 +930,7 @@ func (s *File) GetFile(ctx context.Context, request operations.GetFileRequest, o
 // Saves a permanent file entity. Updates an existing file entity when `_id` is passed.
 //
 // Saves metadata to file entity and stores a version when `s3ref` or `source_url` is passed.
-func (s *File) SaveFileV2(ctx context.Context, request *shared.SaveFilePayloadV2, opts ...operations.Option) (*operations.SaveFileV2Response, error) {
+func (s *File) SaveFileV2(ctx context.Context, request operations.SaveFileV2Request, opts ...operations.Option) (*operations.SaveFileV2Response, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
 		OperationID:    "saveFileV2",
@@ -948,7 +956,7 @@ func (s *File) SaveFileV2(ctx context.Context, request *shared.SaveFilePayloadV2
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
 
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "SaveFilePayloadV2", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -971,6 +979,10 @@ func (s *File) SaveFileV2(ctx context.Context, request *shared.SaveFilePayloadV2
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	req.Header.Set("Content-Type", reqContentType)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

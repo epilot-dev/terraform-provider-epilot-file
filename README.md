@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.3.2"
+      version = "0.4.0"
     }
   }
 }
@@ -90,6 +90,19 @@ TF_REATTACH_PROVIDERS=... terraform init
 TF_REATTACH_PROVIDERS=... terraform apply
 ```
 <!-- End SDK Example Usage [usage] -->
+
+<!-- Start Summary [summary] -->
+## Summary
+
+File API: Upload and manage epilot Files
+<!-- End Summary [summary] -->
+
+<!-- Start Table of Contents [toc] -->
+## Table of Contents
+
+* [SDK Installation](#sdk-installation)
+* [SDK Example Usage](#sdk-example-usage)
+<!-- End Table of Contents [toc] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 

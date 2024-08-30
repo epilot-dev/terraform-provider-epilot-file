@@ -3,9 +3,41 @@
 package operations
 
 import (
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"net/http"
 )
+
+type SaveFileV2Request struct {
+	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
+	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
+	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
+}
+
+func (s SaveFileV2Request) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+	if o == nil {
+		return nil
+	}
+	return o.SaveFilePayloadV2
+}
+
+func (o *SaveFileV2Request) GetStrict() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Strict
+}
 
 type SaveFileV2Response struct {
 	// HTTP response content type for this operation

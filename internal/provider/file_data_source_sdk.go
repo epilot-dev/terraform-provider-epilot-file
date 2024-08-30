@@ -3,6 +3,7 @@
 package provider
 
 import (
+	"encoding/json"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -11,10 +12,17 @@ import (
 
 func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
 	if resp != nil {
+		if len(resp.Additional) > 0 {
+			r.Additional = make(map[string]types.String)
+			for key, value := range resp.Additional {
+				result, _ := json.Marshal(value)
+				r.Additional[key] = types.StringValue(string(result))
+			}
+		}
 		if resp.ACL == nil {
 			r.ACL = nil
 		} else {
-			r.ACL = &tfTypes.ACL{}
+			r.ACL = &tfTypes.BaseEntityACL{}
 			r.ACL.Delete = []types.String{}
 			for _, v := range resp.ACL.Delete {
 				r.ACL.Delete = append(r.ACL.Delete, types.StringValue(v))
@@ -34,6 +42,25 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 			r.CreatedAt = types.StringNull()
 		}
 		r.Org = types.StringPointerValue(resp.Org)
+		r.Owners = []tfTypes.BaseEntityOwner{}
+		if len(r.Owners) > len(resp.Owners) {
+			r.Owners = r.Owners[:len(resp.Owners)]
+		}
+		for ownersCount, ownersItem := range resp.Owners {
+			var owners1 tfTypes.BaseEntityOwner
+			owners1.OrgID = types.StringValue(ownersItem.OrgID)
+			owners1.UserID = types.StringPointerValue(ownersItem.UserID)
+			if ownersCount+1 > len(r.Owners) {
+				r.Owners = append(r.Owners, owners1)
+			} else {
+				r.Owners[ownersCount].OrgID = owners1.OrgID
+				r.Owners[ownersCount].UserID = owners1.UserID
+			}
+		}
+		r.Purpose = []types.String{}
+		for _, v := range resp.Purpose {
+			r.Purpose = append(r.Purpose, types.StringValue(v))
+		}
 		if resp.Schema != nil {
 			r.Schema = types.StringValue(string(*resp.Schema))
 		} else {
