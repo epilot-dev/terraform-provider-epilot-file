@@ -9,7 +9,9 @@ import (
 )
 
 type DeleteFileRequest struct {
-	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// Activity to include in event feed
+	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
+	ID         string  `pathParam:"style=simple,explode=false,name=id"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -23,6 +25,13 @@ func (d *DeleteFileRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (o *DeleteFileRequest) GetActivityID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ActivityID
 }
 
 func (o *DeleteFileRequest) GetID() string {

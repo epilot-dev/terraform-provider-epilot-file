@@ -7,6 +7,26 @@ import (
 	"net/http"
 )
 
+type SaveFileRequest struct {
+	SaveFilePayload *shared.SaveFilePayload `request:"mediaType=application/json"`
+	// Activity to include in event feed
+	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
+}
+
+func (o *SaveFileRequest) GetSaveFilePayload() *shared.SaveFilePayload {
+	if o == nil {
+		return nil
+	}
+	return o.SaveFilePayload
+}
+
+func (o *SaveFileRequest) GetActivityID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ActivityID
+}
+
 type SaveFileResponse struct {
 	// HTTP response content type for this operation
 	ContentType string

@@ -10,6 +10,8 @@ import (
 
 type SaveFileV2Request struct {
 	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
+	// Activity to include in event feed
+	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -30,6 +32,13 @@ func (o *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
 		return nil
 	}
 	return o.SaveFilePayloadV2
+}
+
+func (o *SaveFileV2Request) GetActivityID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ActivityID
 }
 
 func (o *SaveFileV2Request) GetStrict() *bool {

@@ -39,6 +39,7 @@ type FileResource struct {
 type FileResourceModel struct {
 	AccessControl     types.String              `tfsdk:"access_control"`
 	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
+	ActivityID        types.String              `tfsdk:"activity_id"`
 	Additional        map[string]types.String   `tfsdk:"additional"`
 	CreatedAt         types.String              `tfsdk:"created_at"`
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
@@ -103,6 +104,10 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					},
 				},
 				Description: `Access control list (ACL) for an entity. Defines sharing access to external orgs or users.`,
+			},
+			"activity_id": schema.StringAttribute{
+				Optional:    true,
+				Description: `Activity to include in event feed`,
 			},
 			"additional": schema.MapAttribute{
 				Computed:    true,
@@ -321,6 +326,12 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 
 	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
+	activityID := new(string)
+	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
+		*activityID = data.ActivityID.ValueString()
+	} else {
+		activityID = nil
+	}
 	strict := new(bool)
 	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
 		*strict = data.Strict.ValueBool()
@@ -329,6 +340,7 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
+		ActivityID:        activityID,
 		Strict:            strict,
 	}
 	res, err := r.client.File.SaveFileV2(ctx, request)
@@ -352,6 +364,41 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 	data.RefreshFromSharedFileEntity(res.FileEntity)
+	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	var id string
+	id = data.ID.ValueString()
+
+	strict1 := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict1 = data.Strict.ValueBool()
+	} else {
+		strict1 = nil
+	}
+	request1 := operations.GetFileRequest{
+		ID:     id,
+		Strict: strict1,
+	}
+	res1, err := r.client.File.GetFile(ctx, request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.FileEntity != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	data.RefreshFromSharedFileEntity(res1.FileEntity)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
 
 	// Save updated data into Terraform state
@@ -434,6 +481,12 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 
 	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
+	activityID := new(string)
+	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
+		*activityID = data.ActivityID.ValueString()
+	} else {
+		activityID = nil
+	}
 	strict := new(bool)
 	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
 		*strict = data.Strict.ValueBool()
@@ -442,6 +495,7 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
+		ActivityID:        activityID,
 		Strict:            strict,
 	}
 	res, err := r.client.File.SaveFileV2(ctx, request)
@@ -466,6 +520,41 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	data.RefreshFromSharedFileEntity(res.FileEntity)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	var id string
+	id = data.ID.ValueString()
+
+	strict1 := new(bool)
+	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
+		*strict1 = data.Strict.ValueBool()
+	} else {
+		strict1 = nil
+	}
+	request1 := operations.GetFileRequest{
+		ID:     id,
+		Strict: strict1,
+	}
+	res1, err := r.client.File.GetFile(ctx, request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.FileEntity != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	data.RefreshFromSharedFileEntity(res1.FileEntity)
+	refreshPlan(ctx, plan, &data, resp.Diagnostics)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -489,6 +578,12 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		return
 	}
 
+	activityID := new(string)
+	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
+		*activityID = data.ActivityID.ValueString()
+	} else {
+		activityID = nil
+	}
 	var id string
 	id = data.ID.ValueString()
 
@@ -499,8 +594,9 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		strict = nil
 	}
 	request := operations.DeleteFileRequest{
-		ID:     id,
-		Strict: strict,
+		ActivityID: activityID,
+		ID:         id,
+		Strict:     strict,
 	}
 	res, err := r.client.File.DeleteFile(ctx, request)
 	if err != nil {

@@ -37,7 +37,7 @@ func newDeprecated(sdkConfig sdkConfiguration) *Deprecated {
 // # Saves metadata to file entity
 //
 // Deprecated method: This will be removed in a future release, please migrate away from it as soon as possible.
-func (s *Deprecated) SaveFile(ctx context.Context, request *shared.SaveFilePayload, opts ...operations.Option) (*operations.SaveFileResponse, error) {
+func (s *Deprecated) SaveFile(ctx context.Context, request operations.SaveFileRequest, opts ...operations.Option) (*operations.SaveFileResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
 		OperationID:    "saveFile",
@@ -63,7 +63,7 @@ func (s *Deprecated) SaveFile(ctx context.Context, request *shared.SaveFilePaylo
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
 
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "SaveFilePayload", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +86,10 @@ func (s *Deprecated) SaveFile(ctx context.Context, request *shared.SaveFilePaylo
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	req.Header.Set("Content-Type", reqContentType)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

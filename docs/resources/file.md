@@ -17,11 +17,12 @@ resource "epilot-file_file" "my_file" {
   id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
   title               = "document.pdf"
   access_control      = "private"
+  activity_id         = "01F130Q52Q6MWSNS8N2AVXV4JN"
   custom_download_url = "https://some-api-url.com/download?file_id=123"
   filename            = "document.pdf"
   mime_type           = "application/pdf"
   source_url          = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  strict              = true
+  strict              = false
   type                = "application"
 }
 ```
@@ -33,6 +34,7 @@ resource "epilot-file_file" "my_file" {
 
 - `access_control` (String) must be one of ["private", "public-read"]; Default: "private"
 - `acl` (Attributes) Access control list (ACL) for an entity. Defines sharing access to external orgs or users. (see [below for nested schema](#nestedatt--acl))
+- `activity_id` (String) Activity to include in event feed
 - `additional` (Map of String) Additional fields that are not part of the schema
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
