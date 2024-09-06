@@ -75,7 +75,7 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:    true,
 				Optional:    true,
 				Default:     stringdefault.StaticString("private"),
-				Description: `must be one of ["private", "public-read"]; Default: "private"`,
+				Description: `Default: "private"; must be one of ["private", "public-read"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"private",
@@ -195,11 +195,9 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"schema": schema.StringAttribute{
 				Computed:    true,
-				Description: `must be one of ["file"]`,
+				Description: `must be "file"`,
 				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"file",
-					),
+					stringvalidator.OneOf("file"),
 				},
 			},
 			"size_bytes": schema.Int64Attribute{

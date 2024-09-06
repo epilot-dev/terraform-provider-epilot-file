@@ -66,8 +66,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 
 		Attributes: map[string]schema.Attribute{
 			"access_control": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["private", "public-read"]`,
+				Computed: true,
 			},
 			"acl": schema.SingleNestedAttribute{
 				Computed: true,
@@ -149,8 +148,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				},
 			},
 			"schema": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["file"]`,
+				Computed: true,
 			},
 			"size_bytes": schema.Int64Attribute{
 				Computed:    true,
@@ -173,8 +171,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
+				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
