@@ -17,8 +17,12 @@ resource "epilot-file_file" "my_file" {
   }
   custom_download_url = "https://some-api-url.com/download?file_id=123"
   filename            = "document.pdf"
+  fill_activity       = true
   id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
-  mime_type           = "application/pdf"
+  manifest = [
+    "123e4567-e89b-12d3-a456-426614174000"
+  ]
+  mime_type = "application/pdf"
   purpose = [
     "..."
   ]

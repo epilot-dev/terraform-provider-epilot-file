@@ -32,8 +32,12 @@ resource "epilot-file_file" "my_file" {
   }
   custom_download_url = "https://some-api-url.com/download?file_id=123"
   filename            = "document.pdf"
+  fill_activity       = true
   id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
-  mime_type           = "application/pdf"
+  manifest = [
+    "123e4567-e89b-12d3-a456-426614174000"
+  ]
+  mime_type = "application/pdf"
   purpose = [
     "..."
   ]
@@ -62,6 +66,10 @@ resource "epilot-file_file" "my_file" {
 - `additional` (Map of String) Additional fields that are not part of the schema
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
+- `fill_activity` (Boolean) Update the diff and entity for the custom activity included in the query.
+Pending state on activity is automatically ended when activity is filled.
+Default: false
+- `manifest` (List of String) Manifest ID used to create/update the entity
 - `mime_type` (String) MIME type of the file
 - `purpose` (List of String)
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))

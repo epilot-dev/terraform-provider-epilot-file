@@ -44,7 +44,9 @@ type FileResourceModel struct {
 	CreatedAt         types.String              `tfsdk:"created_at"`
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
 	Filename          types.String              `tfsdk:"filename"`
+	FillActivity      types.Bool                `tfsdk:"fill_activity"`
 	ID                types.String              `tfsdk:"id"`
+	Manifest          []types.String            `tfsdk:"manifest"`
 	MimeType          types.String              `tfsdk:"mime_type"`
 	Org               types.String              `tfsdk:"org"`
 	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
@@ -133,9 +135,23 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed: true,
 				Optional: true,
 			},
+			"fill_activity": schema.BoolAttribute{
+				Computed: true,
+				Optional: true,
+				Default:  booldefault.StaticBool(false),
+				MarkdownDescription: `Update the diff and entity for the custom activity included in the query.` + "\n" +
+					`Pending state on activity is automatically ended when activity is filled.` + "\n" +
+					`Default: false`,
+			},
 			"id": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
+			},
+			"manifest": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Manifest ID used to create/update the entity`,
 			},
 			"mime_type": schema.StringAttribute{
 				Computed:    true,
@@ -330,6 +346,12 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	} else {
 		activityID = nil
 	}
+	fillActivity := new(bool)
+	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
+		*fillActivity = data.FillActivity.ValueBool()
+	} else {
+		fillActivity = nil
+	}
 	strict := new(bool)
 	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
 		*strict = data.Strict.ValueBool()
@@ -339,6 +361,7 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
 		ActivityID:        activityID,
+		FillActivity:      fillActivity,
 		Strict:            strict,
 	}
 	res, err := r.client.File.SaveFileV2(ctx, request)
@@ -485,6 +508,12 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	} else {
 		activityID = nil
 	}
+	fillActivity := new(bool)
+	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
+		*fillActivity = data.FillActivity.ValueBool()
+	} else {
+		fillActivity = nil
+	}
 	strict := new(bool)
 	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
 		*strict = data.Strict.ValueBool()
@@ -494,6 +523,7 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
 		ActivityID:        activityID,
+		FillActivity:      fillActivity,
 		Strict:            strict,
 	}
 	res, err := r.client.File.SaveFileV2(ctx, request)

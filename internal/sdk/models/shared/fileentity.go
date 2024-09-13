@@ -62,9 +62,11 @@ type FileEntity struct {
 	// Additional fields that are not part of the schema
 	Additional map[string]any `json:"__additional,omitempty"`
 	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
-	ACL           *BaseEntityACL    `json:"_acl,omitempty"`
-	CreatedAt     *time.Time        `json:"_created_at,omitempty"`
-	ID            *string           `json:"_id,omitempty"`
+	ACL       *BaseEntityACL `json:"_acl,omitempty"`
+	CreatedAt *time.Time     `json:"_created_at,omitempty"`
+	ID        *string        `json:"_id,omitempty"`
+	// Manifest ID used to create/update the entity
+	Manifest      []string          `json:"_manifest,omitempty"`
 	Org           *string           `json:"_org,omitempty"`
 	Owners        []BaseEntityOwner `json:"_owners,omitempty"`
 	Purpose       []string          `json:"_purpose,omitempty"`
@@ -128,6 +130,13 @@ func (o *FileEntity) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *FileEntity) GetManifest() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Manifest
 }
 
 func (o *FileEntity) GetOrg() *string {

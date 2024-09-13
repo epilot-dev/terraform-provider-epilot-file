@@ -36,6 +36,7 @@ type FileDataSourceModel struct {
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
 	Filename          types.String              `tfsdk:"filename"`
 	ID                types.String              `tfsdk:"id"`
+	Manifest          []types.String            `tfsdk:"manifest"`
 	MimeType          types.String              `tfsdk:"mime_type"`
 	Org               types.String              `tfsdk:"org"`
 	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
@@ -103,6 +104,11 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+			},
+			"manifest": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: `Manifest ID used to create/update the entity`,
 			},
 			"mime_type": schema.StringAttribute{
 				Computed:    true,

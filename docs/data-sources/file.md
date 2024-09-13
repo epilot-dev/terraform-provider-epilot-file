@@ -35,6 +35,7 @@ data "epilot-file_file" "my_file" {
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
 - `id` (String) The ID of this resource.
+- `manifest` (List of String) Manifest ID used to create/update the entity
 - `mime_type` (String) MIME type of the file
 - `org` (String)
 - `owners` (Attributes List) (see [below for nested schema](#nestedatt--owners))

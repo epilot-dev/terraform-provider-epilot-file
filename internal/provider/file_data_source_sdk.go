@@ -41,6 +41,10 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntit
 		} else {
 			r.CreatedAt = types.StringNull()
 		}
+		r.Manifest = []types.String{}
+		for _, v := range resp.Manifest {
+			r.Manifest = append(r.Manifest, types.StringValue(v))
+		}
 		r.Org = types.StringPointerValue(resp.Org)
 		r.Owners = []tfTypes.BaseEntityOwner{}
 		if len(r.Owners) > len(resp.Owners) {

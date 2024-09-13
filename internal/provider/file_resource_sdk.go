@@ -43,6 +43,10 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		id = nil
 	}
+	var manifest []string = []string{}
+	for _, manifestItem := range r.Manifest {
+		manifest = append(manifest, manifestItem.ValueString())
+	}
 	var purpose []string = []string{}
 	for _, purposeItem := range r.Purpose {
 		purpose = append(purpose, purposeItem.ValueString())
@@ -110,6 +114,7 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 		Additional:        additional,
 		ACL:               acl,
 		ID:                id,
+		Manifest:          manifest,
 		Purpose:           purpose,
 		Tags:              tags,
 		Title:             title,
@@ -156,6 +161,10 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity)
 			r.CreatedAt = types.StringNull()
 		}
 		r.ID = types.StringPointerValue(resp.ID)
+		r.Manifest = []types.String{}
+		for _, v := range resp.Manifest {
+			r.Manifest = append(r.Manifest, types.StringValue(v))
+		}
 		r.Org = types.StringPointerValue(resp.Org)
 		r.Owners = []tfTypes.BaseEntityOwner{}
 		if len(r.Owners) > len(resp.Owners) {

@@ -12,6 +12,10 @@ type SaveFileV2Request struct {
 	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
+	// Update the diff and entity for the custom activity included in the query.
+	// Pending state on activity is automatically ended when activity is filled.
+	//
+	FillActivity *bool `default:"false" queryParam:"style=form,explode=true,name=fill_activity"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -39,6 +43,13 @@ func (o *SaveFileV2Request) GetActivityID() *string {
 		return nil
 	}
 	return o.ActivityID
+}
+
+func (o *SaveFileV2Request) GetFillActivity() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.FillActivity
 }
 
 func (o *SaveFileV2Request) GetStrict() *bool {
