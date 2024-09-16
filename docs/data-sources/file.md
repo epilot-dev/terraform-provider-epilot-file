@@ -28,13 +28,14 @@ data "epilot-file_file" "my_file" {
 
 ### Read-Only
 
-- `access_control` (String) must be one of ["private", "public-read"]
+- `access_control` (String)
 - `acl` (Attributes) Access control list (ACL) for an entity. Defines sharing access to external orgs or users. (see [below for nested schema](#nestedatt--acl))
 - `additional` (Map of String) Additional fields that are not part of the schema
 - `created_at` (String)
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
 - `id` (String) The ID of this resource.
+- `manifest` (List of String) Manifest ID used to create/update the entity
 - `mime_type` (String) MIME type of the file
 - `org` (String)
 - `owners` (Attributes List) (see [below for nested schema](#nestedatt--owners))
@@ -42,12 +43,12 @@ data "epilot-file_file" "my_file" {
 - `purpose` (List of String)
 - `readable_size` (String) Human readable file size
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
-- `schema` (String) must be one of ["file"]
+- `schema` (String)
 - `size_bytes` (Number) File size in bytes
 - `source_url` (String) Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
 - `tags` (List of String)
 - `title` (String)
-- `type` (String) must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]
+- `type` (String)
 - `updated_at` (String)
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 

@@ -36,6 +36,7 @@ type FileDataSourceModel struct {
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
 	Filename          types.String              `tfsdk:"filename"`
 	ID                types.String              `tfsdk:"id"`
+	Manifest          []types.String            `tfsdk:"manifest"`
 	MimeType          types.String              `tfsdk:"mime_type"`
 	Org               types.String              `tfsdk:"org"`
 	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
@@ -66,8 +67,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 
 		Attributes: map[string]schema.Attribute{
 			"access_control": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["private", "public-read"]`,
+				Computed: true,
 			},
 			"acl": schema.SingleNestedAttribute{
 				Computed: true,
@@ -104,6 +104,11 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+			},
+			"manifest": schema.ListAttribute{
+				Computed:    true,
+				ElementType: types.StringType,
+				Description: `Manifest ID used to create/update the entity`,
 			},
 			"mime_type": schema.StringAttribute{
 				Computed:    true,
@@ -149,8 +154,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				},
 			},
 			"schema": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["file"]`,
+				Computed: true,
 			},
 			"size_bytes": schema.Int64Attribute{
 				Computed:    true,
@@ -173,8 +177,7 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
+				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,

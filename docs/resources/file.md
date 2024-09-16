@@ -14,15 +14,44 @@ File Resource
 
 ```terraform
 resource "epilot-file_file" "my_file" {
-  id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
-  title               = "document.pdf"
-  access_control      = "private"
+  access_control = "public-read"
+  acl = {
+    delete = [
+      "org:456"
+    ]
+    edit = [
+      "org:456"
+    ]
+    view = [
+      "org:456"
+    ]
+  }
+  activity_id = "01F130Q52Q6MWSNS8N2AVXV4JN"
+  additional = {
+    "see" : jsonencode("documentation"),
+  }
   custom_download_url = "https://some-api-url.com/download?file_id=123"
   filename            = "document.pdf"
-  mime_type           = "application/pdf"
-  source_url          = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  strict              = true
-  type                = "application"
+  fill_activity       = true
+  id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  manifest = [
+    "123e4567-e89b-12d3-a456-426614174000"
+  ]
+  mime_type = "application/pdf"
+  purpose = [
+    "..."
+  ]
+  s3ref = {
+    bucket = "epilot-prod-user-content"
+    key    = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
+  }
+  source_url = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
+  strict     = true
+  tags = [
+    "..."
+  ]
+  title = "document.pdf"
+  type  = "font"
 }
 ```
 
@@ -31,11 +60,16 @@ resource "epilot-file_file" "my_file" {
 
 ### Optional
 
-- `access_control` (String) must be one of ["private", "public-read"]; Default: "private"
+- `access_control` (String) Default: "private"; must be one of ["private", "public-read"]
 - `acl` (Attributes) Access control list (ACL) for an entity. Defines sharing access to external orgs or users. (see [below for nested schema](#nestedatt--acl))
+- `activity_id` (String) Activity to include in event feed
 - `additional` (Map of String) Additional fields that are not part of the schema
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
+- `fill_activity` (Boolean) Update the diff and entity for the custom activity included in the query.
+Pending state on activity is automatically ended when activity is filled.
+Default: false
+- `manifest` (List of String) Manifest ID used to create/update the entity
 - `mime_type` (String) MIME type of the file
 - `purpose` (List of String)
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
@@ -53,7 +87,7 @@ resource "epilot-file_file" "my_file" {
 - `owners` (Attributes List) (see [below for nested schema](#nestedatt--owners))
 - `public_url` (String) Direct URL for file (public only if file access control is public-read)
 - `readable_size` (String) Human readable file size
-- `schema` (String) must be one of ["file"]
+- `schema` (String) must be "file"
 - `size_bytes` (Number) File size in bytes
 - `updated_at` (String)
 - `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))

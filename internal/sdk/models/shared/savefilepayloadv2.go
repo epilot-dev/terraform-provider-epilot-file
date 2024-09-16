@@ -38,8 +38,10 @@ type SaveFilePayloadV2 struct {
 	// Additional fields that are not part of the schema
 	Additional map[string]any `json:"__additional,omitempty"`
 	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
-	ACL           *BaseEntityACL                  `json:"_acl,omitempty"`
-	ID            *string                         `json:"_id,omitempty"`
+	ACL *BaseEntityACL `json:"_acl,omitempty"`
+	ID  *string        `json:"_id,omitempty"`
+	// Manifest ID used to create/update the entity
+	Manifest      []string                        `json:"_manifest,omitempty"`
 	Purpose       []string                        `json:"_purpose,omitempty"`
 	Tags          []string                        `json:"_tags,omitempty"`
 	Title         *string                         `json:"_title,omitempty"`
@@ -85,6 +87,13 @@ func (o *SaveFilePayloadV2) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *SaveFilePayloadV2) GetManifest() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Manifest
 }
 
 func (o *SaveFilePayloadV2) GetPurpose() []string {
