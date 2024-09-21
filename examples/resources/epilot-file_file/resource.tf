@@ -31,7 +31,7 @@ resource "epilot-file_file" "my_file" {
     key    = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
   }
   source_url = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  strict     = true
+  strict     = false
   tags = [
     "..."
   ]

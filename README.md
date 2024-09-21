@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.4.4"
+      version = "0.4.5"
     }
   }
 }
