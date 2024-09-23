@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 1c118012fa9137969bd948e2375be0b5
+  docChecksum: 1c56c7ca8bb88e9f3f0a7643ee3863a4
   docVersion: 0.2.0
   speakeasyVersion: 1.396.7
   generationVersion: 2.415.6
-  releaseVersion: 0.4.1
-  configChecksum: 82a10c0503f9db25ac41c8bdc280746e
+  releaseVersion: 0.4.2
+  configChecksum: 122c582ae34924cbbbf36d5bcaf65981
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -158,7 +158,7 @@ examples:
         query:
           activity_id: "01F130Q52Q6MWSNS8N2AVXV4JN"
       requestBody:
-        application/json: {"_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "relations": [], "source_url": "https://some-api-url.com/download?file_id=123", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}}
+        application/json: {"_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "relations": [], "source_url": "https://some-api-url.com/download?file_id=123", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}}
       responses:
         "201":
           application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf", "versions": []}

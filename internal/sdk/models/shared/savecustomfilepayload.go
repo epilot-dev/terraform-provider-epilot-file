@@ -35,11 +35,13 @@ func (e *SaveCustomFilePayloadAccessControl) UnmarshalJSON(data []byte) error {
 }
 
 type SaveCustomFilePayload struct {
-	AdditionalProperties any                                 `additionalProperties:"true" json:"-"`
-	ID                   *string                             `json:"_id,omitempty"`
-	Purpose              []string                            `json:"_purpose,omitempty"`
-	Tags                 []string                            `json:"_tags,omitempty"`
-	AccessControl        *SaveCustomFilePayloadAccessControl `default:"private" json:"access_control"`
+	AdditionalProperties any     `additionalProperties:"true" json:"-"`
+	ID                   *string `json:"_id,omitempty"`
+	// Manifest ID used to create/update the entity
+	Manifest      []string                            `json:"_manifest,omitempty"`
+	Purpose       []string                            `json:"_purpose,omitempty"`
+	Tags          []string                            `json:"_tags,omitempty"`
+	AccessControl *SaveCustomFilePayloadAccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
 	// Deprecated, use _id instead
@@ -77,6 +79,13 @@ func (o *SaveCustomFilePayload) GetID() *string {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *SaveCustomFilePayload) GetManifest() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Manifest
 }
 
 func (o *SaveCustomFilePayload) GetPurpose() []string {
