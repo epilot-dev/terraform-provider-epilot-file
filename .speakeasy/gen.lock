@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: 1c56c7ca8bb88e9f3f0a7643ee3863a4
+  docChecksum: d3aa063b0ea9a835fec5be6f1dc06f50
   docVersion: 0.2.0
-  speakeasyVersion: 1.396.7
-  generationVersion: 2.415.6
-  releaseVersion: 0.4.2
-  configChecksum: 122c582ae34924cbbbf36d5bcaf65981
+  speakeasyVersion: 1.405.6
+  generationVersion: 2.428.1
+  releaseVersion: 0.4.3
+  configChecksum: 6bc9811f971ab1d0e6f25e4b5d4b4ac4
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -15,7 +15,7 @@ features:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.2
     constsAndDefaults: 0.1.4
-    core: 3.24.11
+    core: 3.24.15
     deprecations: 2.81.1
     envVarSecurityUsage: 0.1.0
     globalSecurity: 2.81.8
@@ -171,7 +171,7 @@ examples:
         application/json: {"filename": "document.pdf", "index_tag": "2f6a377c8e78", "metadata": {"color": "blue"}, "mime_type": "application/pdf"}
       responses:
         "201":
-          application/json: {"public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
+          application/json: {"public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
   deleteFile:
     speakeasy-default-delete-file:
       parameters:
