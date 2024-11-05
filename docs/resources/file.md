@@ -30,6 +30,7 @@ resource "epilot-file_file" "my_file" {
   additional = {
     "see" : jsonencode("documentation"),
   }
+  async               = true
   custom_download_url = "https://some-api-url.com/download?file_id=123"
   filename            = "document.pdf"
   fill_activity       = true
@@ -46,7 +47,7 @@ resource "epilot-file_file" "my_file" {
     key    = "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"
   }
   source_url = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
-  strict     = true
+  strict     = false
   tags = [
     "..."
   ]
@@ -64,6 +65,7 @@ resource "epilot-file_file" "my_file" {
 - `acl` (Attributes) Access control list (ACL) for an entity. Defines sharing access to external orgs or users. (see [below for nested schema](#nestedatt--acl))
 - `activity_id` (String) Activity to include in event feed
 - `additional` (Map of String) Additional fields that are not part of the schema
+- `async` (Boolean) Don't wait for updated entity to become available in Search API. Useful for large migrations. Default: false
 - `custom_download_url` (String) Custom external download url used for the file
 - `filename` (String)
 - `fill_activity` (Boolean) Update the diff and entity for the custom activity included in the query.

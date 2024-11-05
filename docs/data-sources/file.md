@@ -14,8 +14,9 @@ File DataSource
 
 ```terraform
 data "epilot-file_file" "my_file" {
+  async  = true
   id     = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
-  strict = true
+  strict = false
 }
 ```
 
@@ -24,6 +25,7 @@ data "epilot-file_file" "my_file" {
 
 ### Optional
 
+- `async` (Boolean) Don't wait for updated entity to become available in Search API. Useful for large migrations
 - `strict` (Boolean) When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 
 ### Read-Only

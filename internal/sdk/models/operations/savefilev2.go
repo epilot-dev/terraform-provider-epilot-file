@@ -12,6 +12,8 @@ type SaveFileV2Request struct {
 	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
+	// Don't wait for updated entity to become available in Search API. Useful for large migrations
+	Async *bool `default:"false" queryParam:"style=form,explode=true,name=async"`
 	// Update the diff and entity for the custom activity included in the query.
 	// Pending state on activity is automatically ended when activity is filled.
 	//
@@ -43,6 +45,13 @@ func (o *SaveFileV2Request) GetActivityID() *string {
 		return nil
 	}
 	return o.ActivityID
+}
+
+func (o *SaveFileV2Request) GetAsync() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Async
 }
 
 func (o *SaveFileV2Request) GetFillActivity() *bool {

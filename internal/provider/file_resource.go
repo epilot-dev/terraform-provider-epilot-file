@@ -5,6 +5,11 @@ package provider
 import (
 	"context"
 	"fmt"
+	speakeasy_int64planmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/int64planmodifier"
+	speakeasy_listplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/listplanmodifier"
+	speakeasy_mapplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/mapplanmodifier"
+	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/objectplanmodifier"
+	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
@@ -16,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -41,6 +47,7 @@ type FileResourceModel struct {
 	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
 	ActivityID        types.String              `tfsdk:"activity_id"`
 	Additional        map[string]types.String   `tfsdk:"additional"`
+	Async             types.Bool                `tfsdk:"async"`
 	CreatedAt         types.String              `tfsdk:"created_at"`
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
 	Filename          types.String              `tfsdk:"filename"`
@@ -74,9 +81,12 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		MarkdownDescription: "File Resource",
 		Attributes: map[string]schema.Attribute{
 			"access_control": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString("private"),
+				Computed: true,
+				Optional: true,
+				Default:  stringdefault.StaticString("private"),
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `Default: "private"; must be one of ["private", "public-read"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
@@ -88,20 +98,32 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"acl": schema.SingleNestedAttribute{
 				Computed: true,
 				Optional: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
 				Attributes: map[string]schema.Attribute{
 					"delete": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.List{
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
 						ElementType: types.StringType,
 					},
 					"edit": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.List{
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
 						ElementType: types.StringType,
 					},
 					"view": schema.ListAttribute{
-						Computed:    true,
-						Optional:    true,
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.List{
+							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						},
 						ElementType: types.StringType,
 					},
 				},
@@ -112,28 +134,46 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `Activity to include in event feed`,
 			},
 			"additional": schema.MapAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.Map{
+					speakeasy_mapplanmodifier.SuppressDiff(speakeasy_mapplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 				Description: `Additional fields that are not part of the schema`,
 				Validators: []validator.Map{
 					mapvalidator.ValueStringsAre(validators.IsValidJSON()),
 				},
 			},
+			"async": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: `Don't wait for updated entity to become available in Search API. Useful for large migrations. Default: false`,
+			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Validators: []validator.String{
 					validators.IsRFC3339(),
 				},
 			},
 			"custom_download_url": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `Custom external download url used for the file`,
 			},
 			"filename": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 			},
 			"fill_activity": schema.BoolAttribute{
 				Computed: true,
@@ -146,62 +186,104 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"id": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 			},
 			"manifest": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 				Description: `Manifest ID used to create/update the entity`,
 			},
 			"mime_type": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `MIME type of the file`,
 			},
 			"org": schema.StringAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 			},
 			"owners": schema.ListNestedAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
 					Attributes: map[string]schema.Attribute{
 						"org_id": schema.StringAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 						},
 						"user_id": schema.StringAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 						},
 					},
 				},
 			},
 			"public_url": schema.StringAttribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `Direct URL for file (public only if file access control is public-read)`,
 			},
 			"purpose": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 			},
 			"readable_size": schema.StringAttribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `Human readable file size`,
 			},
 			"s3ref": schema.SingleNestedAttribute{
 				Computed: true,
 				Optional: true,
+				PlanModifiers: []planmodifier.Object{
+					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+				},
 				Attributes: map[string]schema.Attribute{
 					"bucket": schema.StringAttribute{
-						Computed:    true,
-						Optional:    true,
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.String{
+							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+						},
 						Description: `Not Null`,
 						Validators: []validator.String{
 							speakeasy_stringvalidators.NotNull(),
 						},
 					},
 					"key": schema.StringAttribute{
-						Computed:    true,
-						Optional:    true,
+						Computed: true,
+						Optional: true,
+						PlanModifiers: []planmodifier.String{
+							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+						},
 						Description: `Not Null`,
 						Validators: []validator.String{
 							speakeasy_stringvalidators.NotNull(),
@@ -210,19 +292,28 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 			},
 			"schema": schema.StringAttribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `must be "file"`,
 				Validators: []validator.String{
 					stringvalidator.OneOf("file"),
 				},
 			},
 			"size_bytes": schema.Int64Attribute{
-				Computed:    true,
+				Computed: true,
+				PlanModifiers: []planmodifier.Int64{
+					speakeasy_int64planmodifier.SuppressDiff(speakeasy_int64planmodifier.ExplicitSuppress),
+				},
 				Description: `File size in bytes`,
 			},
 			"source_url": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true`,
 			},
 			"strict": schema.BoolAttribute{
@@ -232,17 +323,26 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Description: `When passed true, the response will contain only fields that match the schema, with non-matching fields included in ` + "`" + `__additional` + "`" + `. Default: false`,
 			},
 			"tags": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				ElementType: types.StringType,
 			},
 			"title": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 			},
 			"type": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `must be one of ["document", "document_template", "text", "image", "video", "audio", "spreadsheet", "presentation", "font", "archive", "application", "unknown"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
@@ -263,36 +363,66 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Validators: []validator.String{
 					validators.IsRFC3339(),
 				},
 			},
 			"versions": schema.ListNestedAttribute{
 				Computed: true,
+				PlanModifiers: []planmodifier.List{
+					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+				},
 				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
 					Attributes: map[string]schema.Attribute{
 						"filename": schema.StringAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 						},
 						"mime_type": schema.StringAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 						},
 						"readable_size": schema.StringAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 						},
 						"s3ref": schema.SingleNestedAttribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
 							Attributes: map[string]schema.Attribute{
 								"bucket": schema.StringAttribute{
 									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
 								},
 								"key": schema.StringAttribute{
 									Computed: true,
+									PlanModifiers: []planmodifier.String{
+										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+									},
 								},
 							},
 						},
 						"size_bytes": schema.Int64Attribute{
 							Computed: true,
+							PlanModifiers: []planmodifier.Int64{
+								speakeasy_int64planmodifier.SuppressDiff(speakeasy_int64planmodifier.ExplicitSuppress),
+							},
 						},
 					},
 				},
@@ -346,6 +476,12 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	} else {
 		activityID = nil
 	}
+	async := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async = data.Async.ValueBool()
+	} else {
+		async = nil
+	}
 	fillActivity := new(bool)
 	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
 		*fillActivity = data.FillActivity.ValueBool()
@@ -361,6 +497,7 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
 		ActivityID:        activityID,
+		Async:             async,
 		FillActivity:      fillActivity,
 		Strict:            strict,
 	}
@@ -386,6 +523,12 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	data.RefreshFromSharedFileEntity(res.FileEntity)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	async1 := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async1 = data.Async.ValueBool()
+	} else {
+		async1 = nil
+	}
 	var id string
 	id = data.ID.ValueString()
 
@@ -396,6 +539,7 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		strict1 = nil
 	}
 	request1 := operations.GetFileRequest{
+		Async:  async1,
 		ID:     id,
 		Strict: strict1,
 	}
@@ -444,6 +588,12 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 
+	async := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async = data.Async.ValueBool()
+	} else {
+		async = nil
+	}
 	var id string
 	id = data.ID.ValueString()
 
@@ -454,6 +604,7 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		strict = nil
 	}
 	request := operations.GetFileRequest{
+		Async:  async,
 		ID:     id,
 		Strict: strict,
 	}
@@ -508,6 +659,12 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	} else {
 		activityID = nil
 	}
+	async := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async = data.Async.ValueBool()
+	} else {
+		async = nil
+	}
 	fillActivity := new(bool)
 	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
 		*fillActivity = data.FillActivity.ValueBool()
@@ -523,6 +680,7 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	request := operations.SaveFileV2Request{
 		SaveFilePayloadV2: saveFilePayloadV2,
 		ActivityID:        activityID,
+		Async:             async,
 		FillActivity:      fillActivity,
 		Strict:            strict,
 	}
@@ -548,6 +706,12 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	data.RefreshFromSharedFileEntity(res.FileEntity)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	async1 := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async1 = data.Async.ValueBool()
+	} else {
+		async1 = nil
+	}
 	var id string
 	id = data.ID.ValueString()
 
@@ -558,6 +722,7 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		strict1 = nil
 	}
 	request1 := operations.GetFileRequest{
+		Async:  async1,
 		ID:     id,
 		Strict: strict1,
 	}

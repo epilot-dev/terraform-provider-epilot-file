@@ -32,6 +32,7 @@ type FileDataSourceModel struct {
 	AccessControl     types.String              `tfsdk:"access_control"`
 	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
 	Additional        map[string]types.String   `tfsdk:"additional"`
+	Async             types.Bool                `tfsdk:"async"`
 	CreatedAt         types.String              `tfsdk:"created_at"`
 	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
 	Filename          types.String              `tfsdk:"filename"`
@@ -91,6 +92,11 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Computed:    true,
 				ElementType: types.StringType,
 				Description: `Additional fields that are not part of the schema`,
+			},
+			"async": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `Don't wait for updated entity to become available in Search API. Useful for large migrations`,
 			},
 			"created_at": schema.StringAttribute{
 				Computed: true,
@@ -254,6 +260,12 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
+	async := new(bool)
+	if !data.Async.IsUnknown() && !data.Async.IsNull() {
+		*async = data.Async.ValueBool()
+	} else {
+		async = nil
+	}
 	var id string
 	id = data.ID.ValueString()
 
@@ -264,6 +276,7 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		strict = nil
 	}
 	request := operations.GetFileRequest{
+		Async:  async,
 		ID:     id,
 		Strict: strict,
 	}

@@ -9,7 +9,9 @@ import (
 )
 
 type GetFileRequest struct {
-	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// Don't wait for updated entity to become available in Search API. Useful for large migrations
+	Async *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
+	ID    string `pathParam:"style=simple,explode=false,name=id"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -23,6 +25,13 @@ func (g *GetFileRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (o *GetFileRequest) GetAsync() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Async
 }
 
 func (o *GetFileRequest) GetID() string {

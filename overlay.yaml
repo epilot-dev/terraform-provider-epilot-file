@@ -36,3 +36,6 @@ actions:
       $ref: "#/components/schemas/FileEntity"
   - target: $["components"]["schemas"]["SaveFilePayloadV2"]["anyOf"]
     remove: yes
+  - target: $["components"]["schemas"]["FileEntity"]["allOf"][2]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true 
