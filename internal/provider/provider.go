@@ -100,15 +100,11 @@ func (p *EpilotFileProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *EpilotFileProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewFileResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *EpilotFileProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewFileDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {
