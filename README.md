@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.5.0"
+      version = "0.6.0"
     }
   }
 }
@@ -117,10 +117,7 @@ provider_installation {
 
 ### Resources
 
-* [epilot-file_file](docs/resources/file.md)
 ### Data Sources
-
-* [epilot-file_file](docs/data-sources/file.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Summary [summary] -->
