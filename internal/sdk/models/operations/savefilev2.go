@@ -14,6 +14,8 @@ type SaveFileV2Request struct {
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
 	Async *bool `default:"false" queryParam:"style=form,explode=true,name=async"`
+	// Delete the temp file from S3 after copying it permanently
+	DeleteTempFile *bool `default:"true" queryParam:"style=form,explode=true,name=delete_temp_file"`
 	// Update the diff and entity for the custom activity included in the query.
 	// Pending state on activity is automatically ended when activity is filled.
 	//
@@ -27,7 +29,7 @@ func (s SaveFileV2Request) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -52,6 +54,13 @@ func (o *SaveFileV2Request) GetAsync() *bool {
 		return nil
 	}
 	return o.Async
+}
+
+func (o *SaveFileV2Request) GetDeleteTempFile() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.DeleteTempFile
 }
 
 func (o *SaveFileV2Request) GetFillActivity() *bool {

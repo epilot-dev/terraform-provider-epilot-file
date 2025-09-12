@@ -46,7 +46,7 @@ type SaveS3FilePayload struct {
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
 	// Deprecated, use _id instead
 	//
-	// Deprecated field: This will be removed in a future release, please migrate away from it as soon as possible.
+	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 	FileEntityID *string `json:"file_entity_id,omitempty"`
 	Filename     *string `json:"filename,omitempty"`
 	// MIME type of the file
@@ -62,7 +62,7 @@ func (s SaveS3FilePayload) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SaveS3FilePayload) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, true); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil

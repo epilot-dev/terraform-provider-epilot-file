@@ -12,6 +12,7 @@ type DeleteFileRequest struct {
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	ID         string  `pathParam:"style=simple,explode=false,name=id"`
+	Purge      *bool   `default:"false" queryParam:"style=form,explode=true,name=purge"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -21,7 +22,7 @@ func (d DeleteFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DeleteFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
@@ -39,6 +40,13 @@ func (o *DeleteFileRequest) GetID() string {
 		return ""
 	}
 	return o.ID
+}
+
+func (o *DeleteFileRequest) GetPurge() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.Purge
 }
 
 func (o *DeleteFileRequest) GetStrict() *bool {

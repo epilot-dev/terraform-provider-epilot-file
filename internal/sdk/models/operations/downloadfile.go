@@ -20,7 +20,7 @@ func (d DownloadFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil

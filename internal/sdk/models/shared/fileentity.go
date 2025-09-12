@@ -58,39 +58,58 @@ func (e *AccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type FileEntityS3ref struct {
+	Bucket string `json:"bucket"`
+	Key    string `json:"key"`
+}
+
+func (o *FileEntityS3ref) GetBucket() string {
+	if o == nil {
+		return ""
+	}
+	return o.Bucket
+}
+
+func (o *FileEntityS3ref) GetKey() string {
+	if o == nil {
+		return ""
+	}
+	return o.Key
+}
+
 type FileEntity struct {
 	// Additional fields that are not part of the schema
 	Additional map[string]any `json:"__additional,omitempty"`
 	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
 	ACL       *BaseEntityACL `json:"_acl,omitempty"`
 	CreatedAt *time.Time     `json:"_created_at,omitempty"`
-	ID        *string        `json:"_id,omitempty"`
+	ID        string         `json:"_id"`
 	// Manifest ID used to create/update the entity
 	Manifest      []string          `json:"_manifest,omitempty"`
-	Org           *string           `json:"_org,omitempty"`
+	Org           string            `json:"_org"`
 	Owners        []BaseEntityOwner `json:"_owners,omitempty"`
 	Purpose       []string          `json:"_purpose,omitempty"`
-	Schema        *Schema           `json:"_schema,omitempty"`
+	Schema        Schema            `json:"_schema"`
 	Tags          []string          `json:"_tags,omitempty"`
-	Title         *string           `json:"_title,omitempty"`
+	Title         string            `json:"_title"`
 	UpdatedAt     *time.Time        `json:"_updated_at,omitempty"`
 	AccessControl *AccessControl    `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
-	Filename          *string `json:"filename,omitempty"`
+	Filename          string  `json:"filename"`
 	// MIME type of the file
 	MimeType *string `json:"mime_type,omitempty"`
 	// Direct URL for file (public only if file access control is public-read)
 	PublicURL *string `json:"public_url,omitempty"`
 	// Human readable file size
-	ReadableSize *string `json:"readable_size,omitempty"`
-	S3ref        *S3Ref  `json:"s3ref,omitempty"`
+	ReadableSize *string          `json:"readable_size,omitempty"`
+	S3ref        *FileEntityS3ref `json:"s3ref,omitempty"`
 	// File size in bytes
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
 	SourceURL *string    `json:"source_url,omitempty"`
-	Type      *FileType  `json:"type,omitempty"`
-	Versions  []FileItem `json:"versions,omitempty"`
+	Type      FileType   `json:"type"`
+	Versions  []FileItem `json:"versions"`
 }
 
 func (f FileEntity) MarshalJSON() ([]byte, error) {
@@ -98,7 +117,7 @@ func (f FileEntity) MarshalJSON() ([]byte, error) {
 }
 
 func (f *FileEntity) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"_id", "_org", "_schema", "_title", "filename", "type", "versions"}); err != nil {
 		return err
 	}
 	return nil
@@ -125,9 +144,9 @@ func (o *FileEntity) GetCreatedAt() *time.Time {
 	return o.CreatedAt
 }
 
-func (o *FileEntity) GetID() *string {
+func (o *FileEntity) GetID() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.ID
 }
@@ -139,9 +158,9 @@ func (o *FileEntity) GetManifest() []string {
 	return o.Manifest
 }
 
-func (o *FileEntity) GetOrg() *string {
+func (o *FileEntity) GetOrg() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Org
 }
@@ -160,9 +179,9 @@ func (o *FileEntity) GetPurpose() []string {
 	return o.Purpose
 }
 
-func (o *FileEntity) GetSchema() *Schema {
+func (o *FileEntity) GetSchema() Schema {
 	if o == nil {
-		return nil
+		return Schema("")
 	}
 	return o.Schema
 }
@@ -174,9 +193,9 @@ func (o *FileEntity) GetTags() []string {
 	return o.Tags
 }
 
-func (o *FileEntity) GetTitle() *string {
+func (o *FileEntity) GetTitle() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Title
 }
@@ -202,9 +221,9 @@ func (o *FileEntity) GetCustomDownloadURL() *string {
 	return o.CustomDownloadURL
 }
 
-func (o *FileEntity) GetFilename() *string {
+func (o *FileEntity) GetFilename() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Filename
 }
@@ -230,7 +249,7 @@ func (o *FileEntity) GetReadableSize() *string {
 	return o.ReadableSize
 }
 
-func (o *FileEntity) GetS3ref() *S3Ref {
+func (o *FileEntity) GetS3ref() *FileEntityS3ref {
 	if o == nil {
 		return nil
 	}
@@ -251,16 +270,16 @@ func (o *FileEntity) GetSourceURL() *string {
 	return o.SourceURL
 }
 
-func (o *FileEntity) GetType() *FileType {
+func (o *FileEntity) GetType() FileType {
 	if o == nil {
-		return nil
+		return FileType("")
 	}
 	return o.Type
 }
 
 func (o *FileEntity) GetVersions() []FileItem {
 	if o == nil {
-		return nil
+		return []FileItem{}
 	}
 	return o.Versions
 }

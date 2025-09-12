@@ -10,8 +10,9 @@ import (
 
 type GetFileRequest struct {
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
-	Async *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
-	ID    string `pathParam:"style=simple,explode=false,name=id"`
+	Async     *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
+	ID        string `pathParam:"style=simple,explode=false,name=id"`
+	SourceURL *bool  `default:"false" queryParam:"style=form,explode=true,name=source_url"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -21,7 +22,7 @@ func (g GetFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
@@ -39,6 +40,13 @@ func (o *GetFileRequest) GetID() string {
 		return ""
 	}
 	return o.ID
+}
+
+func (o *GetFileRequest) GetSourceURL() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.SourceURL
 }
 
 func (o *GetFileRequest) GetStrict() *bool {

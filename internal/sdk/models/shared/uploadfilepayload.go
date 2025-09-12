@@ -21,7 +21,7 @@ func (u UploadFilePayload) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UploadFilePayload) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &u, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &u, "", false, []string{"filename"}); err != nil {
 		return err
 	}
 	return nil

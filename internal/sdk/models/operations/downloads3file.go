@@ -19,7 +19,7 @@ func (d DownloadS3FileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadS3FileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"s3_bucket", "s3_key"}); err != nil {
 		return err
 	}
 	return nil
