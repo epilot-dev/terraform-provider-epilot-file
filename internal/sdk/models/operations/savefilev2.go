@@ -14,6 +14,8 @@ type SaveFileV2Request struct {
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
 	Async *bool `default:"false" queryParam:"style=form,explode=true,name=async"`
+	// Delete the temp file from S3 after copying it permanently
+	DeleteTempFile *bool `default:"true" queryParam:"style=form,explode=true,name=delete_temp_file"`
 	// Update the diff and entity for the custom activity included in the query.
 	// Pending state on activity is automatically ended when activity is filled.
 	//
@@ -27,45 +29,52 @@ func (s SaveFileV2Request) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
-	if o == nil {
+func (s *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+	if s == nil {
 		return nil
 	}
-	return o.SaveFilePayloadV2
+	return s.SaveFilePayloadV2
 }
 
-func (o *SaveFileV2Request) GetActivityID() *string {
-	if o == nil {
+func (s *SaveFileV2Request) GetActivityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ActivityID
+	return s.ActivityID
 }
 
-func (o *SaveFileV2Request) GetAsync() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetAsync() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Async
+	return s.Async
 }
 
-func (o *SaveFileV2Request) GetFillActivity() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetDeleteTempFile() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.FillActivity
+	return s.DeleteTempFile
 }
 
-func (o *SaveFileV2Request) GetStrict() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetFillActivity() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Strict
+	return s.FillActivity
+}
+
+func (s *SaveFileV2Request) GetStrict() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.Strict
 }
 
 type SaveFileV2Response struct {
@@ -79,30 +88,30 @@ type SaveFileV2Response struct {
 	RawResponse *http.Response
 }
 
-func (o *SaveFileV2Response) GetContentType() string {
-	if o == nil {
+func (s *SaveFileV2Response) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (s *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.FileEntity
 }
 
-func (o *SaveFileV2Response) GetStatusCode() int {
-	if o == nil {
+func (s *SaveFileV2Response) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SaveFileV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SaveFileV2Response) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }

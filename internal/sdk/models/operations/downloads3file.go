@@ -19,31 +19,31 @@ func (d DownloadS3FileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadS3FileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"s3_bucket", "s3_key"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *DownloadS3FileRequest) GetAttachment() *bool {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetAttachment() *bool {
+	if d == nil {
 		return nil
 	}
-	return o.Attachment
+	return d.Attachment
 }
 
-func (o *DownloadS3FileRequest) GetS3Bucket() string {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetS3Bucket() string {
+	if d == nil {
 		return ""
 	}
-	return o.S3Bucket
+	return d.S3Bucket
 }
 
-func (o *DownloadS3FileRequest) GetS3Key() string {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetS3Key() string {
+	if d == nil {
 		return ""
 	}
-	return o.S3Key
+	return d.S3Key
 }
 
 // DownloadS3FileResponseBody - Generated thumbnail image
@@ -51,11 +51,11 @@ type DownloadS3FileResponseBody struct {
 	DownloadURL *string `json:"download_url,omitempty"`
 }
 
-func (o *DownloadS3FileResponseBody) GetDownloadURL() *string {
-	if o == nil {
+func (d *DownloadS3FileResponseBody) GetDownloadURL() *string {
+	if d == nil {
 		return nil
 	}
-	return o.DownloadURL
+	return d.DownloadURL
 }
 
 type DownloadS3FileResponse struct {
@@ -69,30 +69,30 @@ type DownloadS3FileResponse struct {
 	Object *DownloadS3FileResponseBody
 }
 
-func (o *DownloadS3FileResponse) GetContentType() string {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DownloadS3FileResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DownloadS3FileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DownloadS3FileResponse) GetObject() *DownloadS3FileResponseBody {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetObject() *DownloadS3FileResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }

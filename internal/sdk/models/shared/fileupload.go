@@ -7,18 +7,18 @@ type FileUploadS3ref struct {
 	Key    string `json:"key"`
 }
 
-func (o *FileUploadS3ref) GetBucket() string {
-	if o == nil {
+func (f *FileUploadS3ref) GetBucket() string {
+	if f == nil {
 		return ""
 	}
-	return o.Bucket
+	return f.Bucket
 }
 
-func (o *FileUploadS3ref) GetKey() string {
-	if o == nil {
+func (f *FileUploadS3ref) GetKey() string {
+	if f == nil {
 		return ""
 	}
-	return o.Key
+	return f.Key
 }
 
 type FileUpload struct {
@@ -28,23 +28,23 @@ type FileUpload struct {
 	UploadURL *string          `json:"upload_url,omitempty"`
 }
 
-func (o *FileUpload) GetPublicURL() *string {
-	if o == nil {
+func (f *FileUpload) GetPublicURL() *string {
+	if f == nil {
 		return nil
 	}
-	return o.PublicURL
+	return f.PublicURL
 }
 
-func (o *FileUpload) GetS3ref() *FileUploadS3ref {
-	if o == nil {
+func (f *FileUpload) GetS3ref() *FileUploadS3ref {
+	if f == nil {
 		return nil
 	}
-	return o.S3ref
+	return f.S3ref
 }
 
-func (o *FileUpload) GetUploadURL() *string {
-	if o == nil {
+func (f *FileUpload) GetUploadURL() *string {
+	if f == nil {
 		return nil
 	}
-	return o.UploadURL
+	return f.UploadURL
 }

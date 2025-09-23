@@ -22,38 +22,38 @@ func (p PreviewFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PreviewFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *PreviewFileRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewFileRequest) GetID() string {
-	if o == nil {
+func (p *PreviewFileRequest) GetID() string {
+	if p == nil {
 		return ""
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PreviewFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetVersion() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Version
+	return p.Version
 }
 
-func (o *PreviewFileRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
 }
 
 type PreviewFileResponse struct {
@@ -65,23 +65,23 @@ type PreviewFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *PreviewFileResponse) GetContentType() string {
-	if o == nil {
+func (p *PreviewFileResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PreviewFileResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PreviewFileResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PreviewFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewFileResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }

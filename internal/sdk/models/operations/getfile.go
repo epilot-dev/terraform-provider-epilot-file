@@ -10,8 +10,9 @@ import (
 
 type GetFileRequest struct {
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
-	Async *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
-	ID    string `pathParam:"style=simple,explode=false,name=id"`
+	Async     *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
+	ID        string `pathParam:"style=simple,explode=false,name=id"`
+	SourceURL *bool  `default:"false" queryParam:"style=form,explode=true,name=source_url"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -21,31 +22,38 @@ func (g GetFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetFileRequest) GetAsync() *bool {
-	if o == nil {
+func (g *GetFileRequest) GetAsync() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.Async
+	return g.Async
 }
 
-func (o *GetFileRequest) GetID() string {
-	if o == nil {
+func (g *GetFileRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
 }
 
-func (o *GetFileRequest) GetStrict() *bool {
-	if o == nil {
+func (g *GetFileRequest) GetSourceURL() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.Strict
+	return g.SourceURL
+}
+
+func (g *GetFileRequest) GetStrict() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Strict
 }
 
 type GetFileResponse struct {
@@ -59,30 +67,30 @@ type GetFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *GetFileResponse) GetContentType() string {
-	if o == nil {
+func (g *GetFileResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetFileResponse) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (g *GetFileResponse) GetFileEntity() *shared.FileEntity {
+	if g == nil {
 		return nil
 	}
-	return o.FileEntity
+	return g.FileEntity
 }
 
-func (o *GetFileResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetFileResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetFileResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }

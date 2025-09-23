@@ -11,11 +11,11 @@ type VerifyCustomDownloadURLResponseBody struct {
 	Valid *bool `json:"valid,omitempty"`
 }
 
-func (o *VerifyCustomDownloadURLResponseBody) GetValid() *bool {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponseBody) GetValid() *bool {
+	if v == nil {
 		return nil
 	}
-	return o.Valid
+	return v.Valid
 }
 
 type VerifyCustomDownloadURLResponse struct {
@@ -29,30 +29,30 @@ type VerifyCustomDownloadURLResponse struct {
 	Object *VerifyCustomDownloadURLResponseBody
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetContentType() string {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetContentType() string {
+	if v == nil {
 		return ""
 	}
-	return o.ContentType
+	return v.ContentType
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetStatusCode() int {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetStatusCode() int {
+	if v == nil {
 		return 0
 	}
-	return o.StatusCode
+	return v.StatusCode
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetRawResponse() *http.Response {
+	if v == nil {
 		return nil
 	}
-	return o.RawResponse
+	return v.RawResponse
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetObject() *VerifyCustomDownloadURLResponseBody {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetObject() *VerifyCustomDownloadURLResponseBody {
+	if v == nil {
 		return nil
 	}
-	return o.Object
+	return v.Object
 }
