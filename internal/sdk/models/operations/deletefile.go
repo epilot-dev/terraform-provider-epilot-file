@@ -12,6 +12,7 @@ type DeleteFileRequest struct {
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	ID         string  `pathParam:"style=simple,explode=false,name=id"`
+	Purge      *bool   `default:"false" queryParam:"style=form,explode=true,name=purge"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -21,31 +22,38 @@ func (d DeleteFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DeleteFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *DeleteFileRequest) GetActivityID() *string {
-	if o == nil {
+func (d *DeleteFileRequest) GetActivityID() *string {
+	if d == nil {
 		return nil
 	}
-	return o.ActivityID
+	return d.ActivityID
 }
 
-func (o *DeleteFileRequest) GetID() string {
-	if o == nil {
+func (d *DeleteFileRequest) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
-func (o *DeleteFileRequest) GetStrict() *bool {
-	if o == nil {
+func (d *DeleteFileRequest) GetPurge() *bool {
+	if d == nil {
 		return nil
 	}
-	return o.Strict
+	return d.Purge
+}
+
+func (d *DeleteFileRequest) GetStrict() *bool {
+	if d == nil {
+		return nil
+	}
+	return d.Strict
 }
 
 type DeleteFileResponse struct {
@@ -59,30 +67,30 @@ type DeleteFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *DeleteFileResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteFileResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteFileResponse) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (d *DeleteFileResponse) GetFileEntity() *shared.FileEntity {
+	if d == nil {
 		return nil
 	}
-	return o.FileEntity
+	return d.FileEntity
 }
 
-func (o *DeleteFileResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteFileResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteFileResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }

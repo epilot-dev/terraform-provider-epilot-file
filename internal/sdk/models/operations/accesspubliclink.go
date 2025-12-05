@@ -7,22 +7,30 @@ import (
 )
 
 type AccessPublicLinkRequest struct {
-	Filename string `pathParam:"style=simple,explode=false,name=filename"`
-	ID       string `pathParam:"style=simple,explode=false,name=id"`
+	Filename string  `pathParam:"style=simple,explode=false,name=filename"`
+	Hash     *string `queryParam:"style=form,explode=true,name=hash"`
+	ID       string  `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *AccessPublicLinkRequest) GetFilename() string {
-	if o == nil {
+func (a *AccessPublicLinkRequest) GetFilename() string {
+	if a == nil {
 		return ""
 	}
-	return o.Filename
+	return a.Filename
 }
 
-func (o *AccessPublicLinkRequest) GetID() string {
-	if o == nil {
+func (a *AccessPublicLinkRequest) GetHash() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Hash
+}
+
+func (a *AccessPublicLinkRequest) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
 }
 
 type AccessPublicLinkResponse struct {
@@ -34,23 +42,23 @@ type AccessPublicLinkResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *AccessPublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (a *AccessPublicLinkResponse) GetContentType() string {
+	if a == nil {
 		return ""
 	}
-	return o.ContentType
+	return a.ContentType
 }
 
-func (o *AccessPublicLinkResponse) GetStatusCode() int {
-	if o == nil {
+func (a *AccessPublicLinkResponse) GetStatusCode() int {
+	if a == nil {
 		return 0
 	}
-	return o.StatusCode
+	return a.StatusCode
 }
 
-func (o *AccessPublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (a *AccessPublicLinkResponse) GetRawResponse() *http.Response {
+	if a == nil {
 		return nil
 	}
-	return o.RawResponse
+	return a.RawResponse
 }

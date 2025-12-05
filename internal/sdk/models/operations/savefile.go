@@ -21,31 +21,31 @@ func (s SaveFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SaveFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *SaveFileRequest) GetSaveFilePayload() *shared.SaveFilePayload {
-	if o == nil {
+func (s *SaveFileRequest) GetSaveFilePayload() *shared.SaveFilePayload {
+	if s == nil {
 		return nil
 	}
-	return o.SaveFilePayload
+	return s.SaveFilePayload
 }
 
-func (o *SaveFileRequest) GetActivityID() *string {
-	if o == nil {
+func (s *SaveFileRequest) GetActivityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ActivityID
+	return s.ActivityID
 }
 
-func (o *SaveFileRequest) GetAsync() *bool {
-	if o == nil {
+func (s *SaveFileRequest) GetAsync() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Async
+	return s.Async
 }
 
 type SaveFileResponse struct {
@@ -59,30 +59,30 @@ type SaveFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *SaveFileResponse) GetContentType() string {
-	if o == nil {
+func (s *SaveFileResponse) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SaveFileResponse) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (s *SaveFileResponse) GetFileEntity() *shared.FileEntity {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.FileEntity
 }
 
-func (o *SaveFileResponse) GetStatusCode() int {
-	if o == nil {
+func (s *SaveFileResponse) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SaveFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SaveFileResponse) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }

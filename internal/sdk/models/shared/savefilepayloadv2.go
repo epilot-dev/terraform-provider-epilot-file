@@ -3,165 +3,122 @@
 package shared
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
 )
 
-type SaveFilePayloadV2AccessControl string
+type SaveFilePayloadV2Type string
 
 const (
-	SaveFilePayloadV2AccessControlPrivate    SaveFilePayloadV2AccessControl = "private"
-	SaveFilePayloadV2AccessControlPublicRead SaveFilePayloadV2AccessControl = "public-read"
+	SaveFilePayloadV2TypeSaveS3FilePayload            SaveFilePayloadV2Type = "SaveS3FilePayload"
+	SaveFilePayloadV2TypeSaveFileFromSourceURLPayload SaveFilePayloadV2Type = "SaveFileFromSourceURLPayload"
+	SaveFilePayloadV2TypeSaveCustomFilePayload        SaveFilePayloadV2Type = "SaveCustomFilePayload"
 )
 
-func (e SaveFilePayloadV2AccessControl) ToPointer() *SaveFilePayloadV2AccessControl {
-	return &e
-}
-func (e *SaveFilePayloadV2AccessControl) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "private":
-		fallthrough
-	case "public-read":
-		*e = SaveFilePayloadV2AccessControl(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for SaveFilePayloadV2AccessControl: %v", v)
-	}
-}
-
 type SaveFilePayloadV2 struct {
-	// Additional fields that are not part of the schema
-	Additional map[string]any `json:"__additional,omitempty"`
-	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
-	ACL *BaseEntityACL `json:"_acl,omitempty"`
-	ID  *string        `json:"_id,omitempty"`
-	// Manifest ID used to create/update the entity
-	Manifest      []string                        `json:"_manifest,omitempty"`
-	Purpose       []string                        `json:"_purpose,omitempty"`
-	Tags          []string                        `json:"_tags,omitempty"`
-	Title         *string                         `json:"_title,omitempty"`
-	AccessControl *SaveFilePayloadV2AccessControl `default:"private" json:"access_control"`
-	// Custom external download url used for the file
-	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
-	Filename          *string `json:"filename,omitempty"`
-	// MIME type of the file
-	MimeType *string `json:"mime_type,omitempty"`
-	S3ref    *S3Ref  `json:"s3ref,omitempty"`
-	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
-	SourceURL *string   `json:"source_url,omitempty"`
-	Type      *FileType `json:"type,omitempty"`
+	SaveS3FilePayload            *SaveS3FilePayload            `queryParam:"inline,name=SaveFilePayloadV2"`
+	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload `queryParam:"inline,name=SaveFilePayloadV2"`
+	SaveCustomFilePayload        *SaveCustomFilePayload        `queryParam:"inline,name=SaveFilePayloadV2"`
+
+	Type SaveFilePayloadV2Type
 }
 
-func (s SaveFilePayloadV2) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(s, "", false)
-}
+func CreateSaveFilePayloadV2SaveS3FilePayload(saveS3FilePayload SaveS3FilePayload) SaveFilePayloadV2 {
+	typ := SaveFilePayloadV2TypeSaveS3FilePayload
 
-func (s *SaveFilePayloadV2) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
-		return err
+	return SaveFilePayloadV2{
+		SaveS3FilePayload: &saveS3FilePayload,
+		Type:              typ,
 	}
-	return nil
 }
 
-func (o *SaveFilePayloadV2) GetAdditional() map[string]any {
-	if o == nil {
+func CreateSaveFilePayloadV2SaveFileFromSourceURLPayload(saveFileFromSourceURLPayload SaveFileFromSourceURLPayload) SaveFilePayloadV2 {
+	typ := SaveFilePayloadV2TypeSaveFileFromSourceURLPayload
+
+	return SaveFilePayloadV2{
+		SaveFileFromSourceURLPayload: &saveFileFromSourceURLPayload,
+		Type:                         typ,
+	}
+}
+
+func CreateSaveFilePayloadV2SaveCustomFilePayload(saveCustomFilePayload SaveCustomFilePayload) SaveFilePayloadV2 {
+	typ := SaveFilePayloadV2TypeSaveCustomFilePayload
+
+	return SaveFilePayloadV2{
+		SaveCustomFilePayload: &saveCustomFilePayload,
+		Type:                  typ,
+	}
+}
+
+func (u *SaveFilePayloadV2) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var saveS3FilePayload SaveS3FilePayload = SaveS3FilePayload{}
+	if err := utils.UnmarshalJSON(data, &saveS3FilePayload, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadV2TypeSaveS3FilePayload,
+			Value: &saveS3FilePayload,
+		})
+	}
+
+	var saveFileFromSourceURLPayload SaveFileFromSourceURLPayload = SaveFileFromSourceURLPayload{}
+	if err := utils.UnmarshalJSON(data, &saveFileFromSourceURLPayload, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadV2TypeSaveFileFromSourceURLPayload,
+			Value: &saveFileFromSourceURLPayload,
+		})
+	}
+
+	var saveCustomFilePayload SaveCustomFilePayload = SaveCustomFilePayload{}
+	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadV2TypeSaveCustomFilePayload,
+			Value: &saveCustomFilePayload,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFilePayloadV2", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestCandidate(candidates)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFilePayloadV2", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(SaveFilePayloadV2Type)
+	switch best.Type {
+	case SaveFilePayloadV2TypeSaveS3FilePayload:
+		u.SaveS3FilePayload = best.Value.(*SaveS3FilePayload)
+		return nil
+	case SaveFilePayloadV2TypeSaveFileFromSourceURLPayload:
+		u.SaveFileFromSourceURLPayload = best.Value.(*SaveFileFromSourceURLPayload)
+		return nil
+	case SaveFilePayloadV2TypeSaveCustomFilePayload:
+		u.SaveCustomFilePayload = best.Value.(*SaveCustomFilePayload)
 		return nil
 	}
-	return o.Additional
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFilePayloadV2", string(data))
 }
 
-func (o *SaveFilePayloadV2) GetACL() *BaseEntityACL {
-	if o == nil {
-		return nil
+func (u SaveFilePayloadV2) MarshalJSON() ([]byte, error) {
+	if u.SaveS3FilePayload != nil {
+		return utils.MarshalJSON(u.SaveS3FilePayload, "", true)
 	}
-	return o.ACL
-}
 
-func (o *SaveFilePayloadV2) GetID() *string {
-	if o == nil {
-		return nil
+	if u.SaveFileFromSourceURLPayload != nil {
+		return utils.MarshalJSON(u.SaveFileFromSourceURLPayload, "", true)
 	}
-	return o.ID
-}
 
-func (o *SaveFilePayloadV2) GetManifest() []string {
-	if o == nil {
-		return nil
+	if u.SaveCustomFilePayload != nil {
+		return utils.MarshalJSON(u.SaveCustomFilePayload, "", true)
 	}
-	return o.Manifest
-}
 
-func (o *SaveFilePayloadV2) GetPurpose() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Purpose
-}
-
-func (o *SaveFilePayloadV2) GetTags() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Tags
-}
-
-func (o *SaveFilePayloadV2) GetTitle() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Title
-}
-
-func (o *SaveFilePayloadV2) GetAccessControl() *SaveFilePayloadV2AccessControl {
-	if o == nil {
-		return nil
-	}
-	return o.AccessControl
-}
-
-func (o *SaveFilePayloadV2) GetCustomDownloadURL() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomDownloadURL
-}
-
-func (o *SaveFilePayloadV2) GetFilename() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Filename
-}
-
-func (o *SaveFilePayloadV2) GetMimeType() *string {
-	if o == nil {
-		return nil
-	}
-	return o.MimeType
-}
-
-func (o *SaveFilePayloadV2) GetS3ref() *S3Ref {
-	if o == nil {
-		return nil
-	}
-	return o.S3ref
-}
-
-func (o *SaveFilePayloadV2) GetSourceURL() *string {
-	if o == nil {
-		return nil
-	}
-	return o.SourceURL
-}
-
-func (o *SaveFilePayloadV2) GetType() *FileType {
-	if o == nil {
-		return nil
-	}
-	return o.Type
+	return nil, errors.New("could not marshal union type SaveFilePayloadV2: all fields are null")
 }

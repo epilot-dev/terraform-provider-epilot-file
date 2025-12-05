@@ -17,32 +17,32 @@ type PreviewS3FileGetRequest struct {
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
-func (o *PreviewS3FileGetRequest) GetBucket() string {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetBucket() string {
+	if p == nil {
 		return ""
 	}
-	return o.Bucket
+	return p.Bucket
 }
 
-func (o *PreviewS3FileGetRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewS3FileGetRequest) GetKey() string {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetKey() string {
+	if p == nil {
 		return ""
 	}
-	return o.Key
+	return p.Key
 }
 
-func (o *PreviewS3FileGetRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
 }
 
 type PreviewS3FileGetResponse struct {
@@ -54,23 +54,23 @@ type PreviewS3FileGetResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *PreviewS3FileGetResponse) GetContentType() string {
-	if o == nil {
+func (p *PreviewS3FileGetResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PreviewS3FileGetResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PreviewS3FileGetResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PreviewS3FileGetResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewS3FileGetResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }

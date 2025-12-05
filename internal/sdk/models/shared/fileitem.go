@@ -10,37 +10,37 @@ type FileItem struct {
 	SizeBytes    *int64  `json:"size_bytes,omitempty"`
 }
 
-func (o *FileItem) GetFilename() *string {
-	if o == nil {
+func (f *FileItem) GetFilename() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Filename
+	return f.Filename
 }
 
-func (o *FileItem) GetMimeType() *string {
-	if o == nil {
+func (f *FileItem) GetMimeType() *string {
+	if f == nil {
 		return nil
 	}
-	return o.MimeType
+	return f.MimeType
 }
 
-func (o *FileItem) GetReadableSize() *string {
-	if o == nil {
+func (f *FileItem) GetReadableSize() *string {
+	if f == nil {
 		return nil
 	}
-	return o.ReadableSize
+	return f.ReadableSize
 }
 
-func (o *FileItem) GetS3ref() *S3Ref {
-	if o == nil {
+func (f *FileItem) GetS3ref() *S3Ref {
+	if f == nil {
 		return nil
 	}
-	return o.S3ref
+	return f.S3ref
 }
 
-func (o *FileItem) GetSizeBytes() *int64 {
-	if o == nil {
+func (f *FileItem) GetSizeBytes() *int64 {
+	if f == nil {
 		return nil
 	}
-	return o.SizeBytes
+	return f.SizeBytes
 }

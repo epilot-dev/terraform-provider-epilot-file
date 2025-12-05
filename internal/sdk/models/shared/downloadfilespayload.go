@@ -8,16 +8,16 @@ type DownloadFilesPayload struct {
 	Version *int64 `json:"version,omitempty"`
 }
 
-func (o *DownloadFilesPayload) GetID() string {
-	if o == nil {
+func (d *DownloadFilesPayload) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
-func (o *DownloadFilesPayload) GetVersion() *int64 {
-	if o == nil {
+func (d *DownloadFilesPayload) GetVersion() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Version
+	return d.Version
 }

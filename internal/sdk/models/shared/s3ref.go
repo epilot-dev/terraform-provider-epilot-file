@@ -2,21 +2,36 @@
 
 package shared
 
+import (
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
+)
+
 type S3Ref struct {
 	Bucket string `json:"bucket"`
 	Key    string `json:"key"`
 }
 
-func (o *S3Ref) GetBucket() string {
-	if o == nil {
-		return ""
-	}
-	return o.Bucket
+func (s S3Ref) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
 }
 
-func (o *S3Ref) GetKey() string {
-	if o == nil {
+func (s *S3Ref) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"bucket", "key"}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *S3Ref) GetBucket() string {
+	if s == nil {
 		return ""
 	}
-	return o.Key
+	return s.Bucket
+}
+
+func (s *S3Ref) GetKey() string {
+	if s == nil {
+		return ""
+	}
+	return s.Key
 }

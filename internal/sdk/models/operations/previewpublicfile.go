@@ -24,45 +24,45 @@ func (p PreviewPublicFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PreviewPublicFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *PreviewPublicFileRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewPublicFileRequest) GetID() string {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetID() string {
+	if p == nil {
 		return ""
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PreviewPublicFileRequest) GetOrgID() *string {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetOrgID() *string {
+	if p == nil {
 		return nil
 	}
-	return o.OrgID
+	return p.OrgID
 }
 
-func (o *PreviewPublicFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetVersion() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Version
+	return p.Version
 }
 
-func (o *PreviewPublicFileRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
 }
 
 type PreviewPublicFileResponse struct {
@@ -74,23 +74,23 @@ type PreviewPublicFileResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *PreviewPublicFileResponse) GetContentType() string {
-	if o == nil {
+func (p *PreviewPublicFileResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PreviewPublicFileResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PreviewPublicFileResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PreviewPublicFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewPublicFileResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }

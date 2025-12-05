@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.5.0"
+      version = "0.6.0"
     }
   }
 }
@@ -112,29 +112,46 @@ provider_installation {
 ```
 <!-- End Testing the provider locally [usage] -->
 
+<!-- Start Authentication [security] -->
+## Authentication
+
+This provider supports authentication configuration via provider configuration.
+
+Available configuration:
+
+| Provider Attribute | Description |
+|---|---|
+| `cookie_auth` | Cookie with epilot OAuth2 token. |
+| `epilot_auth` | Authorization header with epilot OAuth2 bearer token. |
+<!-- End Authentication [security] -->
+
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
 ### Resources
 
-* [epilot-file_file](docs/resources/file.md)
 ### Data Sources
-
-* [epilot-file_file](docs/data-sources/file.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Summary [summary] -->
 ## Summary
 
 File API: Upload and manage epilot Files
+
+## Changelog
+<a href="changelog">View API Changelog</a>
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
+<!-- $toc-max-depth=2 -->
+* [epilot-file](#epilot-file)
+  * [Installation](#installation)
+  * [Testing the provider locally](#testing-the-provider-locally)
+  * [Authentication](#authentication)
+  * [Available Resources and Data Sources](#available-resources-and-data-sources)
+  * [Changelog](#changelog)
 
-* [Installation](#installation)
-* [Available Resources and Data Sources](#available-resources-and-data-sources)
-* [Testing the provider locally](#testing-the-provider-locally)
 <!-- End Table of Contents [toc] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->

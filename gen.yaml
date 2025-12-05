@@ -3,12 +3,24 @@ generation:
   sdkClassName: SDK
   usageSnippets:
     optionalPropertyRendering: withExample
+    sdkInitStyle: constructor
   fixes:
-    nameResolutionDec2023: false
+    nameResolutionFeb2025: false
     parameterOrderingFeb2024: false
     requestResponseComponentNamesFeb2024: false
+    securityFeb2025: false
+    sharedErrorComponentsApr2025: false
   auth:
     oAuth2ClientCredentialsEnabled: false
+    oAuth2PasswordEnabled: false
+    hoistGlobalSecurity: true
+  schemas:
+    allOfMergeStrategy: shallowMerge
+  requestBodyFieldName: ""
+  tests:
+    generateTests: true
+    generateNewTests: false
+    skipResponseBodyAssertions: false
   telemetryEnabled: false
 go:
   version: 0.0.1
@@ -27,13 +39,24 @@ go:
   outputModelSuffix: output
   packageName: openapi
 terraform:
-  version: 0.5.0
+  version: 0.6.0
   additionalDataSources: []
   additionalDependencies: {}
+  additionalEphemeralResources: []
+  additionalProviderAttributes:
+    httpHeaders: ""
+    tlsSkipVerify: ""
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
   author: epilot-dev
+  baseErrorName: SDKBaseError
+  defaultErrorName: SDKError
+  enableCustomCodeRegions: false
+  enableOperationSecurity: false
+  enableOperationServers: false
+  enableTypeDeduplication: true
   environmentVariables: []
+  excludeEmptyObjectSchemas: false
   imports:
     option: openapi
     paths:
@@ -42,6 +65,9 @@ terraform:
       operations: operations
       shared: shared
       webhooks: webhooks
+  includeEmptyObjects: false
+  inferUnionDiscriminators: false
   inputModelSuffix: input
   outputModelSuffix: output
   packageName: epilot-file
+  unionStrategy: populated-fields

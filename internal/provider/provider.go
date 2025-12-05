@@ -7,6 +7,7 @@ import (
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -14,7 +15,8 @@ import (
 	"net/http"
 )
 
-var _ provider.Provider = &EpilotFileProvider{}
+var _ provider.Provider = (*EpilotFileProvider)(nil)
+var _ provider.ProviderWithEphemeralResources = (*EpilotFileProvider)(nil)
 
 type EpilotFileProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -25,9 +27,9 @@ type EpilotFileProvider struct {
 
 // EpilotFileProviderModel describes the provider data model.
 type EpilotFileProviderModel struct {
-	ServerURL  types.String `tfsdk:"server_url"`
 	CookieAuth types.String `tfsdk:"cookie_auth"`
 	EpilotAuth types.String `tfsdk:"epilot_auth"`
+	ServerURL  types.String `tfsdk:"server_url"`
 }
 
 func (p *EpilotFileProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -37,22 +39,26 @@ func (p *EpilotFileProvider) Metadata(ctx context.Context, req provider.Metadata
 
 func (p *EpilotFileProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: `File API: Upload and manage epilot Files`,
 		Attributes: map[string]schema.Attribute{
-			"server_url": schema.StringAttribute{
-				MarkdownDescription: "Server URL (defaults to https://file.sls.epilot.io)",
-				Optional:            true,
-				Required:            false,
-			},
 			"cookie_auth": schema.StringAttribute{
-				Sensitive: true,
-				Optional:  true,
+				MarkdownDescription: `Cookie with epilot OAuth2 token.`,
+				Optional:            true,
+				Sensitive:           true,
 			},
 			"epilot_auth": schema.StringAttribute{
-				Sensitive: true,
-				Optional:  true,
+				MarkdownDescription: `Authorization header with epilot OAuth2 bearer token.`,
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"server_url": schema.StringAttribute{
+				Description: `Server URL (defaults to https://file.sls.epilot.io)`,
+				Optional:    true,
 			},
 		},
+		MarkdownDescription: `File API: Upload and manage epilot Files` + "\n" +
+			`` + "\n" +
+			`## Changelog` + "\n" +
+			`<a href="changelog">View API Changelog</a>`,
 	}
 }
 
@@ -65,50 +71,52 @@ func (p *EpilotFileProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	ServerURL := data.ServerURL.ValueString()
+	serverUrl := data.ServerURL.ValueString()
 
-	if ServerURL == "" {
-		ServerURL = "https://file.sls.epilot.io"
+	if serverUrl == "" {
+		serverUrl = "https://file.sls.epilot.io"
 	}
 
-	cookieAuth := new(string)
-	if !data.CookieAuth.IsUnknown() && !data.CookieAuth.IsNull() {
-		*cookieAuth = data.CookieAuth.ValueString()
-	} else {
-		cookieAuth = nil
+	security := shared.Security{}
+
+	if !data.CookieAuth.IsUnknown() {
+		security.CookieAuth = data.CookieAuth.ValueStringPointer()
 	}
-	epilotAuth := new(string)
-	if !data.EpilotAuth.IsUnknown() && !data.EpilotAuth.IsNull() {
-		*epilotAuth = data.EpilotAuth.ValueString()
-	} else {
-		epilotAuth = nil
+
+	if !data.EpilotAuth.IsUnknown() {
+		security.EpilotAuth = data.EpilotAuth.ValueStringPointer()
 	}
-	security := shared.Security{
-		CookieAuth: cookieAuth,
-		EpilotAuth: epilotAuth,
+
+	providerHTTPTransportOpts := ProviderHTTPTransportOpts{
+		SetHeaders: make(map[string]string),
+		Transport:  http.DefaultTransport,
 	}
+
+	httpClient := http.DefaultClient
+	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
-		sdk.WithServerURL(ServerURL),
+		sdk.WithServerURL(serverUrl),
 		sdk.WithSecurity(security),
-		sdk.WithClient(http.DefaultClient),
+		sdk.WithClient(httpClient),
 	}
-	client := sdk.New(opts...)
 
+	client := sdk.New(opts...)
 	resp.DataSourceData = client
+	resp.EphemeralResourceData = client
 	resp.ResourceData = client
 }
 
 func (p *EpilotFileProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewFileResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *EpilotFileProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewFileDataSource,
-	}
+	return []func() datasource.DataSource{}
+}
+
+func (p *EpilotFileProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{}
 }
 
 func New(version string) func() provider.Provider {

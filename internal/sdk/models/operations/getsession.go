@@ -15,23 +15,23 @@ type GetSessionResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *GetSessionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetSessionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetSessionResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetSessionResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetSessionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetSessionResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }

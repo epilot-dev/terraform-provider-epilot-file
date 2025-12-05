@@ -11,23 +11,23 @@ type PublicLink struct {
 	Link *string `json:"link,omitempty"`
 }
 
-func (o *PublicLink) GetID() *string {
-	if o == nil {
+func (p *PublicLink) GetID() *string {
+	if p == nil {
 		return nil
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PublicLink) GetLastAccessedAt() *string {
-	if o == nil {
+func (p *PublicLink) GetLastAccessedAt() *string {
+	if p == nil {
 		return nil
 	}
-	return o.LastAccessedAt
+	return p.LastAccessedAt
 }
 
-func (o *PublicLink) GetLink() *string {
-	if o == nil {
+func (p *PublicLink) GetLink() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Link
+	return p.Link
 }

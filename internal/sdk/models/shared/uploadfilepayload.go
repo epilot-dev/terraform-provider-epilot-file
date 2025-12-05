@@ -21,36 +21,36 @@ func (u UploadFilePayload) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UploadFilePayload) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &u, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &u, "", false, []string{"filename"}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *UploadFilePayload) GetFilename() string {
-	if o == nil {
+func (u *UploadFilePayload) GetFilename() string {
+	if u == nil {
 		return ""
 	}
-	return o.Filename
+	return u.Filename
 }
 
-func (o *UploadFilePayload) GetIndexTag() *string {
-	if o == nil {
+func (u *UploadFilePayload) GetIndexTag() *string {
+	if u == nil {
 		return nil
 	}
-	return o.IndexTag
+	return u.IndexTag
 }
 
-func (o *UploadFilePayload) GetMetadata() map[string]string {
-	if o == nil {
+func (u *UploadFilePayload) GetMetadata() map[string]string {
+	if u == nil {
 		return nil
 	}
-	return o.Metadata
+	return u.Metadata
 }
 
-func (o *UploadFilePayload) GetMimeType() *string {
-	if o == nil {
+func (u *UploadFilePayload) GetMimeType() *string {
+	if u == nil {
 		return nil
 	}
-	return o.MimeType
+	return u.MimeType
 }
