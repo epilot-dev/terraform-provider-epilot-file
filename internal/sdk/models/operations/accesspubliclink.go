@@ -7,8 +7,9 @@ import (
 )
 
 type AccessPublicLinkRequest struct {
-	Filename string `pathParam:"style=simple,explode=false,name=filename"`
-	ID       string `pathParam:"style=simple,explode=false,name=id"`
+	Filename string  `pathParam:"style=simple,explode=false,name=filename"`
+	Hash     *string `queryParam:"style=form,explode=true,name=hash"`
+	ID       string  `pathParam:"style=simple,explode=false,name=id"`
 }
 
 func (o *AccessPublicLinkRequest) GetFilename() string {
@@ -16,6 +17,13 @@ func (o *AccessPublicLinkRequest) GetFilename() string {
 		return ""
 	}
 	return o.Filename
+}
+
+func (o *AccessPublicLinkRequest) GetHash() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Hash
 }
 
 func (o *AccessPublicLinkRequest) GetID() string {

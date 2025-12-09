@@ -51,6 +51,7 @@ type FileResourceModel struct {
 	Async             types.Bool                      `queryParam:"style=form,explode=true,name=async" tfsdk:"async"`
 	CreatedAt         types.String                    `tfsdk:"created_at"`
 	CustomDownloadURL types.String                    `tfsdk:"custom_download_url"`
+	DeleteTempFile    types.Bool                      `queryParam:"style=form,explode=true,name=delete_temp_file" tfsdk:"delete_temp_file"`
 	Filename          types.String                    `tfsdk:"filename"`
 	FillActivity      types.Bool                      `queryParam:"style=form,explode=true,name=fill_activity" tfsdk:"fill_activity"`
 	ID                types.String                    `tfsdk:"id"`
@@ -59,9 +60,10 @@ type FileResourceModel struct {
 	Org               types.String                    `tfsdk:"org"`
 	Owners            []tfTypes.BaseEntityOwner       `tfsdk:"owners"`
 	PublicURL         types.String                    `tfsdk:"public_url"`
+	Purge             types.Bool                      `queryParam:"style=form,explode=true,name=purge" tfsdk:"purge"`
 	Purpose           []types.String                  `tfsdk:"purpose"`
 	ReadableSize      types.String                    `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref                  `tfsdk:"s3ref"`
+	S3ref             *tfTypes.FileEntityS3ref        `tfsdk:"s3ref"`
 	Schema            types.String                    `tfsdk:"schema"`
 	SizeBytes         types.Int64                     `tfsdk:"size_bytes"`
 	SourceURL         types.String                    `tfsdk:"source_url"`
@@ -168,6 +170,12 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 				Description: `Custom external download url used for the file`,
 			},
+			"delete_temp_file": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(true),
+				Description: `Delete the temp file from S3 after copying it permanently. Default: true`,
+			},
 			"filename": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
@@ -188,6 +196,9 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(0),
 				},
 			},
 			"manifest": schema.ListAttribute{
@@ -244,6 +255,12 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Direct URL for file (public only if file access control is public-read)`,
+			},
+			"purge": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: `Default: false`,
 			},
 			"purpose": schema.ListAttribute{
 				Computed: true,

@@ -32,13 +32,15 @@ resource "epilot-file_file" "my_file" {
   }
   async               = true
   custom_download_url = "https://some-api-url.com/download?file_id=123"
+  delete_temp_file    = false
   filename            = "document.pdf"
   fill_activity       = true
-  id                  = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  id                  = "...my_id..."
   manifest = [
     "123e4567-e89b-12d3-a456-426614174000"
   ]
   mime_type = "application/pdf"
+  purge     = true
   purpose = [
     "8d396871-95a0-4c9d-bb4d-9eda9c35776c",
     "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8",
@@ -69,12 +71,14 @@ resource "epilot-file_file" "my_file" {
 - `additional` (Map of String) Additional fields that are not part of the schema
 - `async` (Boolean) Don't wait for updated entity to become available in Search API. Useful for large migrations. Default: false
 - `custom_download_url` (String) Custom external download url used for the file
+- `delete_temp_file` (Boolean) Delete the temp file from S3 after copying it permanently. Default: true
 - `filename` (String)
 - `fill_activity` (Boolean) Update the diff and entity for the custom activity included in the query.
 Pending state on activity is automatically ended when activity is filled.
 Default: false
 - `manifest` (List of String) Manifest ID used to create/update the entity
 - `mime_type` (String) MIME type of the file
+- `purge` (Boolean) Default: false
 - `purpose` (List of String)
 - `s3ref` (Attributes) (see [below for nested schema](#nestedatt--s3ref))
 - `source_url` (String) Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
@@ -131,12 +135,12 @@ In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.
 ```terraform
 import {
   to = epilot-file_file.my_epilot-file_file
-  id = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  id = "..."
 }
 ```
 
 The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
-terraform import epilot-file_file.my_epilot-file_file "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+terraform import epilot-file_file.my_epilot-file_file "..."
 ```

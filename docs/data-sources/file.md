@@ -15,7 +15,7 @@ File DataSource
 ```terraform
 data "epilot-file_file" "my_file" {
   async  = true
-  id     = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+  id     = "...my_id..."
   strict = false
 }
 ```

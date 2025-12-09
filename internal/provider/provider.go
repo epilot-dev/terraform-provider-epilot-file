@@ -55,7 +55,10 @@ func (p *EpilotFileProvider) Schema(ctx context.Context, req provider.SchemaRequ
 				Optional:    true,
 			},
 		},
-		MarkdownDescription: `File API: Upload and manage epilot Files`,
+		MarkdownDescription: `File API: Upload and manage epilot Files` + "\n" +
+			`` + "\n" +
+			`## Changelog` + "\n" +
+			`<a href="changelog">View API Changelog</a>`,
 	}
 }
 

@@ -3,11 +3,16 @@
 page_title: "epilot-file Provider"
 description: |-
   File API: Upload and manage epilot Files
+  Changelog
+  View API Changelog
 ---
 
 # epilot-file Provider
 
 File API: Upload and manage epilot Files
+
+## Changelog
+<a href="changelog">View API Changelog</a>
 
 ## Example Usage
 
@@ -16,7 +21,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.6.0"
+      version = "0.7.0"
     }
   }
 }

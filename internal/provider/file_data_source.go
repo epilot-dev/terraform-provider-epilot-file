@@ -8,8 +8,10 @@ import (
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
@@ -45,7 +47,7 @@ type FileDataSourceModel struct {
 	PublicURL         types.String                    `tfsdk:"public_url"`
 	Purpose           []types.String                  `tfsdk:"purpose"`
 	ReadableSize      types.String                    `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref                  `tfsdk:"s3ref"`
+	S3ref             *tfTypes.FileEntityS3ref        `tfsdk:"s3ref"`
 	Schema            types.String                    `tfsdk:"schema"`
 	SizeBytes         types.Int64                     `tfsdk:"size_bytes"`
 	SourceURL         types.String                    `tfsdk:"source_url"`
@@ -109,6 +111,9 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(0),
+				},
 			},
 			"manifest": schema.ListAttribute{
 				Computed:    true,

@@ -27,8 +27,16 @@ func (o *UploadFilePublicS3ref) GetKey() string {
 
 // UploadFilePublicResponseBody - Pre-signed URL for POST / PUT upload
 type UploadFilePublicResponseBody struct {
+	Error     *string                `json:"error,omitempty"`
 	S3ref     *UploadFilePublicS3ref `json:"s3ref,omitempty"`
 	UploadURL *string                `json:"upload_url,omitempty"`
+}
+
+func (o *UploadFilePublicResponseBody) GetError() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Error
 }
 
 func (o *UploadFilePublicResponseBody) GetS3ref() *UploadFilePublicS3ref {

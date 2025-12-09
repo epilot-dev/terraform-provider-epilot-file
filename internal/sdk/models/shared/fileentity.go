@@ -58,6 +58,25 @@ func (e *AccessControl) UnmarshalJSON(data []byte) error {
 	}
 }
 
+type FileEntityS3ref struct {
+	Bucket string `json:"bucket"`
+	Key    string `json:"key"`
+}
+
+func (o *FileEntityS3ref) GetBucket() string {
+	if o == nil {
+		return ""
+	}
+	return o.Bucket
+}
+
+func (o *FileEntityS3ref) GetKey() string {
+	if o == nil {
+		return ""
+	}
+	return o.Key
+}
+
 type FileEntity struct {
 	// Additional fields that are not part of the schema
 	Additional map[string]any `json:"__additional,omitempty"`
@@ -83,8 +102,8 @@ type FileEntity struct {
 	// Direct URL for file (public only if file access control is public-read)
 	PublicURL *string `json:"public_url,omitempty"`
 	// Human readable file size
-	ReadableSize *string `json:"readable_size,omitempty"`
-	S3ref        *S3Ref  `json:"s3ref,omitempty"`
+	ReadableSize *string          `json:"readable_size,omitempty"`
+	S3ref        *FileEntityS3ref `json:"s3ref,omitempty"`
 	// File size in bytes
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
@@ -229,7 +248,7 @@ func (o *FileEntity) GetReadableSize() *string {
 	return o.ReadableSize
 }
 
-func (o *FileEntity) GetS3ref() *S3Ref {
+func (o *FileEntity) GetS3ref() *FileEntityS3ref {
 	if o == nil {
 		return nil
 	}
@@ -273,8 +292,8 @@ type FileEntityInput struct {
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
 	Filename          *string `json:"filename,omitempty"`
 	// MIME type of the file
-	MimeType *string `json:"mime_type,omitempty"`
-	S3ref    *S3Ref  `json:"s3ref,omitempty"`
+	MimeType *string          `json:"mime_type,omitempty"`
+	S3ref    *FileEntityS3ref `json:"s3ref,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
 	SourceURL *string   `json:"source_url,omitempty"`
 	Type      *FileType `json:"type,omitempty"`
@@ -368,7 +387,7 @@ func (o *FileEntityInput) GetMimeType() *string {
 	return o.MimeType
 }
 
-func (o *FileEntityInput) GetS3ref() *S3Ref {
+func (o *FileEntityInput) GetS3ref() *FileEntityS3ref {
 	if o == nil {
 		return nil
 	}

@@ -87,7 +87,7 @@ func (r *FileResourceModel) RefreshFromSharedFileEntity(ctx context.Context, res
 		if resp.S3ref == nil {
 			r.S3ref = nil
 		} else {
-			r.S3ref = &tfTypes.S3Ref{}
+			r.S3ref = &tfTypes.FileEntityS3ref{}
 			r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
 			r.S3ref.Key = types.StringValue(resp.S3ref.Key)
 		}
@@ -115,6 +115,12 @@ func (r *FileResourceModel) ToOperationsDeleteFileRequest(ctx context.Context) (
 	var id string
 	id = r.ID.ValueString()
 
+	purge := new(bool)
+	if !r.Purge.IsUnknown() && !r.Purge.IsNull() {
+		*purge = r.Purge.ValueBool()
+	} else {
+		purge = nil
+	}
 	strict := new(bool)
 	if !r.Strict.IsUnknown() && !r.Strict.IsNull() {
 		*strict = r.Strict.ValueBool()
@@ -124,6 +130,7 @@ func (r *FileResourceModel) ToOperationsDeleteFileRequest(ctx context.Context) (
 	out := operations.DeleteFileRequest{
 		ActivityID: activityID,
 		ID:         id,
+		Purge:      purge,
 		Strict:     strict,
 	}
 
@@ -179,6 +186,12 @@ func (r *FileResourceModel) ToOperationsSaveFileV2Request(ctx context.Context) (
 	} else {
 		async = nil
 	}
+	deleteTempFile := new(bool)
+	if !r.DeleteTempFile.IsUnknown() && !r.DeleteTempFile.IsNull() {
+		*deleteTempFile = r.DeleteTempFile.ValueBool()
+	} else {
+		deleteTempFile = nil
+	}
 	fillActivity := new(bool)
 	if !r.FillActivity.IsUnknown() && !r.FillActivity.IsNull() {
 		*fillActivity = r.FillActivity.ValueBool()
@@ -192,11 +205,12 @@ func (r *FileResourceModel) ToOperationsSaveFileV2Request(ctx context.Context) (
 		strict = nil
 	}
 	out := operations.SaveFileV2Request{
-		FileEntity:   fileEntity,
-		ActivityID:   activityID,
-		Async:        async,
-		FillActivity: fillActivity,
-		Strict:       strict,
+		FileEntity:     fileEntity,
+		ActivityID:     activityID,
+		Async:          async,
+		DeleteTempFile: deleteTempFile,
+		FillActivity:   fillActivity,
+		Strict:         strict,
 	}
 
 	return &out, diags
@@ -279,7 +293,7 @@ func (r *FileResourceModel) ToSharedFileEntityInput(ctx context.Context) (*share
 	} else {
 		mimeType = nil
 	}
-	var s3ref *shared.S3Ref
+	var s3ref *shared.FileEntityS3ref
 	if r.S3ref != nil {
 		var bucket string
 		bucket = r.S3ref.Bucket.ValueString()
@@ -287,7 +301,7 @@ func (r *FileResourceModel) ToSharedFileEntityInput(ctx context.Context) (*share
 		var key string
 		key = r.S3ref.Key.ValueString()
 
-		s3ref = &shared.S3Ref{
+		s3ref = &shared.FileEntityS3ref{
 			Bucket: bucket,
 			Key:    key,
 		}

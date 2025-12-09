@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 11c8545a-deb6-44f9-ba56-e71722af6a51
 management:
-  docChecksum: cfdc1dd1a0f56e4f13b18a9c61693a0f
-  docVersion: 0.2.0
+  docChecksum: 0fa7fbcea3229ac34b49cdf05083d25e
+  docVersion: 1.4.0
   speakeasyVersion: 1.611.0
   generationVersion: 2.694.1
-  releaseVersion: 0.6.0
-  configChecksum: 78f62bde5736cececed4867a0944577e
+  releaseVersion: 0.7.0
+  configChecksum: f75b8392513192966f7d816839e399b6
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-file.git
   repoSubDirectory: .
   published: true
@@ -70,12 +70,14 @@ generatedFiles:
   - internal/provider/typeconvert/int.go
   - internal/provider/types/base_entity_acl.go
   - internal/provider/types/base_entity_owner.go
-  - internal/provider/types/s3_ref.go
+  - internal/provider/types/file_entity_s3ref.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
   - internal/sdk/deprecated.go
   - internal/sdk/docs/models/operations/option.md
   - internal/sdk/file.go
+  - internal/sdk/filecollections.go
+  - internal/sdk/filefolders.go
   - internal/sdk/internal/config/sdkconfiguration.go
   - internal/sdk/internal/hooks/hooks.go
   - internal/sdk/internal/utils/contenttype.go
@@ -91,14 +93,27 @@ generatedFiles:
   - internal/sdk/internal/utils/utils.go
   - internal/sdk/models/errors/sdkerror.go
   - internal/sdk/models/operations/accesspubliclink.go
+  - internal/sdk/models/operations/createfilecollection.go
+  - internal/sdk/models/operations/createfilefolder.go
+  - internal/sdk/models/operations/createuserschemafilecollection.go
   - internal/sdk/models/operations/deletefile.go
+  - internal/sdk/models/operations/deletefilecollection.go
+  - internal/sdk/models/operations/deletefilefolder.go
   - internal/sdk/models/operations/deletesession.go
+  - internal/sdk/models/operations/deleteuserschemafilecollection.go
   - internal/sdk/models/operations/downloadfile.go
   - internal/sdk/models/operations/downloadfiles.go
   - internal/sdk/models/operations/downloads3file.go
   - internal/sdk/models/operations/generatepubliclink.go
   - internal/sdk/models/operations/getfile.go
+  - internal/sdk/models/operations/getfilecollections.go
+  - internal/sdk/models/operations/getfilefolders.go
+  - internal/sdk/models/operations/getfilesincollection.go
+  - internal/sdk/models/operations/getfilesinfolder.go
+  - internal/sdk/models/operations/getglobalfilecollections.go
+  - internal/sdk/models/operations/getglobalfilefolders.go
   - internal/sdk/models/operations/getsession.go
+  - internal/sdk/models/operations/getuserschemafilecollections.go
   - internal/sdk/models/operations/listpubliclinksforfile.go
   - internal/sdk/models/operations/options.go
   - internal/sdk/models/operations/previewfile.go
@@ -108,6 +123,9 @@ generatedFiles:
   - internal/sdk/models/operations/revokepubliclink.go
   - internal/sdk/models/operations/savefile.go
   - internal/sdk/models/operations/savefilev2.go
+  - internal/sdk/models/operations/updatefilecollection.go
+  - internal/sdk/models/operations/updatefilefolder.go
+  - internal/sdk/models/operations/updateuserschemafilecollection.go
   - internal/sdk/models/operations/uploadfile.go
   - internal/sdk/models/operations/uploadfilepublic.go
   - internal/sdk/models/operations/uploadfilev2.go
@@ -115,7 +133,13 @@ generatedFiles:
   - internal/sdk/models/shared/baseentityacl.go
   - internal/sdk/models/shared/baseentityowner.go
   - internal/sdk/models/shared/downloadfilespayload.go
+  - internal/sdk/models/shared/filecollectionattributes.go
+  - internal/sdk/models/shared/filecollectioncreaterequest.go
+  - internal/sdk/models/shared/filecollectionitem.go
   - internal/sdk/models/shared/fileentity.go
+  - internal/sdk/models/shared/filefolderattributes.go
+  - internal/sdk/models/shared/filefoldercreaterequest.go
+  - internal/sdk/models/shared/filefolderitem.go
   - internal/sdk/models/shared/filerelationitem.go
   - internal/sdk/models/shared/filetype.go
   - internal/sdk/models/shared/fileupload.go
@@ -167,7 +191,7 @@ examples:
         application/json: {"_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "relations": [{"_schema": "contact", "entity_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8"}]}
       responses:
         "201":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
   uploadFile:
     speakeasy-default-upload-file:
       parameters:
@@ -186,9 +210,10 @@ examples:
         query:
           activity_id: "01F130Q52Q6MWSNS8N2AVXV4JN"
           strict: false
+          purge: false
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
   downloadFile:
     speakeasy-default-download-file:
       parameters:
@@ -227,7 +252,7 @@ examples:
           async: false
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
   saveFileV2:
     New file from s3ref:
       parameters:
@@ -236,11 +261,12 @@ examples:
           fill_activity: false
           strict: false
           async: false
+          delete_temp_file: true
       requestBody:
         application/json: {"_tags": ["string"], "access_control": "private", "filename": "document.pdf", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "type": "document"}
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
     Update existing file with relations:
       parameters:
         query:
@@ -248,11 +274,12 @@ examples:
           fill_activity: false
           strict: false
           async: false
+          delete_temp_file: true
       requestBody:
         application/json: {"_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf"}
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
     New file from source_url:
       parameters:
         query:
@@ -260,11 +287,12 @@ examples:
           fill_activity: false
           strict: false
           async: false
+          delete_temp_file: true
       requestBody:
         application/json: {"_tags": ["string"], "access_control": "private", "filename": "document.pdf", "source_url": "https://docs.epilot.io/document.pdf", "type": "document"}
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
     File with custom download URL (external):
       parameters:
         query:
@@ -272,24 +300,25 @@ examples:
           fill_activity: false
           strict: false
           async: false
+          delete_temp_file: true
       requestBody:
         application/json: {"_tags": ["string"], "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "type": "document"}
       responses:
         "200":
-          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_id": "ef7d985c-2385-44f4-9c71-ae06a52264f8", "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
+          application/json: {"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}
   uploadFilePublic:
     Upload an image file:
       requestBody:
         application/json: {"filename": "image.png", "mime_type": "image/png"}
       responses:
         "201":
-          application/json: {"s3ref": {"bucket": "epilot-prod-user-content", "key": "123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
+          application/json: {"error": "File entity not found", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
     Upload a document:
       requestBody:
         application/json: {"filename": "document.pdf", "mime_type": "application/pdf"}
       responses:
         "201":
-          application/json: {"s3ref": {"bucket": "epilot-prod-user-content", "key": "123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
+          application/json: {"error": "File entity not found", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "upload_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/temp/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf?AWSParams=123"}
   uploadFileV2:
     Upload an image file:
       parameters:
@@ -372,4 +401,174 @@ examples:
           bucket: "<value>"
   deleteSession: {}
   getSession: {}
+  createFileCollection:
+    speakeasy-default-create-file-collection:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+      requestBody:
+        application/json: {"name": "<value>", "starred": false}
+      responses:
+        "201":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  createUserSchemaFileCollection:
+    speakeasy-default-create-user-schema-file-collection:
+      parameters:
+        path:
+          slug: "opportunity"
+      requestBody:
+        application/json: {"name": "<value>", "starred": false}
+      responses:
+        "201":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+  deleteFileCollection:
+    speakeasy-default-delete-file-collection:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          collectionSlug: "documents"
+      responses:
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  deleteUserSchemaFileCollection:
+    speakeasy-default-delete-user-schema-file-collection:
+      parameters:
+        path:
+          slug: "opportunity"
+          collectionSlug: "documents"
+      responses:
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  getFileCollections:
+    speakeasy-default-get-file-collections:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+      responses:
+        "200":
+          application/json: [{"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}]
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  getFilesInCollection:
+    speakeasy-default-get-files-in-collection:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          collectionSlug: "documents"
+      responses:
+        "200":
+          application/json: [{"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}]
+        "403":
+          application/json: {"error": "User must have permission to view this entity to access its files"}
+        "404":
+          application/json: {"error": "Entity not found"}
+  getGlobalFileCollections:
+    speakeasy-default-get-global-file-collections:
+      parameters:
+        path:
+          schemaSlug: "order"
+      responses:
+        "200":
+          application/json: [{"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}]
+  getUserSchemaFileCollections:
+    speakeasy-default-get-user-schema-file-collections:
+      parameters:
+        path:
+          slug: "opportunity"
+      responses:
+        "200":
+          application/json: [{"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}]
+  updateFileCollection:
+    speakeasy-default-update-file-collection:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          collectionSlug: "documents"
+      requestBody:
+        application/json: {"starred": false}
+      responses:
+        "200":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  updateUserSchemaFileCollection:
+    speakeasy-default-update-user-schema-file-collection:
+      parameters:
+        path:
+          slug: "opportunity"
+          collectionSlug: "documents"
+      requestBody:
+        application/json: {"starred": false}
+      responses:
+        "200":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  createFileFolder:
+    speakeasy-default-create-file-folder:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+      requestBody:
+        application/json: {"name": "<value>", "starred": false}
+      responses:
+        "201":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  deleteFileFolder:
+    speakeasy-default-delete-file-folder:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          folderSlug: "documents"
+      responses:
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  getFileFolders:
+    speakeasy-default-get-file-folders:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+      responses:
+        "200":
+          application/json: [{"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}]
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
+  getFilesInFolder:
+    speakeasy-default-get-files-in-folder:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          folderSlug: "documents"
+      responses:
+        "200":
+          application/json: [{"_acl": {"delete": ["org:456"], "edit": ["org:456"], "view": ["org:456"]}, "_manifest": ["123e4567-e89b-12d3-a456-426614174000"], "_org": "123", "_owners": [{"org_id": "123", "user_id": "123"}], "_purpose": ["8d396871-95a0-4c9d-bb4d-9eda9c35776c", "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8"], "_tags": ["tag1", "tag2"], "_title": "document.pdf", "access_control": "private", "custom_download_url": "https://some-api-url.com/download?file_id=123", "filename": "document.pdf", "mime_type": "application/pdf", "public_url": "https://epilot-prod-user-content.s3.eu-central-1.amazonaws.com/123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf", "readable_size": "1.2 MB", "s3ref": {"bucket": "epilot-prod-user-content", "key": "123/4d689aeb-1497-4410-a9fe-b36ca9ac4389/document.pdf"}, "size_bytes": 1234, "source_url": "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"}]
+        "403":
+          application/json: {"error": "User must have permission to view this entity to access its files"}
+        "404":
+          application/json: {"error": "Entity not found"}
+  getGlobalFileFolders:
+    speakeasy-default-get-global-file-folders:
+      parameters:
+        path:
+          schemaSlug: "order"
+      responses:
+        "200":
+          application/json: [{"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}]
+  updateFileFolder:
+    speakeasy-default-update-file-folder:
+      parameters:
+        path:
+          id: "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+          folderSlug: "documents"
+      requestBody:
+        application/json: {"starred": false}
+      responses:
+        "200":
+          application/json: {"created_at": "2024-01-01T12:00:00Z", "name": "Documents", "order": 0, "parents": ["_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234"], "slug": "_system_files_collection_3fa85f64-5717-4562-b3fc-2c963f66afa6_10234:documents", "starred": false, "updated_at": "2024-01-02T12:00:00Z"}
+        "404":
+          application/json: {"error": "Not Found", "status": 404}
 examplesVersion: 1.0.2

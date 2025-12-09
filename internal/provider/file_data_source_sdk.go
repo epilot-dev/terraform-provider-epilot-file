@@ -87,7 +87,7 @@ func (r *FileDataSourceModel) RefreshFromSharedFileEntity(ctx context.Context, r
 		if resp.S3ref == nil {
 			r.S3ref = nil
 		} else {
-			r.S3ref = &tfTypes.S3Ref{}
+			r.S3ref = &tfTypes.FileEntityS3ref{}
 			r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
 			r.S3ref.Key = types.StringValue(resp.S3ref.Key)
 		}

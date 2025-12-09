@@ -59,7 +59,7 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.6.0"
+      version = "0.7.0"
     }
   }
 }
@@ -140,6 +140,9 @@ Available configuration:
 ## Summary
 
 File API: Upload and manage epilot Files
+
+## Changelog
+<a href="changelog">View API Changelog</a>
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -150,6 +153,7 @@ File API: Upload and manage epilot Files
   * [Testing the provider locally](#testing-the-provider-locally)
   * [Authentication](#authentication)
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
+  * [Changelog](#changelog)
 
 <!-- End Table of Contents [toc] -->
 
