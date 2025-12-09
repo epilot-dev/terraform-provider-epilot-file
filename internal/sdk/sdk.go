@@ -2,9 +2,12 @@
 
 package sdk
 
+// Generated from OpenAPI doc version 0.2.0 and generator version 2.694.1
+
 import (
 	"context"
 	"fmt"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/config"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/hooks"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
@@ -18,7 +21,7 @@ var ServerList = []string{
 	"https://file.sls.epilot.io",
 }
 
-// HTTPClient provides an interface for suplying the SDK with a custom HTTP client
+// HTTPClient provides an interface for supplying the SDK with a custom HTTP client
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
@@ -44,31 +47,9 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-type sdkConfiguration struct {
-	Client            HTTPClient
-	Security          func(context.Context) (interface{}, error)
-	ServerURL         string
-	ServerIndex       int
-	Language          string
-	OpenAPIDocVersion string
-	SDKVersion        string
-	GenVersion        string
-	UserAgent         string
-	RetryConfig       *retry.Config
-	Hooks             *hooks.Hooks
-	Timeout           *time.Duration
-}
-
-func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
-	if c.ServerURL != "" {
-		return c.ServerURL, nil
-	}
-
-	return ServerList[c.ServerIndex], nil
-}
-
 // SDK - File API: Upload and manage epilot Files
 type SDK struct {
+	SDKVersion string
 	// Deprecated APIs
 	Deprecated *Deprecated
 	// Upload and Manage File Entities
@@ -80,7 +61,8 @@ type SDK struct {
 	// Session API for cookie authentication
 	Session *Session
 
-	sdkConfiguration sdkConfiguration
+	sdkConfiguration config.SDKConfiguration
+	hooks            *hooks.Hooks
 }
 
 type SDKOption func(*SDK)
@@ -153,14 +135,12 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		sdkConfiguration: sdkConfiguration{
-			Language:          "go",
-			OpenAPIDocVersion: "0.2.0",
-			SDKVersion:        "0.0.1",
-			GenVersion:        "2.438.15",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.438.15 0.2.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
-			Hooks:             hooks.New(),
+		SDKVersion: "0.6.0",
+		sdkConfiguration: config.SDKConfiguration{
+			UserAgent:  "speakeasy-sdk/terraform 0.6.0 2.694.1 0.2.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
+			ServerList: ServerList,
 		},
+		hooks: hooks.New(),
 	}
 	for _, opt := range opts {
 		opt(sdk)
@@ -173,20 +153,16 @@ func New(opts ...SDKOption) *SDK {
 
 	currentServerURL, _ := sdk.sdkConfiguration.GetServerDetails()
 	serverURL := currentServerURL
-	serverURL, sdk.sdkConfiguration.Client = sdk.sdkConfiguration.Hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
-	if serverURL != currentServerURL {
+	serverURL, sdk.sdkConfiguration.Client = sdk.hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
+	if currentServerURL != serverURL {
 		sdk.sdkConfiguration.ServerURL = serverURL
 	}
 
-	sdk.Deprecated = newDeprecated(sdk.sdkConfiguration)
-
-	sdk.File = newFile(sdk.sdkConfiguration)
-
-	sdk.PublicLinks = newPublicLinks(sdk.sdkConfiguration)
-
-	sdk.Preview = newPreview(sdk.sdkConfiguration)
-
-	sdk.Session = newSession(sdk.sdkConfiguration)
+	sdk.Deprecated = newDeprecated(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.File = newFile(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.PublicLinks = newPublicLinks(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Preview = newPreview(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Session = newSession(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

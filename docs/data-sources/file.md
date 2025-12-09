@@ -52,7 +52,6 @@ data "epilot-file_file" "my_file" {
 - `title` (String)
 - `type` (String)
 - `updated_at` (String)
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
 <a id="nestedatt--acl"></a>
 ### Nested Schema for `acl`
@@ -75,26 +74,6 @@ Read-Only:
 
 <a id="nestedatt--s3ref"></a>
 ### Nested Schema for `s3ref`
-
-Read-Only:
-
-- `bucket` (String)
-- `key` (String)
-
-
-<a id="nestedatt--versions"></a>
-### Nested Schema for `versions`
-
-Read-Only:
-
-- `filename` (String)
-- `mime_type` (String)
-- `readable_size` (String)
-- `s3ref` (Attributes) (see [below for nested schema](#nestedatt--versions--s3ref))
-- `size_bytes` (Number)
-
-<a id="nestedatt--versions--s3ref"></a>
-### Nested Schema for `versions.s3ref`
 
 Read-Only:
 

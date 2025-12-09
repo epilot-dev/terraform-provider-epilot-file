@@ -28,7 +28,7 @@ resource "epilot-file_file" "my_file" {
   }
   activity_id = "01F130Q52Q6MWSNS8N2AVXV4JN"
   additional = {
-    "see" : jsonencode("documentation"),
+    key = jsonencode("value")
   }
   async               = true
   custom_download_url = "https://some-api-url.com/download?file_id=123"
@@ -40,7 +40,8 @@ resource "epilot-file_file" "my_file" {
   ]
   mime_type = "application/pdf"
   purpose = [
-    "..."
+    "8d396871-95a0-4c9d-bb4d-9eda9c35776c",
+    "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8",
   ]
   s3ref = {
     bucket = "epilot-prod-user-content"
@@ -49,7 +50,8 @@ resource "epilot-file_file" "my_file" {
   source_url = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
   strict     = false
   tags = [
-    "..."
+    "tag1",
+    "tag2",
   ]
   title = "document.pdf"
   type  = "font"
@@ -92,7 +94,6 @@ Default: false
 - `schema` (String) must be "file"
 - `size_bytes` (Number) File size in bytes
 - `updated_at` (String)
-- `versions` (Attributes List) (see [below for nested schema](#nestedatt--versions))
 
 <a id="nestedatt--acl"></a>
 ### Nested Schema for `acl`
@@ -121,29 +122,20 @@ Read-Only:
 - `org_id` (String)
 - `user_id` (String)
 
-
-<a id="nestedatt--versions"></a>
-### Nested Schema for `versions`
-
-Read-Only:
-
-- `filename` (String)
-- `mime_type` (String)
-- `readable_size` (String)
-- `s3ref` (Attributes) (see [below for nested schema](#nestedatt--versions--s3ref))
-- `size_bytes` (Number)
-
-<a id="nestedatt--versions--s3ref"></a>
-### Nested Schema for `versions.s3ref`
-
-Read-Only:
-
-- `bucket` (String)
-- `key` (String)
-
 ## Import
 
 Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = epilot-file_file.my_epilot-file_file
+  id = "ef7d985c-2385-44f4-9c71-ae06a52264f8"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
 
 ```shell
 terraform import epilot-file_file.my_epilot-file_file "ef7d985c-2385-44f4-9c71-ae06a52264f8"

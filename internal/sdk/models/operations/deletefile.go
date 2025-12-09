@@ -21,7 +21,7 @@ func (d DeleteFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DeleteFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil

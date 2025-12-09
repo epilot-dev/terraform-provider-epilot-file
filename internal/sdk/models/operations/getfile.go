@@ -21,7 +21,7 @@ func (g GetFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil

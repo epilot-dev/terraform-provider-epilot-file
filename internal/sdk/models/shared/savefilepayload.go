@@ -17,9 +17,9 @@ const (
 )
 
 type SaveFilePayload struct {
-	SaveS3FilePayload            *SaveS3FilePayload
-	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload
-	SaveCustomFilePayload        *SaveCustomFilePayload
+	SaveS3FilePayload            *SaveS3FilePayload            `queryParam:"inline" name:"SaveFilePayload"`
+	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload `queryParam:"inline" name:"SaveFilePayload"`
+	SaveCustomFilePayload        *SaveCustomFilePayload        `queryParam:"inline" name:"SaveFilePayload"`
 
 	Type SaveFilePayloadType
 }
@@ -53,24 +53,24 @@ func CreateSaveFilePayloadSaveCustomFilePayload(saveCustomFilePayload SaveCustom
 
 func (u *SaveFilePayload) UnmarshalJSON(data []byte) error {
 
-	var saveCustomFilePayload SaveCustomFilePayload = SaveCustomFilePayload{}
-	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, true); err == nil {
-		u.SaveCustomFilePayload = &saveCustomFilePayload
-		u.Type = SaveFilePayloadTypeSaveCustomFilePayload
-		return nil
-	}
-
 	var saveS3FilePayload SaveS3FilePayload = SaveS3FilePayload{}
-	if err := utils.UnmarshalJSON(data, &saveS3FilePayload, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &saveS3FilePayload, "", true, nil); err == nil {
 		u.SaveS3FilePayload = &saveS3FilePayload
 		u.Type = SaveFilePayloadTypeSaveS3FilePayload
 		return nil
 	}
 
 	var saveFileFromSourceURLPayload SaveFileFromSourceURLPayload = SaveFileFromSourceURLPayload{}
-	if err := utils.UnmarshalJSON(data, &saveFileFromSourceURLPayload, "", true, true); err == nil {
+	if err := utils.UnmarshalJSON(data, &saveFileFromSourceURLPayload, "", true, nil); err == nil {
 		u.SaveFileFromSourceURLPayload = &saveFileFromSourceURLPayload
 		u.Type = SaveFilePayloadTypeSaveFileFromSourceURLPayload
+		return nil
+	}
+
+	var saveCustomFilePayload SaveCustomFilePayload = SaveCustomFilePayload{}
+	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, nil); err == nil {
+		u.SaveCustomFilePayload = &saveCustomFilePayload
+		u.Type = SaveFilePayloadTypeSaveCustomFilePayload
 		return nil
 	}
 

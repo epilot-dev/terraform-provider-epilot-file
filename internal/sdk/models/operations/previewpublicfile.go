@@ -24,7 +24,7 @@ func (p PreviewPublicFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PreviewPublicFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"id"}); err != nil {
 		return err
 	}
 	return nil

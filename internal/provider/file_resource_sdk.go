@@ -3,14 +3,208 @@
 package provider
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/typeconvert"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"time"
 )
 
-func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+func (r *FileResourceModel) RefreshFromSharedFileEntity(ctx context.Context, resp *shared.FileEntity) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		if resp.Additional != nil {
+			r.Additional = make(map[string]jsontypes.Normalized, len(resp.Additional))
+			for key, value := range resp.Additional {
+				result, _ := json.Marshal(value)
+				r.Additional[key] = jsontypes.NewNormalizedValue(string(result))
+			}
+		}
+		if resp.ACL == nil {
+			r.ACL = nil
+		} else {
+			r.ACL = &tfTypes.BaseEntityACL{}
+			r.ACL.Delete = make([]types.String, 0, len(resp.ACL.Delete))
+			for _, v := range resp.ACL.Delete {
+				r.ACL.Delete = append(r.ACL.Delete, types.StringValue(v))
+			}
+			r.ACL.Edit = make([]types.String, 0, len(resp.ACL.Edit))
+			for _, v := range resp.ACL.Edit {
+				r.ACL.Edit = append(r.ACL.Edit, types.StringValue(v))
+			}
+			r.ACL.View = make([]types.String, 0, len(resp.ACL.View))
+			for _, v := range resp.ACL.View {
+				r.ACL.View = append(r.ACL.View, types.StringValue(v))
+			}
+		}
+		r.CreatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreatedAt))
+		r.ID = types.StringPointerValue(resp.ID)
+		r.Manifest = make([]types.String, 0, len(resp.Manifest))
+		for _, v := range resp.Manifest {
+			r.Manifest = append(r.Manifest, types.StringValue(v))
+		}
+		r.Org = types.StringPointerValue(resp.Org)
+		r.Owners = []tfTypes.BaseEntityOwner{}
+
+		for _, ownersItem := range resp.Owners {
+			var owners tfTypes.BaseEntityOwner
+
+			owners.OrgID = types.StringValue(ownersItem.OrgID)
+			owners.UserID = types.StringPointerValue(ownersItem.UserID)
+
+			r.Owners = append(r.Owners, owners)
+		}
+		r.Purpose = make([]types.String, 0, len(resp.Purpose))
+		for _, v := range resp.Purpose {
+			r.Purpose = append(r.Purpose, types.StringValue(v))
+		}
+		if resp.Schema != nil {
+			r.Schema = types.StringValue(string(*resp.Schema))
+		} else {
+			r.Schema = types.StringNull()
+		}
+		r.Tags = make([]types.String, 0, len(resp.Tags))
+		for _, v := range resp.Tags {
+			r.Tags = append(r.Tags, types.StringValue(v))
+		}
+		r.Title = types.StringPointerValue(resp.Title)
+		r.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.UpdatedAt))
+		if resp.AccessControl != nil {
+			r.AccessControl = types.StringValue(string(*resp.AccessControl))
+		} else {
+			r.AccessControl = types.StringNull()
+		}
+		r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
+		r.Filename = types.StringPointerValue(resp.Filename)
+		r.MimeType = types.StringPointerValue(resp.MimeType)
+		r.PublicURL = types.StringPointerValue(resp.PublicURL)
+		r.ReadableSize = types.StringPointerValue(resp.ReadableSize)
+		if resp.S3ref == nil {
+			r.S3ref = nil
+		} else {
+			r.S3ref = &tfTypes.S3Ref{}
+			r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
+			r.S3ref.Key = types.StringValue(resp.S3ref.Key)
+		}
+		r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
+		r.SourceURL = types.StringPointerValue(resp.SourceURL)
+		if resp.Type != nil {
+			r.Type = types.StringValue(string(*resp.Type))
+		} else {
+			r.Type = types.StringNull()
+		}
+	}
+
+	return diags
+}
+
+func (r *FileResourceModel) ToOperationsDeleteFileRequest(ctx context.Context) (*operations.DeleteFileRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	activityID := new(string)
+	if !r.ActivityID.IsUnknown() && !r.ActivityID.IsNull() {
+		*activityID = r.ActivityID.ValueString()
+	} else {
+		activityID = nil
+	}
+	var id string
+	id = r.ID.ValueString()
+
+	strict := new(bool)
+	if !r.Strict.IsUnknown() && !r.Strict.IsNull() {
+		*strict = r.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
+	out := operations.DeleteFileRequest{
+		ActivityID: activityID,
+		ID:         id,
+		Strict:     strict,
+	}
+
+	return &out, diags
+}
+
+func (r *FileResourceModel) ToOperationsGetFileRequest(ctx context.Context) (*operations.GetFileRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	async := new(bool)
+	if !r.Async.IsUnknown() && !r.Async.IsNull() {
+		*async = r.Async.ValueBool()
+	} else {
+		async = nil
+	}
+	var id string
+	id = r.ID.ValueString()
+
+	strict := new(bool)
+	if !r.Strict.IsUnknown() && !r.Strict.IsNull() {
+		*strict = r.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
+	out := operations.GetFileRequest{
+		Async:  async,
+		ID:     id,
+		Strict: strict,
+	}
+
+	return &out, diags
+}
+
+func (r *FileResourceModel) ToOperationsSaveFileV2Request(ctx context.Context) (*operations.SaveFileV2Request, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	fileEntity, fileEntityDiags := r.ToSharedFileEntityInput(ctx)
+	diags.Append(fileEntityDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	activityID := new(string)
+	if !r.ActivityID.IsUnknown() && !r.ActivityID.IsNull() {
+		*activityID = r.ActivityID.ValueString()
+	} else {
+		activityID = nil
+	}
+	async := new(bool)
+	if !r.Async.IsUnknown() && !r.Async.IsNull() {
+		*async = r.Async.ValueBool()
+	} else {
+		async = nil
+	}
+	fillActivity := new(bool)
+	if !r.FillActivity.IsUnknown() && !r.FillActivity.IsNull() {
+		*fillActivity = r.FillActivity.ValueBool()
+	} else {
+		fillActivity = nil
+	}
+	strict := new(bool)
+	if !r.Strict.IsUnknown() && !r.Strict.IsNull() {
+		*strict = r.Strict.ValueBool()
+	} else {
+		strict = nil
+	}
+	out := operations.SaveFileV2Request{
+		FileEntity:   fileEntity,
+		ActivityID:   activityID,
+		Async:        async,
+		FillActivity: fillActivity,
+		Strict:       strict,
+	}
+
+	return &out, diags
+}
+
+func (r *FileResourceModel) ToSharedFileEntityInput(ctx context.Context) (*shared.FileEntityInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	additional := make(map[string]interface{})
 	for additionalKey, additionalValue := range r.Additional {
 		var additionalInst interface{}
@@ -19,15 +213,15 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	}
 	var acl *shared.BaseEntityACL
 	if r.ACL != nil {
-		var delete []string = []string{}
+		delete := make([]string, 0, len(r.ACL.Delete))
 		for _, deleteItem := range r.ACL.Delete {
 			delete = append(delete, deleteItem.ValueString())
 		}
-		var edit []string = []string{}
+		edit := make([]string, 0, len(r.ACL.Edit))
 		for _, editItem := range r.ACL.Edit {
 			edit = append(edit, editItem.ValueString())
 		}
-		var view []string = []string{}
+		view := make([]string, 0, len(r.ACL.View))
 		for _, viewItem := range r.ACL.View {
 			view = append(view, viewItem.ValueString())
 		}
@@ -43,15 +237,15 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		id = nil
 	}
-	var manifest []string = []string{}
+	manifest := make([]string, 0, len(r.Manifest))
 	for _, manifestItem := range r.Manifest {
 		manifest = append(manifest, manifestItem.ValueString())
 	}
-	var purpose []string = []string{}
+	purpose := make([]string, 0, len(r.Purpose))
 	for _, purposeItem := range r.Purpose {
 		purpose = append(purpose, purposeItem.ValueString())
 	}
-	var tags []string = []string{}
+	tags := make([]string, 0, len(r.Tags))
 	for _, tagsItem := range r.Tags {
 		tags = append(tags, tagsItem.ValueString())
 	}
@@ -61,9 +255,9 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		title = nil
 	}
-	accessControl := new(shared.SaveFilePayloadV2AccessControl)
+	accessControl := new(shared.AccessControl)
 	if !r.AccessControl.IsUnknown() && !r.AccessControl.IsNull() {
-		*accessControl = shared.SaveFilePayloadV2AccessControl(r.AccessControl.ValueString())
+		*accessControl = shared.AccessControl(r.AccessControl.ValueString())
 	} else {
 		accessControl = nil
 	}
@@ -110,7 +304,7 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 	} else {
 		typeVar = nil
 	}
-	out := shared.SaveFilePayloadV2{
+	out := shared.FileEntityInput{
 		Additional:        additional,
 		ACL:               acl,
 		ID:                id,
@@ -126,130 +320,6 @@ func (r *FileResourceModel) ToSharedSaveFilePayloadV2() *shared.SaveFilePayloadV
 		SourceURL:         sourceURL,
 		Type:              typeVar,
 	}
-	return &out
-}
 
-func (r *FileResourceModel) RefreshFromSharedFileEntity(resp *shared.FileEntity) {
-	if resp != nil {
-		if len(resp.Additional) > 0 {
-			r.Additional = make(map[string]types.String)
-			for key, value := range resp.Additional {
-				result, _ := json.Marshal(value)
-				r.Additional[key] = types.StringValue(string(result))
-			}
-		}
-		if resp.ACL == nil {
-			r.ACL = nil
-		} else {
-			r.ACL = &tfTypes.BaseEntityACL{}
-			r.ACL.Delete = []types.String{}
-			for _, v := range resp.ACL.Delete {
-				r.ACL.Delete = append(r.ACL.Delete, types.StringValue(v))
-			}
-			r.ACL.Edit = []types.String{}
-			for _, v := range resp.ACL.Edit {
-				r.ACL.Edit = append(r.ACL.Edit, types.StringValue(v))
-			}
-			r.ACL.View = []types.String{}
-			for _, v := range resp.ACL.View {
-				r.ACL.View = append(r.ACL.View, types.StringValue(v))
-			}
-		}
-		if resp.CreatedAt != nil {
-			r.CreatedAt = types.StringValue(resp.CreatedAt.Format(time.RFC3339Nano))
-		} else {
-			r.CreatedAt = types.StringNull()
-		}
-		r.ID = types.StringPointerValue(resp.ID)
-		r.Manifest = []types.String{}
-		for _, v := range resp.Manifest {
-			r.Manifest = append(r.Manifest, types.StringValue(v))
-		}
-		r.Org = types.StringPointerValue(resp.Org)
-		r.Owners = []tfTypes.BaseEntityOwner{}
-		if len(r.Owners) > len(resp.Owners) {
-			r.Owners = r.Owners[:len(resp.Owners)]
-		}
-		for ownersCount, ownersItem := range resp.Owners {
-			var owners1 tfTypes.BaseEntityOwner
-			owners1.OrgID = types.StringValue(ownersItem.OrgID)
-			owners1.UserID = types.StringPointerValue(ownersItem.UserID)
-			if ownersCount+1 > len(r.Owners) {
-				r.Owners = append(r.Owners, owners1)
-			} else {
-				r.Owners[ownersCount].OrgID = owners1.OrgID
-				r.Owners[ownersCount].UserID = owners1.UserID
-			}
-		}
-		r.Purpose = []types.String{}
-		for _, v := range resp.Purpose {
-			r.Purpose = append(r.Purpose, types.StringValue(v))
-		}
-		if resp.Schema != nil {
-			r.Schema = types.StringValue(string(*resp.Schema))
-		} else {
-			r.Schema = types.StringNull()
-		}
-		r.Tags = []types.String{}
-		for _, v := range resp.Tags {
-			r.Tags = append(r.Tags, types.StringValue(v))
-		}
-		r.Title = types.StringPointerValue(resp.Title)
-		if resp.UpdatedAt != nil {
-			r.UpdatedAt = types.StringValue(resp.UpdatedAt.Format(time.RFC3339Nano))
-		} else {
-			r.UpdatedAt = types.StringNull()
-		}
-		if resp.AccessControl != nil {
-			r.AccessControl = types.StringValue(string(*resp.AccessControl))
-		} else {
-			r.AccessControl = types.StringNull()
-		}
-		r.CustomDownloadURL = types.StringPointerValue(resp.CustomDownloadURL)
-		r.Filename = types.StringPointerValue(resp.Filename)
-		r.MimeType = types.StringPointerValue(resp.MimeType)
-		r.PublicURL = types.StringPointerValue(resp.PublicURL)
-		r.ReadableSize = types.StringPointerValue(resp.ReadableSize)
-		if resp.S3ref == nil {
-			r.S3ref = nil
-		} else {
-			r.S3ref = &tfTypes.S3Ref{}
-			r.S3ref.Bucket = types.StringValue(resp.S3ref.Bucket)
-			r.S3ref.Key = types.StringValue(resp.S3ref.Key)
-		}
-		r.SizeBytes = types.Int64PointerValue(resp.SizeBytes)
-		r.SourceURL = types.StringPointerValue(resp.SourceURL)
-		if resp.Type != nil {
-			r.Type = types.StringValue(string(*resp.Type))
-		} else {
-			r.Type = types.StringNull()
-		}
-		r.Versions = []tfTypes.FileItem{}
-		if len(r.Versions) > len(resp.Versions) {
-			r.Versions = r.Versions[:len(resp.Versions)]
-		}
-		for versionsCount, versionsItem := range resp.Versions {
-			var versions1 tfTypes.FileItem
-			versions1.Filename = types.StringPointerValue(versionsItem.Filename)
-			versions1.MimeType = types.StringPointerValue(versionsItem.MimeType)
-			versions1.ReadableSize = types.StringPointerValue(versionsItem.ReadableSize)
-			if versionsItem.S3ref == nil {
-				versions1.S3ref = nil
-			} else {
-				versions1.S3ref = &tfTypes.S3Ref{}
-				versions1.S3ref.Bucket = types.StringValue(versionsItem.S3ref.Bucket)
-				versions1.S3ref.Key = types.StringValue(versionsItem.S3ref.Key)
-			}
-			versions1.SizeBytes = types.Int64PointerValue(versionsItem.SizeBytes)
-			if versionsCount+1 > len(r.Versions) {
-				r.Versions = append(r.Versions, versions1)
-			} else {
-				r.Versions[versionsCount].Filename = versions1.Filename
-				r.Versions[versionsCount].MimeType = versions1.MimeType
-				r.Versions[versionsCount].ReadableSize = versions1.ReadableSize
-				r.Versions[versionsCount].S3ref = versions1.S3ref
-				r.Versions[versionsCount].SizeBytes = versions1.SizeBytes
-			}
-		}
-	}
+	return &out, diags
 }

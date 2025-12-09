@@ -7,7 +7,7 @@ import (
 	"fmt"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,36 +24,36 @@ func NewFileDataSource() datasource.DataSource {
 
 // FileDataSource is the data source implementation.
 type FileDataSource struct {
+	// Provider configured SDK client.
 	client *sdk.SDK
 }
 
 // FileDataSourceModel describes the data model.
 type FileDataSourceModel struct {
-	AccessControl     types.String              `tfsdk:"access_control"`
-	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
-	Additional        map[string]types.String   `tfsdk:"additional"`
-	Async             types.Bool                `tfsdk:"async"`
-	CreatedAt         types.String              `tfsdk:"created_at"`
-	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
-	Filename          types.String              `tfsdk:"filename"`
-	ID                types.String              `tfsdk:"id"`
-	Manifest          []types.String            `tfsdk:"manifest"`
-	MimeType          types.String              `tfsdk:"mime_type"`
-	Org               types.String              `tfsdk:"org"`
-	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
-	PublicURL         types.String              `tfsdk:"public_url"`
-	Purpose           []types.String            `tfsdk:"purpose"`
-	ReadableSize      types.String              `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref            `tfsdk:"s3ref"`
-	Schema            types.String              `tfsdk:"schema"`
-	SizeBytes         types.Int64               `tfsdk:"size_bytes"`
-	SourceURL         types.String              `tfsdk:"source_url"`
-	Strict            types.Bool                `tfsdk:"strict"`
-	Tags              []types.String            `tfsdk:"tags"`
-	Title             types.String              `tfsdk:"title"`
-	Type              types.String              `tfsdk:"type"`
-	UpdatedAt         types.String              `tfsdk:"updated_at"`
-	Versions          []tfTypes.FileItem        `tfsdk:"versions"`
+	AccessControl     types.String                    `tfsdk:"access_control"`
+	ACL               *tfTypes.BaseEntityACL          `tfsdk:"acl"`
+	Additional        map[string]jsontypes.Normalized `tfsdk:"additional"`
+	Async             types.Bool                      `queryParam:"style=form,explode=true,name=async" tfsdk:"async"`
+	CreatedAt         types.String                    `tfsdk:"created_at"`
+	CustomDownloadURL types.String                    `tfsdk:"custom_download_url"`
+	Filename          types.String                    `tfsdk:"filename"`
+	ID                types.String                    `tfsdk:"id"`
+	Manifest          []types.String                  `tfsdk:"manifest"`
+	MimeType          types.String                    `tfsdk:"mime_type"`
+	Org               types.String                    `tfsdk:"org"`
+	Owners            []tfTypes.BaseEntityOwner       `tfsdk:"owners"`
+	PublicURL         types.String                    `tfsdk:"public_url"`
+	Purpose           []types.String                  `tfsdk:"purpose"`
+	ReadableSize      types.String                    `tfsdk:"readable_size"`
+	S3ref             *tfTypes.S3Ref                  `tfsdk:"s3ref"`
+	Schema            types.String                    `tfsdk:"schema"`
+	SizeBytes         types.Int64                     `tfsdk:"size_bytes"`
+	SourceURL         types.String                    `tfsdk:"source_url"`
+	Strict            types.Bool                      `queryParam:"style=form,explode=true,name=strict" tfsdk:"strict"`
+	Tags              []types.String                  `tfsdk:"tags"`
+	Title             types.String                    `tfsdk:"title"`
+	Type              types.String                    `tfsdk:"type"`
+	UpdatedAt         types.String                    `tfsdk:"updated_at"`
 }
 
 // Metadata returns the data source type name.
@@ -90,11 +90,10 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"additional": schema.MapAttribute{
 				Computed:    true,
-				ElementType: types.StringType,
+				ElementType: jsontypes.NormalizedType{},
 				Description: `Additional fields that are not part of the schema`,
 			},
 			"async": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Don't wait for updated entity to become available in Search API. Useful for large migrations`,
 			},
@@ -171,7 +170,6 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: `Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true`,
 			},
 			"strict": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `When passed true, the response will contain only fields that match the schema, with non-matching fields included in ` + "`" + `__additional` + "`" + ``,
 			},
@@ -187,36 +185,6 @@ func (r *FileDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
-			},
-			"versions": schema.ListNestedAttribute{
-				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"filename": schema.StringAttribute{
-							Computed: true,
-						},
-						"mime_type": schema.StringAttribute{
-							Computed: true,
-						},
-						"readable_size": schema.StringAttribute{
-							Computed: true,
-						},
-						"s3ref": schema.SingleNestedAttribute{
-							Computed: true,
-							Attributes: map[string]schema.Attribute{
-								"bucket": schema.StringAttribute{
-									Computed: true,
-								},
-								"key": schema.StringAttribute{
-									Computed: true,
-								},
-							},
-						},
-						"size_bytes": schema.Int64Attribute{
-							Computed: true,
-						},
-					},
-				},
 			},
 		},
 	}
@@ -260,27 +228,13 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	async := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async = data.Async.ValueBool()
-	} else {
-		async = nil
-	}
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetFileRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	strict := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict = data.Strict.ValueBool()
-	} else {
-		strict = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request := operations.GetFileRequest{
-		Async:  async,
-		ID:     id,
-		Strict: strict,
-	}
-	res, err := r.client.File.GetFile(ctx, request)
+	res, err := r.client.File.GetFile(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -292,10 +246,6 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -304,7 +254,11 @@ func (r *FileDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res.FileEntity)
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res.FileEntity)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

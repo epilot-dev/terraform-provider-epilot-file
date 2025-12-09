@@ -2,11 +2,26 @@
 
 package shared
 
+import (
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
+)
+
 type FileRelationItem struct {
 	// URL-friendly identifier for the entity schema
 	Schema   *string  `json:"_schema,omitempty"`
 	Tags     []string `json:"_tags,omitempty"`
 	EntityID string   `json:"entity_id"`
+}
+
+func (f FileRelationItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FileRelationItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"entity_id"}); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *FileRelationItem) GetSchema() *string {

@@ -9,7 +9,7 @@ import (
 )
 
 type SaveFileV2Request struct {
-	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
+	FileEntity *shared.FileEntityInput `request:"mediaType=application/json"`
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
@@ -27,17 +27,17 @@ func (s SaveFileV2Request) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+func (o *SaveFileV2Request) GetFileEntity() *shared.FileEntityInput {
 	if o == nil {
 		return nil
 	}
-	return o.SaveFilePayloadV2
+	return o.FileEntity
 }
 
 func (o *SaveFileV2Request) GetActivityID() *string {

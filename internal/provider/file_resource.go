@@ -12,9 +12,9 @@ import (
 	speakeasy_stringplanmodifier "github.com/epilot-dev/terraform-provider-epilot-file/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-file/internal/provider/types"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
-	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/validators"
 	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-file/internal/validators/stringvalidators"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -38,38 +38,38 @@ func NewFileResource() resource.Resource {
 
 // FileResource defines the resource implementation.
 type FileResource struct {
+	// Provider configured SDK client.
 	client *sdk.SDK
 }
 
 // FileResourceModel describes the resource data model.
 type FileResourceModel struct {
-	AccessControl     types.String              `tfsdk:"access_control"`
-	ACL               *tfTypes.BaseEntityACL    `tfsdk:"acl"`
-	ActivityID        types.String              `tfsdk:"activity_id"`
-	Additional        map[string]types.String   `tfsdk:"additional"`
-	Async             types.Bool                `tfsdk:"async"`
-	CreatedAt         types.String              `tfsdk:"created_at"`
-	CustomDownloadURL types.String              `tfsdk:"custom_download_url"`
-	Filename          types.String              `tfsdk:"filename"`
-	FillActivity      types.Bool                `tfsdk:"fill_activity"`
-	ID                types.String              `tfsdk:"id"`
-	Manifest          []types.String            `tfsdk:"manifest"`
-	MimeType          types.String              `tfsdk:"mime_type"`
-	Org               types.String              `tfsdk:"org"`
-	Owners            []tfTypes.BaseEntityOwner `tfsdk:"owners"`
-	PublicURL         types.String              `tfsdk:"public_url"`
-	Purpose           []types.String            `tfsdk:"purpose"`
-	ReadableSize      types.String              `tfsdk:"readable_size"`
-	S3ref             *tfTypes.S3Ref            `tfsdk:"s3ref"`
-	Schema            types.String              `tfsdk:"schema"`
-	SizeBytes         types.Int64               `tfsdk:"size_bytes"`
-	SourceURL         types.String              `tfsdk:"source_url"`
-	Strict            types.Bool                `tfsdk:"strict"`
-	Tags              []types.String            `tfsdk:"tags"`
-	Title             types.String              `tfsdk:"title"`
-	Type              types.String              `tfsdk:"type"`
-	UpdatedAt         types.String              `tfsdk:"updated_at"`
-	Versions          []tfTypes.FileItem        `tfsdk:"versions"`
+	AccessControl     types.String                    `tfsdk:"access_control"`
+	ACL               *tfTypes.BaseEntityACL          `tfsdk:"acl"`
+	ActivityID        types.String                    `queryParam:"style=form,explode=true,name=activity_id" tfsdk:"activity_id"`
+	Additional        map[string]jsontypes.Normalized `tfsdk:"additional"`
+	Async             types.Bool                      `queryParam:"style=form,explode=true,name=async" tfsdk:"async"`
+	CreatedAt         types.String                    `tfsdk:"created_at"`
+	CustomDownloadURL types.String                    `tfsdk:"custom_download_url"`
+	Filename          types.String                    `tfsdk:"filename"`
+	FillActivity      types.Bool                      `queryParam:"style=form,explode=true,name=fill_activity" tfsdk:"fill_activity"`
+	ID                types.String                    `tfsdk:"id"`
+	Manifest          []types.String                  `tfsdk:"manifest"`
+	MimeType          types.String                    `tfsdk:"mime_type"`
+	Org               types.String                    `tfsdk:"org"`
+	Owners            []tfTypes.BaseEntityOwner       `tfsdk:"owners"`
+	PublicURL         types.String                    `tfsdk:"public_url"`
+	Purpose           []types.String                  `tfsdk:"purpose"`
+	ReadableSize      types.String                    `tfsdk:"readable_size"`
+	S3ref             *tfTypes.S3Ref                  `tfsdk:"s3ref"`
+	Schema            types.String                    `tfsdk:"schema"`
+	SizeBytes         types.Int64                     `tfsdk:"size_bytes"`
+	SourceURL         types.String                    `tfsdk:"source_url"`
+	Strict            types.Bool                      `queryParam:"style=form,explode=true,name=strict" tfsdk:"strict"`
+	Tags              []types.String                  `tfsdk:"tags"`
+	Title             types.String                    `tfsdk:"title"`
+	Type              types.String                    `tfsdk:"type"`
+	UpdatedAt         types.String                    `tfsdk:"updated_at"`
 }
 
 func (r *FileResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -83,7 +83,7 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"access_control": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
-				Default:  stringdefault.StaticString("private"),
+				Default:  stringdefault.StaticString(`private`),
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
@@ -139,7 +139,7 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				PlanModifiers: []planmodifier.Map{
 					speakeasy_mapplanmodifier.SuppressDiff(speakeasy_mapplanmodifier.ExplicitSuppress),
 				},
-				ElementType: types.StringType,
+				ElementType: jsontypes.NormalizedType{},
 				Description: `Additional fields that are not part of the schema`,
 				Validators: []validator.Map{
 					mapvalidator.ValueStringsAre(validators.IsValidJSON()),
@@ -370,63 +370,6 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 					validators.IsRFC3339(),
 				},
 			},
-			"versions": schema.ListNestedAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.List{
-					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-				},
-				NestedObject: schema.NestedAttributeObject{
-					PlanModifiers: []planmodifier.Object{
-						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-					},
-					Attributes: map[string]schema.Attribute{
-						"filename": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
-						},
-						"mime_type": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
-						},
-						"readable_size": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
-						},
-						"s3ref": schema.SingleNestedAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.Object{
-								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-							},
-							Attributes: map[string]schema.Attribute{
-								"bucket": schema.StringAttribute{
-									Computed: true,
-									PlanModifiers: []planmodifier.String{
-										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-									},
-								},
-								"key": schema.StringAttribute{
-									Computed: true,
-									PlanModifiers: []planmodifier.String{
-										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-									},
-								},
-							},
-						},
-						"size_bytes": schema.Int64Attribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.Int64{
-								speakeasy_int64planmodifier.SuppressDiff(speakeasy_int64planmodifier.ExplicitSuppress),
-							},
-						},
-					},
-				},
-			},
 		},
 	}
 }
@@ -469,39 +412,13 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
-	activityID := new(string)
-	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
-		*activityID = data.ActivityID.ValueString()
-	} else {
-		activityID = nil
+	request, requestDiags := data.ToOperationsSaveFileV2Request(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	async := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async = data.Async.ValueBool()
-	} else {
-		async = nil
-	}
-	fillActivity := new(bool)
-	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
-		*fillActivity = data.FillActivity.ValueBool()
-	} else {
-		fillActivity = nil
-	}
-	strict := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict = data.Strict.ValueBool()
-	} else {
-		strict = nil
-	}
-	request := operations.SaveFileV2Request{
-		SaveFilePayloadV2: saveFilePayloadV2,
-		ActivityID:        activityID,
-		Async:             async,
-		FillActivity:      fillActivity,
-		Strict:            strict,
-	}
-	res, err := r.client.File.SaveFileV2(ctx, request)
+	res, err := r.client.File.SaveFileV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -521,29 +438,24 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res.FileEntity)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	async1 := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async1 = data.Async.ValueBool()
-	} else {
-		async1 = nil
-	}
-	var id string
-	id = data.ID.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res.FileEntity)...)
 
-	strict1 := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict1 = data.Strict.ValueBool()
-	} else {
-		strict1 = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request1 := operations.GetFileRequest{
-		Async:  async1,
-		ID:     id,
-		Strict: strict1,
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.File.GetFile(ctx, request1)
+	request1, request1Diags := data.ToOperationsGetFileRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.File.GetFile(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -563,8 +475,17 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res1.FileEntity)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res1.FileEntity)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -588,27 +509,13 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 
-	async := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async = data.Async.ValueBool()
-	} else {
-		async = nil
-	}
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetFileRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	strict := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict = data.Strict.ValueBool()
-	} else {
-		strict = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request := operations.GetFileRequest{
-		Async:  async,
-		ID:     id,
-		Strict: strict,
-	}
-	res, err := r.client.File.GetFile(ctx, request)
+	res, err := r.client.File.GetFile(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -632,7 +539,11 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res.FileEntity)
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res.FileEntity)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -652,39 +563,13 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	saveFilePayloadV2 := data.ToSharedSaveFilePayloadV2()
-	activityID := new(string)
-	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
-		*activityID = data.ActivityID.ValueString()
-	} else {
-		activityID = nil
+	request, requestDiags := data.ToOperationsSaveFileV2Request(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	async := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async = data.Async.ValueBool()
-	} else {
-		async = nil
-	}
-	fillActivity := new(bool)
-	if !data.FillActivity.IsUnknown() && !data.FillActivity.IsNull() {
-		*fillActivity = data.FillActivity.ValueBool()
-	} else {
-		fillActivity = nil
-	}
-	strict := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict = data.Strict.ValueBool()
-	} else {
-		strict = nil
-	}
-	request := operations.SaveFileV2Request{
-		SaveFilePayloadV2: saveFilePayloadV2,
-		ActivityID:        activityID,
-		Async:             async,
-		FillActivity:      fillActivity,
-		Strict:            strict,
-	}
-	res, err := r.client.File.SaveFileV2(ctx, request)
+	res, err := r.client.File.SaveFileV2(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -704,29 +589,24 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res.FileEntity)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	async1 := new(bool)
-	if !data.Async.IsUnknown() && !data.Async.IsNull() {
-		*async1 = data.Async.ValueBool()
-	} else {
-		async1 = nil
-	}
-	var id string
-	id = data.ID.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res.FileEntity)...)
 
-	strict1 := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict1 = data.Strict.ValueBool()
-	} else {
-		strict1 = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request1 := operations.GetFileRequest{
-		Async:  async1,
-		ID:     id,
-		Strict: strict1,
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.File.GetFile(ctx, request1)
+	request1, request1Diags := data.ToOperationsGetFileRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.File.GetFile(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -746,8 +626,17 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedFileEntity(res1.FileEntity)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedFileEntity(ctx, res1.FileEntity)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -771,27 +660,13 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		return
 	}
 
-	activityID := new(string)
-	if !data.ActivityID.IsUnknown() && !data.ActivityID.IsNull() {
-		*activityID = data.ActivityID.ValueString()
-	} else {
-		activityID = nil
-	}
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsDeleteFileRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	strict := new(bool)
-	if !data.Strict.IsUnknown() && !data.Strict.IsNull() {
-		*strict = data.Strict.ValueBool()
-	} else {
-		strict = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request := operations.DeleteFileRequest{
-		ActivityID: activityID,
-		ID:         id,
-		Strict:     strict,
-	}
-	res, err := r.client.File.DeleteFile(ctx, request)
+	res, err := r.client.File.DeleteFile(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

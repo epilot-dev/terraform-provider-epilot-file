@@ -39,3 +39,9 @@ actions:
   - target: $["components"]["schemas"]["FileEntity"]["allOf"][2]
     update:
       x-speakeasy-param-suppress-computed-diff: true 
+  - target: $["components"]["schemas"]["FileEntity"]["allOf"][2]["properties"]["versions"]
+    remove: yes
+  
+  # not needed since we remove whole requirede property in above lines
+  # - target: $["components"]["schemas"]["FileEntity"]["allOf"][2]["required"][?(@=='versions')]
+  #   remove: yes

@@ -13,7 +13,7 @@ resource "epilot-file_file" "my_file" {
   }
   activity_id = "01F130Q52Q6MWSNS8N2AVXV4JN"
   additional = {
-    "see" : jsonencode("documentation"),
+    key = jsonencode("value")
   }
   async               = true
   custom_download_url = "https://some-api-url.com/download?file_id=123"
@@ -25,7 +25,8 @@ resource "epilot-file_file" "my_file" {
   ]
   mime_type = "application/pdf"
   purpose = [
-    "..."
+    "8d396871-95a0-4c9d-bb4d-9eda9c35776c",
+    "da7cdf9a-01be-40c9-a29c-9a8f9f0de6f8",
   ]
   s3ref = {
     bucket = "epilot-prod-user-content"
@@ -34,7 +35,8 @@ resource "epilot-file_file" "my_file" {
   source_url = "https://productengineer-content.s3.eu-west-1.amazonaws.com/product-engineer-checklist.pdf"
   strict     = false
   tags = [
-    "..."
+    "tag1",
+    "tag2",
   ]
   title = "document.pdf"
   type  = "font"

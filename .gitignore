@@ -1,3 +1,5 @@
+**/.speakeasy/temp/
+**/.speakeasy/logs/
 # .gitignore
 .terraform
 .terraform*
@@ -30,8 +32,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 .DS_Store
-
 terraform-provider-epilot-file
-
 original.yaml
 original_modified.yaml

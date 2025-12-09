@@ -88,9 +88,8 @@ type FileEntity struct {
 	// File size in bytes
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
 	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
-	SourceURL *string    `json:"source_url,omitempty"`
-	Type      *FileType  `json:"type,omitempty"`
-	Versions  []FileItem `json:"versions,omitempty"`
+	SourceURL *string   `json:"source_url,omitempty"`
+	Type      *FileType `json:"type,omitempty"`
 }
 
 func (f FileEntity) MarshalJSON() ([]byte, error) {
@@ -98,7 +97,7 @@ func (f FileEntity) MarshalJSON() ([]byte, error) {
 }
 
 func (f *FileEntity) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
@@ -258,9 +257,134 @@ func (o *FileEntity) GetType() *FileType {
 	return o.Type
 }
 
-func (o *FileEntity) GetVersions() []FileItem {
+type FileEntityInput struct {
+	// Additional fields that are not part of the schema
+	Additional map[string]any `json:"__additional,omitempty"`
+	// Access control list (ACL) for an entity. Defines sharing access to external orgs or users.
+	ACL *BaseEntityACL `json:"_acl,omitempty"`
+	ID  *string        `json:"_id,omitempty"`
+	// Manifest ID used to create/update the entity
+	Manifest      []string       `json:"_manifest,omitempty"`
+	Purpose       []string       `json:"_purpose,omitempty"`
+	Tags          []string       `json:"_tags,omitempty"`
+	Title         *string        `json:"_title,omitempty"`
+	AccessControl *AccessControl `default:"private" json:"access_control"`
+	// Custom external download url used for the file
+	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	Filename          *string `json:"filename,omitempty"`
+	// MIME type of the file
+	MimeType *string `json:"mime_type,omitempty"`
+	S3ref    *S3Ref  `json:"s3ref,omitempty"`
+	// Source URL for the file. Included if the entity was created from source_url, or when ?source_url=true
+	SourceURL *string   `json:"source_url,omitempty"`
+	Type      *FileType `json:"type,omitempty"`
+}
+
+func (f FileEntityInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FileEntityInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *FileEntityInput) GetAdditional() map[string]any {
 	if o == nil {
 		return nil
 	}
-	return o.Versions
+	return o.Additional
+}
+
+func (o *FileEntityInput) GetACL() *BaseEntityACL {
+	if o == nil {
+		return nil
+	}
+	return o.ACL
+}
+
+func (o *FileEntityInput) GetID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ID
+}
+
+func (o *FileEntityInput) GetManifest() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Manifest
+}
+
+func (o *FileEntityInput) GetPurpose() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Purpose
+}
+
+func (o *FileEntityInput) GetTags() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Tags
+}
+
+func (o *FileEntityInput) GetTitle() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Title
+}
+
+func (o *FileEntityInput) GetAccessControl() *AccessControl {
+	if o == nil {
+		return nil
+	}
+	return o.AccessControl
+}
+
+func (o *FileEntityInput) GetCustomDownloadURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.CustomDownloadURL
+}
+
+func (o *FileEntityInput) GetFilename() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Filename
+}
+
+func (o *FileEntityInput) GetMimeType() *string {
+	if o == nil {
+		return nil
+	}
+	return o.MimeType
+}
+
+func (o *FileEntityInput) GetS3ref() *S3Ref {
+	if o == nil {
+		return nil
+	}
+	return o.S3ref
+}
+
+func (o *FileEntityInput) GetSourceURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.SourceURL
+}
+
+func (o *FileEntityInput) GetType() *FileType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
