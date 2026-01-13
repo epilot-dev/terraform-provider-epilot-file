@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 1.4.0 and generator version 2.694.1
+// Generated from OpenAPI doc version 1.6.0 and generator version 2.793.2
 
 import (
 	"context"
@@ -55,8 +55,6 @@ type SDK struct {
 	SDKVersion string
 	// Collection management for organizing files within entities
 	FileCollections *FileCollections
-	// Folder management for organizing files within entities (deprecated - use File Collections)
-	FileFolders *FileFolders
 	// Deprecated APIs
 	Deprecated *Deprecated
 	// Upload and Manage File Entities
@@ -142,9 +140,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.7.0",
+		SDKVersion: "0.8.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.7.0 2.694.1 1.4.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.8.0 2.793.2 1.6.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -166,7 +164,6 @@ func New(opts ...SDKOption) *SDK {
 	}
 
 	sdk.FileCollections = newFileCollections(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.FileFolders = newFileFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Deprecated = newDeprecated(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.File = newFile(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.PublicLinks = newPublicLinks(sdk, sdk.sdkConfiguration, sdk.hooks)

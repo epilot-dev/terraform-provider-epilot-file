@@ -21,29 +21,29 @@ func (f FileCollectionCreateRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (f *FileCollectionCreateRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"name"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *FileCollectionCreateRequest) GetName() string {
-	if o == nil {
+func (f *FileCollectionCreateRequest) GetName() string {
+	if f == nil {
 		return ""
 	}
-	return o.Name
+	return f.Name
 }
 
-func (o *FileCollectionCreateRequest) GetParents() []string {
-	if o == nil {
+func (f *FileCollectionCreateRequest) GetParents() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Parents
+	return f.Parents
 }
 
-func (o *FileCollectionCreateRequest) GetStarred() *bool {
-	if o == nil {
+func (f *FileCollectionCreateRequest) GetStarred() *bool {
+	if f == nil {
 		return nil
 	}
-	return o.Starred
+	return f.Starred
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type SaveFileV2Request struct {
-	FileEntity *shared.FileEntityInput `request:"mediaType=application/json"`
+	SaveFilePayloadV2 *shared.SaveFilePayloadV2 `request:"mediaType=application/json"`
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
@@ -35,46 +35,46 @@ func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFileV2Request) GetFileEntity() *shared.FileEntityInput {
-	if o == nil {
+func (s *SaveFileV2Request) GetSaveFilePayloadV2() *shared.SaveFilePayloadV2 {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.SaveFilePayloadV2
 }
 
-func (o *SaveFileV2Request) GetActivityID() *string {
-	if o == nil {
+func (s *SaveFileV2Request) GetActivityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ActivityID
+	return s.ActivityID
 }
 
-func (o *SaveFileV2Request) GetAsync() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetAsync() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Async
+	return s.Async
 }
 
-func (o *SaveFileV2Request) GetDeleteTempFile() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetDeleteTempFile() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.DeleteTempFile
+	return s.DeleteTempFile
 }
 
-func (o *SaveFileV2Request) GetFillActivity() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetFillActivity() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.FillActivity
+	return s.FillActivity
 }
 
-func (o *SaveFileV2Request) GetStrict() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetStrict() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Strict
+	return s.Strict
 }
 
 type SaveFileV2Response struct {
@@ -88,30 +88,30 @@ type SaveFileV2Response struct {
 	RawResponse *http.Response
 }
 
-func (o *SaveFileV2Response) GetContentType() string {
-	if o == nil {
+func (s *SaveFileV2Response) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (s *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.FileEntity
 }
 
-func (o *SaveFileV2Response) GetStatusCode() int {
-	if o == nil {
+func (s *SaveFileV2Response) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SaveFileV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SaveFileV2Response) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }

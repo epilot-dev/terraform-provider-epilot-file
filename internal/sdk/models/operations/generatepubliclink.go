@@ -10,11 +10,11 @@ type GeneratePublicLinkRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *GeneratePublicLinkRequest) GetID() string {
-	if o == nil {
+func (g *GeneratePublicLinkRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
 }
 
 type GeneratePublicLinkResponse struct {
@@ -28,30 +28,30 @@ type GeneratePublicLinkResponse struct {
 	String *string
 }
 
-func (o *GeneratePublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GeneratePublicLinkResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GeneratePublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GeneratePublicLinkResponse) GetString() *string {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetString() *string {
+	if g == nil {
 		return nil
 	}
-	return o.String
+	return g.String
 }

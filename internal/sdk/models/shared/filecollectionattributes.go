@@ -26,23 +26,23 @@ func (f *FileCollectionAttributes) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FileCollectionAttributes) GetName() *string {
-	if o == nil {
+func (f *FileCollectionAttributes) GetName() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Name
+	return f.Name
 }
 
-func (o *FileCollectionAttributes) GetParents() []string {
-	if o == nil {
+func (f *FileCollectionAttributes) GetParents() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Parents
+	return f.Parents
 }
 
-func (o *FileCollectionAttributes) GetStarred() *bool {
-	if o == nil {
+func (f *FileCollectionAttributes) GetStarred() *bool {
+	if f == nil {
 		return nil
 	}
-	return o.Starred
+	return f.Starred
 }

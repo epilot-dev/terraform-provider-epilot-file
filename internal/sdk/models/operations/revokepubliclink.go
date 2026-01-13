@@ -10,11 +10,11 @@ type RevokePublicLinkRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *RevokePublicLinkRequest) GetID() string {
-	if o == nil {
+func (r *RevokePublicLinkRequest) GetID() string {
+	if r == nil {
 		return ""
 	}
-	return o.ID
+	return r.ID
 }
 
 type RevokePublicLinkResponse struct {
@@ -28,30 +28,30 @@ type RevokePublicLinkResponse struct {
 	String *string
 }
 
-func (o *RevokePublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetContentType() string {
+	if r == nil {
 		return ""
 	}
-	return o.ContentType
+	return r.ContentType
 }
 
-func (o *RevokePublicLinkResponse) GetStatusCode() int {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetStatusCode() int {
+	if r == nil {
 		return 0
 	}
-	return o.StatusCode
+	return r.StatusCode
 }
 
-func (o *RevokePublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetRawResponse() *http.Response {
+	if r == nil {
 		return nil
 	}
-	return o.RawResponse
+	return r.RawResponse
 }
 
-func (o *RevokePublicLinkResponse) GetString() *string {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetString() *string {
+	if r == nil {
 		return nil
 	}
-	return o.String
+	return r.String
 }

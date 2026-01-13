@@ -16,18 +16,18 @@ type UploadFileV2Request struct {
 	FileEntityID *string `queryParam:"style=form,explode=true,name=file_entity_id"`
 }
 
-func (o *UploadFileV2Request) GetUploadFilePayload() *shared.UploadFilePayload {
-	if o == nil {
+func (u *UploadFileV2Request) GetUploadFilePayload() *shared.UploadFilePayload {
+	if u == nil {
 		return nil
 	}
-	return o.UploadFilePayload
+	return u.UploadFilePayload
 }
 
-func (o *UploadFileV2Request) GetFileEntityID() *string {
-	if o == nil {
+func (u *UploadFileV2Request) GetFileEntityID() *string {
+	if u == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return u.FileEntityID
 }
 
 type UploadFileV2Response struct {
@@ -41,30 +41,30 @@ type UploadFileV2Response struct {
 	RawResponse *http.Response
 }
 
-func (o *UploadFileV2Response) GetContentType() string {
-	if o == nil {
+func (u *UploadFileV2Response) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UploadFileV2Response) GetFileUpload() *shared.FileUpload {
-	if o == nil {
+func (u *UploadFileV2Response) GetFileUpload() *shared.FileUpload {
+	if u == nil {
 		return nil
 	}
-	return o.FileUpload
+	return u.FileUpload
 }
 
-func (o *UploadFileV2Response) GetStatusCode() int {
-	if o == nil {
+func (u *UploadFileV2Response) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UploadFileV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UploadFileV2Response) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }

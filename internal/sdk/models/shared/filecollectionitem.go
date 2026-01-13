@@ -11,6 +11,8 @@ import (
 type FileCollectionItem struct {
 	// Timestamp when the collection was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+	// List of purpose slugs where the collection is enabled. If empty, enabled for all.
+	EnabledLocations []string `json:"enabled_locations,omitempty"`
 	// Generated uuid for a file collection
 	ID *string `json:"id,omitempty"`
 	// Display name of the collection
@@ -42,64 +44,71 @@ func (f FileCollectionItem) MarshalJSON() ([]byte, error) {
 }
 
 func (f *FileCollectionItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"name"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *FileCollectionItem) GetCreatedAt() *time.Time {
-	if o == nil {
+func (f *FileCollectionItem) GetCreatedAt() *time.Time {
+	if f == nil {
 		return nil
 	}
-	return o.CreatedAt
+	return f.CreatedAt
 }
 
-func (o *FileCollectionItem) GetID() *string {
-	if o == nil {
+func (f *FileCollectionItem) GetEnabledLocations() []string {
+	if f == nil {
 		return nil
 	}
-	return o.ID
+	return f.EnabledLocations
 }
 
-func (o *FileCollectionItem) GetName() string {
-	if o == nil {
+func (f *FileCollectionItem) GetID() *string {
+	if f == nil {
+		return nil
+	}
+	return f.ID
+}
+
+func (f *FileCollectionItem) GetName() string {
+	if f == nil {
 		return ""
 	}
-	return o.Name
+	return f.Name
 }
 
-func (o *FileCollectionItem) GetOrder() *float64 {
-	if o == nil {
+func (f *FileCollectionItem) GetOrder() *float64 {
+	if f == nil {
 		return nil
 	}
-	return o.Order
+	return f.Order
 }
 
-func (o *FileCollectionItem) GetParents() []string {
-	if o == nil {
+func (f *FileCollectionItem) GetParents() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Parents
+	return f.Parents
 }
 
-func (o *FileCollectionItem) GetSlug() *string {
-	if o == nil {
+func (f *FileCollectionItem) GetSlug() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Slug
+	return f.Slug
 }
 
-func (o *FileCollectionItem) GetStarred() *bool {
-	if o == nil {
+func (f *FileCollectionItem) GetStarred() *bool {
+	if f == nil {
 		return nil
 	}
-	return o.Starred
+	return f.Starred
 }
 
-func (o *FileCollectionItem) GetUpdatedAt() *time.Time {
-	if o == nil {
+func (f *FileCollectionItem) GetUpdatedAt() *time.Time {
+	if f == nil {
 		return nil
 	}
-	return o.UpdatedAt
+	return f.UpdatedAt
 }
