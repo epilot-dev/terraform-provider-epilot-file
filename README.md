@@ -59,13 +59,13 @@ terraform {
   required_providers {
     epilot-file = {
       source  = "epilot-dev/epilot-file"
-      version = "0.7.0"
+      version = "0.8.0"
     }
   }
 }
 
 provider "epilot-file" {
-  # Configuration options
+  server_url = "..." # Optional
 }
 ```
 <!-- End Installation [installation] -->
@@ -130,10 +130,7 @@ Available configuration:
 
 ### Resources
 
-* [epilot-file_file](docs/resources/file.md)
 ### Data Sources
-
-* [epilot-file_file](docs/data-sources/file.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Summary [summary] -->

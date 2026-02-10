@@ -14,18 +14,18 @@ type GetFilesInCollectionRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *GetFilesInCollectionRequest) GetCollectionSlug() string {
-	if o == nil {
+func (g *GetFilesInCollectionRequest) GetCollectionSlug() string {
+	if g == nil {
 		return ""
 	}
-	return o.CollectionSlug
+	return g.CollectionSlug
 }
 
-func (o *GetFilesInCollectionRequest) GetID() string {
-	if o == nil {
+func (g *GetFilesInCollectionRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
 }
 
 // GetFilesInCollectionFileCollectionsResponseBody - Entity or collection not found
@@ -33,11 +33,11 @@ type GetFilesInCollectionFileCollectionsResponseBody struct {
 	Error *string `json:"error,omitempty"`
 }
 
-func (o *GetFilesInCollectionFileCollectionsResponseBody) GetError() *string {
-	if o == nil {
+func (g *GetFilesInCollectionFileCollectionsResponseBody) GetError() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Error
+	return g.Error
 }
 
 // GetFilesInCollectionResponseBody - User must have permission to view this entity to access its files
@@ -45,11 +45,11 @@ type GetFilesInCollectionResponseBody struct {
 	Error *string `json:"error,omitempty"`
 }
 
-func (o *GetFilesInCollectionResponseBody) GetError() *string {
-	if o == nil {
+func (g *GetFilesInCollectionResponseBody) GetError() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Error
+	return g.Error
 }
 
 type GetFilesInCollectionResponse struct {
@@ -67,44 +67,44 @@ type GetFilesInCollectionResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *GetFilesInCollectionResponse) GetTwoHundredApplicationJSONClasses() []shared.FileEntity {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetTwoHundredApplicationJSONClasses() []shared.FileEntity {
+	if g == nil {
 		return nil
 	}
-	return o.TwoHundredApplicationJSONClasses
+	return g.TwoHundredApplicationJSONClasses
 }
 
-func (o *GetFilesInCollectionResponse) GetFourHundredAndThreeApplicationJSONObject() *GetFilesInCollectionResponseBody {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetFourHundredAndThreeApplicationJSONObject() *GetFilesInCollectionResponseBody {
+	if g == nil {
 		return nil
 	}
-	return o.FourHundredAndThreeApplicationJSONObject
+	return g.FourHundredAndThreeApplicationJSONObject
 }
 
-func (o *GetFilesInCollectionResponse) GetFourHundredAndFourApplicationJSONObject() *GetFilesInCollectionFileCollectionsResponseBody {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetFourHundredAndFourApplicationJSONObject() *GetFilesInCollectionFileCollectionsResponseBody {
+	if g == nil {
 		return nil
 	}
-	return o.FourHundredAndFourApplicationJSONObject
+	return g.FourHundredAndFourApplicationJSONObject
 }
 
-func (o *GetFilesInCollectionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetFilesInCollectionResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetFilesInCollectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }

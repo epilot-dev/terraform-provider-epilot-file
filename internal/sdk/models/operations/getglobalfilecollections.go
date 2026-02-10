@@ -12,11 +12,11 @@ type GetGlobalFileCollectionsRequest struct {
 	SchemaSlug string `pathParam:"style=simple,explode=false,name=schemaSlug"`
 }
 
-func (o *GetGlobalFileCollectionsRequest) GetSchemaSlug() string {
-	if o == nil {
+func (g *GetGlobalFileCollectionsRequest) GetSchemaSlug() string {
+	if g == nil {
 		return ""
 	}
-	return o.SchemaSlug
+	return g.SchemaSlug
 }
 
 type GetGlobalFileCollectionsResponse struct {
@@ -30,30 +30,30 @@ type GetGlobalFileCollectionsResponse struct {
 	Classes []shared.FileCollectionItem
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
+	if g == nil {
 		return nil
 	}
-	return o.Classes
+	return g.Classes
 }

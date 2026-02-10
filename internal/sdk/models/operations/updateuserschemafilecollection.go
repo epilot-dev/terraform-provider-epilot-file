@@ -15,25 +15,25 @@ type UpdateUserSchemaFileCollectionRequest struct {
 	Slug string `pathParam:"style=simple,explode=false,name=slug"`
 }
 
-func (o *UpdateUserSchemaFileCollectionRequest) GetFileCollectionAttributes() shared.FileCollectionAttributes {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionRequest) GetFileCollectionAttributes() shared.FileCollectionAttributes {
+	if u == nil {
 		return shared.FileCollectionAttributes{}
 	}
-	return o.FileCollectionAttributes
+	return u.FileCollectionAttributes
 }
 
-func (o *UpdateUserSchemaFileCollectionRequest) GetCollectionSlug() string {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionRequest) GetCollectionSlug() string {
+	if u == nil {
 		return ""
 	}
-	return o.CollectionSlug
+	return u.CollectionSlug
 }
 
-func (o *UpdateUserSchemaFileCollectionRequest) GetSlug() string {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionRequest) GetSlug() string {
+	if u == nil {
 		return ""
 	}
-	return o.Slug
+	return u.Slug
 }
 
 // UpdateUserSchemaFileCollectionResponseBody - A generic error returned by the API
@@ -44,18 +44,18 @@ type UpdateUserSchemaFileCollectionResponseBody struct {
 	Status *int64 `json:"status,omitempty"`
 }
 
-func (o *UpdateUserSchemaFileCollectionResponseBody) GetError() *string {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponseBody) GetError() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Error
+	return u.Error
 }
 
-func (o *UpdateUserSchemaFileCollectionResponseBody) GetStatus() *int64 {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponseBody) GetStatus() *int64 {
+	if u == nil {
 		return nil
 	}
-	return o.Status
+	return u.Status
 }
 
 type UpdateUserSchemaFileCollectionResponse struct {
@@ -71,37 +71,37 @@ type UpdateUserSchemaFileCollectionResponse struct {
 	Object *UpdateUserSchemaFileCollectionResponseBody
 }
 
-func (o *UpdateUserSchemaFileCollectionResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
+	if u == nil {
 		return nil
 	}
-	return o.FileCollectionItem
+	return u.FileCollectionItem
 }
 
-func (o *UpdateUserSchemaFileCollectionResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UpdateUserSchemaFileCollectionResponse) GetObject() *UpdateUserSchemaFileCollectionResponseBody {
-	if o == nil {
+func (u *UpdateUserSchemaFileCollectionResponse) GetObject() *UpdateUserSchemaFileCollectionResponseBody {
+	if u == nil {
 		return nil
 	}
-	return o.Object
+	return u.Object
 }

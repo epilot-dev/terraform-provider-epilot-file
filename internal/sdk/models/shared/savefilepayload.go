@@ -17,9 +17,9 @@ const (
 )
 
 type SaveFilePayload struct {
-	SaveS3FilePayload            *SaveS3FilePayload            `queryParam:"inline" name:"SaveFilePayload"`
-	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload `queryParam:"inline" name:"SaveFilePayload"`
-	SaveCustomFilePayload        *SaveCustomFilePayload        `queryParam:"inline" name:"SaveFilePayload"`
+	SaveS3FilePayload            *SaveS3FilePayload            `queryParam:"inline" union:"member"`
+	SaveFileFromSourceURLPayload *SaveFileFromSourceURLPayload `queryParam:"inline" union:"member"`
+	SaveCustomFilePayload        *SaveCustomFilePayload        `queryParam:"inline" union:"member"`
 
 	Type SaveFilePayloadType
 }
@@ -53,24 +53,54 @@ func CreateSaveFilePayloadSaveCustomFilePayload(saveCustomFilePayload SaveCustom
 
 func (u *SaveFilePayload) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var saveS3FilePayload SaveS3FilePayload = SaveS3FilePayload{}
 	if err := utils.UnmarshalJSON(data, &saveS3FilePayload, "", true, nil); err == nil {
-		u.SaveS3FilePayload = &saveS3FilePayload
-		u.Type = SaveFilePayloadTypeSaveS3FilePayload
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadTypeSaveS3FilePayload,
+			Value: &saveS3FilePayload,
+		})
 	}
 
 	var saveFileFromSourceURLPayload SaveFileFromSourceURLPayload = SaveFileFromSourceURLPayload{}
 	if err := utils.UnmarshalJSON(data, &saveFileFromSourceURLPayload, "", true, nil); err == nil {
-		u.SaveFileFromSourceURLPayload = &saveFileFromSourceURLPayload
-		u.Type = SaveFilePayloadTypeSaveFileFromSourceURLPayload
-		return nil
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadTypeSaveFileFromSourceURLPayload,
+			Value: &saveFileFromSourceURLPayload,
+		})
 	}
 
 	var saveCustomFilePayload SaveCustomFilePayload = SaveCustomFilePayload{}
 	if err := utils.UnmarshalJSON(data, &saveCustomFilePayload, "", true, nil); err == nil {
-		u.SaveCustomFilePayload = &saveCustomFilePayload
-		u.Type = SaveFilePayloadTypeSaveCustomFilePayload
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFilePayloadTypeSaveCustomFilePayload,
+			Value: &saveCustomFilePayload,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFilePayload", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFilePayload", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(SaveFilePayloadType)
+	switch best.Type {
+	case SaveFilePayloadTypeSaveS3FilePayload:
+		u.SaveS3FilePayload = best.Value.(*SaveS3FilePayload)
+		return nil
+	case SaveFilePayloadTypeSaveFileFromSourceURLPayload:
+		u.SaveFileFromSourceURLPayload = best.Value.(*SaveFileFromSourceURLPayload)
+		return nil
+	case SaveFilePayloadTypeSaveCustomFilePayload:
+		u.SaveCustomFilePayload = best.Value.(*SaveCustomFilePayload)
 		return nil
 	}
 

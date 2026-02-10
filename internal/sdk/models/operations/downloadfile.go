@@ -9,8 +9,9 @@ import (
 
 type DownloadFileRequest struct {
 	// Controls the Content-Disposition header to control browser behaviour. Set to true to trigger download.
-	Attachment *bool  `default:"true" queryParam:"style=form,explode=true,name=attachment"`
-	ID         string `pathParam:"style=simple,explode=false,name=id"`
+	Attachment *bool `default:"true" queryParam:"style=form,explode=true,name=attachment"`
+	// Empty string (used when file ID not yet assigned)
+	ID string `pathParam:"style=simple,explode=false,name=id"`
 	// index of file version
 	Version *int64 `default:"0" queryParam:"style=form,explode=true,name=version"`
 }
@@ -20,31 +21,31 @@ func (d DownloadFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *DownloadFileRequest) GetAttachment() *bool {
-	if o == nil {
+func (d *DownloadFileRequest) GetAttachment() *bool {
+	if d == nil {
 		return nil
 	}
-	return o.Attachment
+	return d.Attachment
 }
 
-func (o *DownloadFileRequest) GetID() string {
-	if o == nil {
+func (d *DownloadFileRequest) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
-func (o *DownloadFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (d *DownloadFileRequest) GetVersion() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Version
+	return d.Version
 }
 
 // DownloadFileResponseBody - Generated thumbnail image
@@ -52,11 +53,11 @@ type DownloadFileResponseBody struct {
 	DownloadURL *string `json:"download_url,omitempty"`
 }
 
-func (o *DownloadFileResponseBody) GetDownloadURL() *string {
-	if o == nil {
+func (d *DownloadFileResponseBody) GetDownloadURL() *string {
+	if d == nil {
 		return nil
 	}
-	return o.DownloadURL
+	return d.DownloadURL
 }
 
 type DownloadFileResponse struct {
@@ -70,30 +71,30 @@ type DownloadFileResponse struct {
 	Object *DownloadFileResponseBody
 }
 
-func (o *DownloadFileResponse) GetContentType() string {
-	if o == nil {
+func (d *DownloadFileResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DownloadFileResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DownloadFileResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DownloadFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DownloadFileResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DownloadFileResponse) GetObject() *DownloadFileResponseBody {
-	if o == nil {
+func (d *DownloadFileResponse) GetObject() *DownloadFileResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }

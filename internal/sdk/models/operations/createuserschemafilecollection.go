@@ -13,18 +13,18 @@ type CreateUserSchemaFileCollectionRequest struct {
 	Slug string `pathParam:"style=simple,explode=false,name=slug"`
 }
 
-func (o *CreateUserSchemaFileCollectionRequest) GetFileCollectionCreateRequest() shared.FileCollectionCreateRequest {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionRequest) GetFileCollectionCreateRequest() shared.FileCollectionCreateRequest {
+	if c == nil {
 		return shared.FileCollectionCreateRequest{}
 	}
-	return o.FileCollectionCreateRequest
+	return c.FileCollectionCreateRequest
 }
 
-func (o *CreateUserSchemaFileCollectionRequest) GetSlug() string {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionRequest) GetSlug() string {
+	if c == nil {
 		return ""
 	}
-	return o.Slug
+	return c.Slug
 }
 
 type CreateUserSchemaFileCollectionResponse struct {
@@ -38,30 +38,30 @@ type CreateUserSchemaFileCollectionResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
+	if c == nil {
 		return nil
 	}
-	return o.FileCollectionItem
+	return c.FileCollectionItem
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }

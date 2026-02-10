@@ -6,8 +6,11 @@ import (
 	"context"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
+	"github.com/hashicorp/terraform-plugin-framework/function"
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,7 +19,9 @@ import (
 )
 
 var _ provider.Provider = (*EpilotFileProvider)(nil)
+var _ provider.ProviderWithActions = (*EpilotFileProvider)(nil)
 var _ provider.ProviderWithEphemeralResources = (*EpilotFileProvider)(nil)
+var _ provider.ProviderWithFunctions = (*EpilotFileProvider)(nil)
 
 type EpilotFileProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -102,25 +107,35 @@ func (p *EpilotFileProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	client := sdk.New(opts...)
+	resp.ActionData = client
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
+	resp.ListResourceData = client
 	resp.ResourceData = client
 }
 
+func (p *EpilotFileProvider) Functions(_ context.Context) []func() function.Function {
+	return []func() function.Function{}
+}
+
+func (p *EpilotFileProvider) Actions(_ context.Context) []func() action.Action {
+	return []func() action.Action{}
+}
+
 func (p *EpilotFileProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewFileResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *EpilotFileProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewFileDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func (p *EpilotFileProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{}
+}
+
+func (p *EpilotFileProvider) ListResources(ctx context.Context) []func() list.ListResource {
+	return []func() list.ListResource{}
 }
 
 func New(version string) func() provider.Provider {

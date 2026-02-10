@@ -16,22 +16,22 @@ func (s S3Ref) MarshalJSON() ([]byte, error) {
 }
 
 func (s *S3Ref) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &s, "", false, []string{"bucket", "key"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *S3Ref) GetBucket() string {
-	if o == nil {
+func (s *S3Ref) GetBucket() string {
+	if s == nil {
 		return ""
 	}
-	return o.Bucket
+	return s.Bucket
 }
 
-func (o *S3Ref) GetKey() string {
-	if o == nil {
+func (s *S3Ref) GetKey() string {
+	if s == nil {
 		return ""
 	}
-	return o.Key
+	return s.Key
 }

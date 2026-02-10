@@ -9,23 +9,23 @@ type BaseEntityACL struct {
 	View   []string `json:"view,omitempty"`
 }
 
-func (o *BaseEntityACL) GetDelete() []string {
-	if o == nil {
+func (b *BaseEntityACL) GetDelete() []string {
+	if b == nil {
 		return nil
 	}
-	return o.Delete
+	return b.Delete
 }
 
-func (o *BaseEntityACL) GetEdit() []string {
-	if o == nil {
+func (b *BaseEntityACL) GetEdit() []string {
+	if b == nil {
 		return nil
 	}
-	return o.Edit
+	return b.Edit
 }
 
-func (o *BaseEntityACL) GetView() []string {
-	if o == nil {
+func (b *BaseEntityACL) GetView() []string {
+	if b == nil {
 		return nil
 	}
-	return o.View
+	return b.View
 }
