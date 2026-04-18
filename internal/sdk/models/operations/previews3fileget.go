@@ -7,70 +7,128 @@ import (
 )
 
 type PreviewS3FileGetRequest struct {
-	// s3 bucket
+	// The S3 bucket name
 	Bucket string `queryParam:"style=form,explode=true,name=bucket"`
-	// height
+	// Desired height in pixels
 	H *int64 `queryParam:"style=form,explode=true,name=h"`
-	// s3 key
+	// The S3 object key
 	Key string `queryParam:"style=form,explode=true,name=key"`
-	// width
+	// Desired width in pixels
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
-func (o *PreviewS3FileGetRequest) GetBucket() string {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetBucket() string {
+	if p == nil {
 		return ""
 	}
-	return o.Bucket
+	return p.Bucket
 }
 
-func (o *PreviewS3FileGetRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewS3FileGetRequest) GetKey() string {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetKey() string {
+	if p == nil {
 		return ""
 	}
-	return o.Key
+	return p.Key
 }
 
-func (o *PreviewS3FileGetRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewS3FileGetRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
 }
+
+// #region class-body-previews3filegetrequest
+// #endregion class-body-previews3filegetrequest
+
+// PreviewS3FileGetResponseBody - A generic error returned by the API
+type PreviewS3FileGetResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (p *PreviewS3FileGetResponseBody) GetError() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Error
+}
+
+func (p *PreviewS3FileGetResponseBody) GetStatus() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Status
+}
+
+// #region class-body-previews3filegetresponsebody
+// #endregion class-body-previews3filegetresponsebody
 
 type PreviewS3FileGetResponse struct {
+	// Generated thumbnail image
+	TwoHundredImageJpegBytes []byte
+	// Generated thumbnail image
+	TwoHundredImagePngBytes []byte
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *PreviewS3FileGetResponseBody
 }
 
-func (o *PreviewS3FileGetResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *PreviewS3FileGetResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *PreviewS3FileGetResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewS3FileGetResponse) GetTwoHundredImageJpegBytes() []byte {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.TwoHundredImageJpegBytes
 }
+
+func (p *PreviewS3FileGetResponse) GetTwoHundredImagePngBytes() []byte {
+	if p == nil {
+		return nil
+	}
+	return p.TwoHundredImagePngBytes
+}
+
+func (p *PreviewS3FileGetResponse) GetContentType() string {
+	if p == nil {
+		return ""
+	}
+	return p.ContentType
+}
+
+func (p *PreviewS3FileGetResponse) GetStatusCode() int {
+	if p == nil {
+		return 0
+	}
+	return p.StatusCode
+}
+
+func (p *PreviewS3FileGetResponse) GetRawResponse() *http.Response {
+	if p == nil {
+		return nil
+	}
+	return p.RawResponse
+}
+
+func (p *PreviewS3FileGetResponse) GetObject() *PreviewS3FileGetResponseBody {
+	if p == nil {
+		return nil
+	}
+	return p.Object
+}
+
+// #region class-body-previews3filegetresponse
+// #endregion class-body-previews3filegetresponse

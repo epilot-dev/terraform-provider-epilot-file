@@ -8,12 +8,13 @@ import (
 )
 
 type PreviewFileRequest struct {
-	// height
-	H  *int64 `queryParam:"style=form,explode=true,name=h"`
+	// Desired height in pixels (maintains aspect ratio if only height is specified)
+	H *int64 `queryParam:"style=form,explode=true,name=h"`
+	// The UUID of the file entity
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// index of file version
+	// Index of the file version to preview (0 = latest)
 	Version *int64 `default:"0" queryParam:"style=form,explode=true,name=version"`
-	// width
+	// Desired width in pixels (maintains aspect ratio if only width is specified)
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
@@ -22,66 +23,115 @@ func (p PreviewFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PreviewFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *PreviewFileRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewFileRequest) GetID() string {
-	if o == nil {
+func (p *PreviewFileRequest) GetID() string {
+	if p == nil {
 		return ""
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PreviewFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetVersion() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Version
+	return p.Version
 }
 
-func (o *PreviewFileRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewFileRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
+}
+
+// PreviewFileResponseBody - A generic error returned by the API
+type PreviewFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (p *PreviewFileResponseBody) GetError() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Error
+}
+
+func (p *PreviewFileResponseBody) GetStatus() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Status
 }
 
 type PreviewFileResponse struct {
+	// Generated thumbnail image
+	TwoHundredImageJpegBytes []byte
+	// Generated thumbnail image
+	TwoHundredImagePngBytes []byte
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Authentication required or invalid credentials
+	Object *PreviewFileResponseBody
 }
 
-func (o *PreviewFileResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *PreviewFileResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *PreviewFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewFileResponse) GetTwoHundredImageJpegBytes() []byte {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.TwoHundredImageJpegBytes
+}
+
+func (p *PreviewFileResponse) GetTwoHundredImagePngBytes() []byte {
+	if p == nil {
+		return nil
+	}
+	return p.TwoHundredImagePngBytes
+}
+
+func (p *PreviewFileResponse) GetContentType() string {
+	if p == nil {
+		return ""
+	}
+	return p.ContentType
+}
+
+func (p *PreviewFileResponse) GetStatusCode() int {
+	if p == nil {
+		return 0
+	}
+	return p.StatusCode
+}
+
+func (p *PreviewFileResponse) GetRawResponse() *http.Response {
+	if p == nil {
+		return nil
+	}
+	return p.RawResponse
+}
+
+func (p *PreviewFileResponse) GetObject() *PreviewFileResponseBody {
+	if p == nil {
+		return nil
+	}
+	return p.Object
 }

@@ -2,7 +2,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 1.4.0 and generator version 2.694.1
+// Generated from OpenAPI doc version 1.10.0 and generator version 2.881.2
 
 import (
 	"context"
@@ -47,25 +47,76 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-// SDK - File API: Upload and manage epilot Files
+// SDK - File API: The File API enables you to upload, store, manage, and share files within the epilot platform.
+//
+// ## Key Features
+// - **Upload files** to temporary storage and save them permanently as File entities
+// - **Generate previews** (thumbnails) for images and documents
+// - **Create public links** to share private files externally
+// - **Organize files** into collections for better management
+// - **Version control** with automatic file versioning on updates
+//
+// ## File Upload Workflow
+// 1. Call `uploadFileV2` to get a pre-signed S3 URL
+// 2. Upload your file directly to S3 using the pre-signed URL (PUT request)
+// 3. Call `saveFileV2` with the S3 reference to create a permanent File entity
 //
 // ## Changelog
 // <a href="changelog">View API Changelog</a>
 type SDK struct {
 	SDKVersion string
-	// Collection management for organizing files within entities
+	// Organize files into collections (folders) for better management.
+	//
+	// Collections can be:
+	// - **User-scoped**: Personal collections visible only to the creating user
+	// - **Global**: Shared collections available to all users for a schema
+	//
+	// Collections support hierarchical organization with parent-child relationships.
+	//
 	FileCollections *FileCollections
-	// Folder management for organizing files within entities (deprecated - use File Collections)
-	FileFolders *FileFolders
-	// Deprecated APIs
+	// Legacy API endpoints scheduled for removal.
+	//
+	// **Important:** These endpoints will be removed on **2025-06-30**.
+	// Please migrate to the v2 equivalents before this date.
+	//
+	// | Deprecated Endpoint | Replacement |
+	// |---------------------|-------------|
+	// | `POST /v1/files/upload` | `POST /v2/files/upload` |
+	// | `POST /v1/files` | `POST /v2/files` |
+	//
 	Deprecated *Deprecated
-	// Upload and Manage File Entities
+	// Core file operations for uploading, saving, retrieving, and deleting files.
+	//
+	// Files are stored as epilot entities with the `file` schema and support:
+	// - Multiple versions (each save creates a new version)
+	// - Custom metadata and tags
+	// - Relations to other entities (contacts, orders, etc.)
+	// - Access control (private or public-read)
+	//
 	File *File
-	// Create and Manage Public Links for Files
+	// Create shareable public links for private files.
+	//
+	// Public links allow external users to access files without authentication.
+	// Links are permanent until revoked and include the filename for user-friendly URLs.
+	//
 	PublicLinks *PublicLinks
-	// Preview APIs
+	// Generate thumbnail previews for files. Supports images, PDFs, and common document formats.
+	//
+	// Preview images are generated on-demand and cached for performance.
+	// You can specify custom dimensions using the `w` (width) and `h` (height) parameters.
+	//
 	Preview *Preview
-	// Session API for cookie authentication
+	// Browser session management for cookie-based authentication.
+	//
+	// Use `getSession` to convert a Bearer token into a session cookie. This enables:
+	// - Direct use of preview URLs in `<img>` tags
+	// - File downloads without manual token handling
+	//
+	// **Typical flow:**
+	// 1. Authenticate and obtain a Bearer token
+	// 2. Call `GET /v1/files/session` with the Bearer token
+	// 3. Subsequent requests use the session cookie automatically
+	//
 	Session *Session
 
 	sdkConfiguration config.SDKConfiguration
@@ -74,7 +125,7 @@ type SDK struct {
 
 type SDKOption func(*SDK)
 
-// WithServerURL allows the overriding of the default server URL
+// WithServerURL allows providing an alternative server URL
 func WithServerURL(serverURL string) SDKOption {
 	return func(sdk *SDK) {
 		sdk.sdkConfiguration.ServerURL = serverURL
@@ -142,9 +193,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *SDK {
 	sdk := &SDK{
-		SDKVersion: "0.7.0",
+		SDKVersion: "0.8.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.7.0 2.694.1 1.4.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.8.0 2.881.2 1.10.0 github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -166,7 +217,6 @@ func New(opts ...SDKOption) *SDK {
 	}
 
 	sdk.FileCollections = newFileCollections(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.FileFolders = newFileFolders(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Deprecated = newDeprecated(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.File = newFile(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.PublicLinks = newPublicLinks(sdk, sdk.sdkConfiguration, sdk.hooks)

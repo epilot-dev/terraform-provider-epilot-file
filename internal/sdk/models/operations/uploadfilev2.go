@@ -16,19 +16,47 @@ type UploadFileV2Request struct {
 	FileEntityID *string `queryParam:"style=form,explode=true,name=file_entity_id"`
 }
 
-func (o *UploadFileV2Request) GetUploadFilePayload() *shared.UploadFilePayload {
-	if o == nil {
+func (u *UploadFileV2Request) GetUploadFilePayload() *shared.UploadFilePayload {
+	if u == nil {
 		return nil
 	}
-	return o.UploadFilePayload
+	return u.UploadFilePayload
 }
 
-func (o *UploadFileV2Request) GetFileEntityID() *string {
-	if o == nil {
+func (u *UploadFileV2Request) GetFileEntityID() *string {
+	if u == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return u.FileEntityID
 }
+
+// #region class-body-uploadfilev2request
+// #endregion class-body-uploadfilev2request
+
+// UploadFileV2ResponseBody - A generic error returned by the API
+type UploadFileV2ResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (u *UploadFileV2ResponseBody) GetError() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Error
+}
+
+func (u *UploadFileV2ResponseBody) GetStatus() *int64 {
+	if u == nil {
+		return nil
+	}
+	return u.Status
+}
+
+// #region class-body-uploadfilev2responsebody
+// #endregion class-body-uploadfilev2responsebody
 
 type UploadFileV2Response struct {
 	// HTTP response content type for this operation
@@ -39,32 +67,44 @@ type UploadFileV2Response struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *UploadFileV2ResponseBody
 }
 
-func (o *UploadFileV2Response) GetContentType() string {
-	if o == nil {
+func (u *UploadFileV2Response) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UploadFileV2Response) GetFileUpload() *shared.FileUpload {
-	if o == nil {
+func (u *UploadFileV2Response) GetFileUpload() *shared.FileUpload {
+	if u == nil {
 		return nil
 	}
-	return o.FileUpload
+	return u.FileUpload
 }
 
-func (o *UploadFileV2Response) GetStatusCode() int {
-	if o == nil {
+func (u *UploadFileV2Response) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UploadFileV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UploadFileV2Response) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
+
+func (u *UploadFileV2Response) GetObject() *UploadFileV2ResponseBody {
+	if u == nil {
+		return nil
+	}
+	return u.Object
+}
+
+// #region class-body-uploadfilev2response
+// #endregion class-body-uploadfilev2response

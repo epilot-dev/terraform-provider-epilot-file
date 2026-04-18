@@ -8,10 +8,11 @@ import (
 )
 
 type DownloadFileRequest struct {
-	// Controls the Content-Disposition header to control browser behaviour. Set to true to trigger download.
-	Attachment *bool  `default:"true" queryParam:"style=form,explode=true,name=attachment"`
-	ID         string `pathParam:"style=simple,explode=false,name=id"`
-	// index of file version
+	// Controls the Content-Disposition header. Set to `true` to trigger browser download dialog, `false` to display inline.
+	Attachment *bool `default:"true" queryParam:"style=form,explode=true,name=attachment"`
+	// The UUID of the file entity
+	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// Index of the file version to download (0 = latest)
 	Version *int64 `default:"0" queryParam:"style=form,explode=true,name=version"`
 }
 
@@ -20,43 +21,66 @@ func (d DownloadFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *DownloadFileRequest) GetAttachment() *bool {
-	if o == nil {
+func (d *DownloadFileRequest) GetAttachment() *bool {
+	if d == nil {
 		return nil
 	}
-	return o.Attachment
+	return d.Attachment
 }
 
-func (o *DownloadFileRequest) GetID() string {
-	if o == nil {
+func (d *DownloadFileRequest) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
-func (o *DownloadFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (d *DownloadFileRequest) GetVersion() *int64 {
+	if d == nil {
 		return nil
 	}
-	return o.Version
+	return d.Version
 }
 
-// DownloadFileResponseBody - Generated thumbnail image
+// DownloadFileFileResponseBody - A generic error returned by the API
+type DownloadFileFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (d *DownloadFileFileResponseBody) GetError() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Error
+}
+
+func (d *DownloadFileFileResponseBody) GetStatus() *int64 {
+	if d == nil {
+		return nil
+	}
+	return d.Status
+}
+
+// DownloadFileResponseBody - Pre-signed download URL
 type DownloadFileResponseBody struct {
+	// Pre-signed S3 URL valid for downloading the file
 	DownloadURL *string `json:"download_url,omitempty"`
 }
 
-func (o *DownloadFileResponseBody) GetDownloadURL() *string {
-	if o == nil {
+func (d *DownloadFileResponseBody) GetDownloadURL() *string {
+	if d == nil {
 		return nil
 	}
-	return o.DownloadURL
+	return d.DownloadURL
 }
 
 type DownloadFileResponse struct {
@@ -66,34 +90,43 @@ type DownloadFileResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Generated thumbnail image
+	// Pre-signed download URL
 	Object *DownloadFileResponseBody
+	// Authentication required or invalid credentials
+	Object1 *DownloadFileFileResponseBody
 }
 
-func (o *DownloadFileResponse) GetContentType() string {
-	if o == nil {
+func (d *DownloadFileResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DownloadFileResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DownloadFileResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DownloadFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DownloadFileResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DownloadFileResponse) GetObject() *DownloadFileResponseBody {
-	if o == nil {
+func (d *DownloadFileResponse) GetObject() *DownloadFileResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
+}
+
+func (d *DownloadFileResponse) GetObject1() *DownloadFileFileResponseBody {
+	if d == nil {
+		return nil
+	}
+	return d.Object1
 }

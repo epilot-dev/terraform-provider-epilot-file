@@ -8,63 +8,73 @@ import (
 )
 
 type ListPublicLinksForFileRequest struct {
+	// The UUID of the file entity
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *ListPublicLinksForFileRequest) GetID() string {
-	if o == nil {
+func (l *ListPublicLinksForFileRequest) GetID() string {
+	if l == nil {
 		return ""
 	}
-	return o.ID
+	return l.ID
 }
 
-// ListPublicLinksForFileResponseBody - Public links of a file retrieved successfully
+// ListPublicLinksForFileResponseBody - Public links retrieved successfully
 type ListPublicLinksForFileResponseBody struct {
 	Results []shared.PublicLink `json:"results,omitempty"`
 }
 
-func (o *ListPublicLinksForFileResponseBody) GetResults() []shared.PublicLink {
-	if o == nil {
+func (l *ListPublicLinksForFileResponseBody) GetResults() []shared.PublicLink {
+	if l == nil {
 		return nil
 	}
-	return o.Results
+	return l.Results
 }
 
 type ListPublicLinksForFileResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
+	// Not implemented
+	ErrorObject *shared.ErrorObject
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Public links of a file retrieved successfully
+	// Public links retrieved successfully
 	Object *ListPublicLinksForFileResponseBody
 }
 
-func (o *ListPublicLinksForFileResponse) GetContentType() string {
-	if o == nil {
+func (l *ListPublicLinksForFileResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListPublicLinksForFileResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListPublicLinksForFileResponse) GetErrorObject() *shared.ErrorObject {
+	if l == nil {
+		return nil
+	}
+	return l.ErrorObject
+}
+
+func (l *ListPublicLinksForFileResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListPublicLinksForFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListPublicLinksForFileResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListPublicLinksForFileResponse) GetObject() *ListPublicLinksForFileResponseBody {
-	if o == nil {
+func (l *ListPublicLinksForFileResponse) GetObject() *ListPublicLinksForFileResponseBody {
+	if l == nil {
 		return nil
 	}
-	return o.Object
+	return l.Object
 }

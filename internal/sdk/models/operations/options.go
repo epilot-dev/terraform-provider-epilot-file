@@ -22,6 +22,8 @@ type AcceptHeaderEnum string
 
 const (
 	AcceptHeaderEnumApplicationJson      AcceptHeaderEnum = "application/json"
+	AcceptHeaderEnumImageJpeg            AcceptHeaderEnum = "image/jpeg"
+	AcceptHeaderEnumImagePng             AcceptHeaderEnum = "image/png"
 	AcceptHeaderEnumWildcardRootWildcard AcceptHeaderEnum = "*/*"
 )
 
