@@ -9,22 +9,44 @@ import (
 
 type CreateUserSchemaFileCollectionRequest struct {
 	FileCollectionCreateRequest shared.FileCollectionCreateRequest `request:"mediaType=application/json"`
-	// The schema slug (e.g., order, opportunity)
+	// The entity schema slug (e.g., order, opportunity, contact)
 	Slug string `pathParam:"style=simple,explode=false,name=slug"`
 }
 
-func (o *CreateUserSchemaFileCollectionRequest) GetFileCollectionCreateRequest() shared.FileCollectionCreateRequest {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionRequest) GetFileCollectionCreateRequest() shared.FileCollectionCreateRequest {
+	if c == nil {
 		return shared.FileCollectionCreateRequest{}
 	}
-	return o.FileCollectionCreateRequest
+	return c.FileCollectionCreateRequest
 }
 
-func (o *CreateUserSchemaFileCollectionRequest) GetSlug() string {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionRequest) GetSlug() string {
+	if c == nil {
 		return ""
 	}
-	return o.Slug
+	return c.Slug
+}
+
+// CreateUserSchemaFileCollectionResponseBody - A generic error returned by the API
+type CreateUserSchemaFileCollectionResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (c *CreateUserSchemaFileCollectionResponseBody) GetError() *string {
+	if c == nil {
+		return nil
+	}
+	return c.Error
+}
+
+func (c *CreateUserSchemaFileCollectionResponseBody) GetStatus() *int64 {
+	if c == nil {
+		return nil
+	}
+	return c.Status
 }
 
 type CreateUserSchemaFileCollectionResponse struct {
@@ -36,32 +58,41 @@ type CreateUserSchemaFileCollectionResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *CreateUserSchemaFileCollectionResponseBody
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetFileCollectionItem() *shared.FileCollectionItem {
+	if c == nil {
 		return nil
 	}
-	return o.FileCollectionItem
+	return c.FileCollectionItem
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateUserSchemaFileCollectionResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
+}
+
+func (c *CreateUserSchemaFileCollectionResponse) GetObject() *CreateUserSchemaFileCollectionResponseBody {
+	if c == nil {
+		return nil
+	}
+	return c.Object
 }

@@ -8,15 +8,37 @@ import (
 )
 
 type GetUserSchemaFileCollectionsRequest struct {
-	// The schema slug (e.g., order, opportunity)
+	// The entity schema slug (e.g., order, opportunity, contact)
 	Slug string `pathParam:"style=simple,explode=false,name=slug"`
 }
 
-func (o *GetUserSchemaFileCollectionsRequest) GetSlug() string {
-	if o == nil {
+func (g *GetUserSchemaFileCollectionsRequest) GetSlug() string {
+	if g == nil {
 		return ""
 	}
-	return o.Slug
+	return g.Slug
+}
+
+// GetUserSchemaFileCollectionsResponseBody - A generic error returned by the API
+type GetUserSchemaFileCollectionsResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (g *GetUserSchemaFileCollectionsResponseBody) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GetUserSchemaFileCollectionsResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
 }
 
 type GetUserSchemaFileCollectionsResponse struct {
@@ -28,32 +50,41 @@ type GetUserSchemaFileCollectionsResponse struct {
 	RawResponse *http.Response
 	// List of collections for the user and schema
 	Classes []shared.FileCollectionItem
+	// Authentication required or invalid credentials
+	Object *GetUserSchemaFileCollectionsResponseBody
 }
 
-func (o *GetUserSchemaFileCollectionsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetUserSchemaFileCollectionsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetUserSchemaFileCollectionsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetUserSchemaFileCollectionsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetUserSchemaFileCollectionsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetUserSchemaFileCollectionsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetUserSchemaFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
-	if o == nil {
+func (g *GetUserSchemaFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
+	if g == nil {
 		return nil
 	}
-	return o.Classes
+	return g.Classes
+}
+
+func (g *GetUserSchemaFileCollectionsResponse) GetObject() *GetUserSchemaFileCollectionsResponseBody {
+	if g == nil {
+		return nil
+	}
+	return g.Object
 }

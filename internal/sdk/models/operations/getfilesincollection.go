@@ -8,103 +8,101 @@ import (
 )
 
 type GetFilesInCollectionRequest struct {
-	// The slug identifier for the collection
+	// The collection slug identifier
 	CollectionSlug string `pathParam:"style=simple,explode=false,name=collectionSlug"`
 	// Entity id
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *GetFilesInCollectionRequest) GetCollectionSlug() string {
-	if o == nil {
+func (g *GetFilesInCollectionRequest) GetCollectionSlug() string {
+	if g == nil {
 		return ""
 	}
-	return o.CollectionSlug
+	return g.CollectionSlug
 }
 
-func (o *GetFilesInCollectionRequest) GetID() string {
-	if o == nil {
+func (g *GetFilesInCollectionRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
 }
 
-// GetFilesInCollectionFileCollectionsResponseBody - Entity or collection not found
-type GetFilesInCollectionFileCollectionsResponseBody struct {
-	Error *string `json:"error,omitempty"`
-}
-
-func (o *GetFilesInCollectionFileCollectionsResponseBody) GetError() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Error
-}
-
-// GetFilesInCollectionResponseBody - User must have permission to view this entity to access its files
+// GetFilesInCollectionResponseBody - A generic error returned by the API
 type GetFilesInCollectionResponseBody struct {
+	// The error message
 	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
 }
 
-func (o *GetFilesInCollectionResponseBody) GetError() *string {
-	if o == nil {
+func (g *GetFilesInCollectionResponseBody) GetError() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Error
+	return g.Error
+}
+
+func (g *GetFilesInCollectionResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
 }
 
 type GetFilesInCollectionResponse struct {
-	// List of files in the collection
-	TwoHundredApplicationJSONClasses []shared.FileEntity
-	// User must have permission to view this entity to access its files
-	FourHundredAndThreeApplicationJSONObject *GetFilesInCollectionResponseBody
-	// Entity or collection not found
-	FourHundredAndFourApplicationJSONObject *GetFilesInCollectionFileCollectionsResponseBody
 	// HTTP response content type for this operation
 	ContentType string
+	// Insufficient permissions to view the entity's files
+	ErrorObject *shared.ErrorObject
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// List of files in the collection
+	Classes []shared.FileEntity
+	// Authentication required or invalid credentials
+	Object *GetFilesInCollectionResponseBody
 }
 
-func (o *GetFilesInCollectionResponse) GetTwoHundredApplicationJSONClasses() []shared.FileEntity {
-	if o == nil {
-		return nil
-	}
-	return o.TwoHundredApplicationJSONClasses
-}
-
-func (o *GetFilesInCollectionResponse) GetFourHundredAndThreeApplicationJSONObject() *GetFilesInCollectionResponseBody {
-	if o == nil {
-		return nil
-	}
-	return o.FourHundredAndThreeApplicationJSONObject
-}
-
-func (o *GetFilesInCollectionResponse) GetFourHundredAndFourApplicationJSONObject() *GetFilesInCollectionFileCollectionsResponseBody {
-	if o == nil {
-		return nil
-	}
-	return o.FourHundredAndFourApplicationJSONObject
-}
-
-func (o *GetFilesInCollectionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetFilesInCollectionResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *GetFilesInCollectionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetFilesInCollectionResponse) GetErrorObject() *shared.ErrorObject {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.ErrorObject
+}
+
+func (g *GetFilesInCollectionResponse) GetStatusCode() int {
+	if g == nil {
+		return 0
+	}
+	return g.StatusCode
+}
+
+func (g *GetFilesInCollectionResponse) GetRawResponse() *http.Response {
+	if g == nil {
+		return nil
+	}
+	return g.RawResponse
+}
+
+func (g *GetFilesInCollectionResponse) GetClasses() []shared.FileEntity {
+	if g == nil {
+		return nil
+	}
+	return g.Classes
+}
+
+func (g *GetFilesInCollectionResponse) GetObject() *GetFilesInCollectionResponseBody {
+	if g == nil {
+		return nil
+	}
+	return g.Object
 }

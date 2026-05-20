@@ -10,8 +10,10 @@ import (
 
 type GetFileRequest struct {
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
-	Async *bool  `default:"false" queryParam:"style=form,explode=true,name=async"`
-	ID    string `pathParam:"style=simple,explode=false,name=id"`
+	Async *bool `default:"false" queryParam:"style=form,explode=true,name=async"`
+	// Empty string (used when file ID not yet assigned)
+	ID        string `pathParam:"style=simple,explode=false,name=id"`
+	SourceURL *bool  `default:"false" queryParam:"style=form,explode=true,name=source_url"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
 }
@@ -21,31 +23,60 @@ func (g GetFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, []string{"id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetFileRequest) GetAsync() *bool {
-	if o == nil {
+func (g *GetFileRequest) GetAsync() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.Async
+	return g.Async
 }
 
-func (o *GetFileRequest) GetID() string {
-	if o == nil {
+func (g *GetFileRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
 }
 
-func (o *GetFileRequest) GetStrict() *bool {
-	if o == nil {
+func (g *GetFileRequest) GetSourceURL() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.Strict
+	return g.SourceURL
+}
+
+func (g *GetFileRequest) GetStrict() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.Strict
+}
+
+// GetFileResponseBody - A generic error returned by the API
+type GetFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (g *GetFileResponseBody) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GetFileResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
 }
 
 type GetFileResponse struct {
@@ -57,32 +88,41 @@ type GetFileResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Authentication required or invalid credentials
+	Object *GetFileResponseBody
 }
 
-func (o *GetFileResponse) GetContentType() string {
-	if o == nil {
+func (g *GetFileResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetFileResponse) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (g *GetFileResponse) GetFileEntity() *shared.FileEntity {
+	if g == nil {
 		return nil
 	}
-	return o.FileEntity
+	return g.FileEntity
 }
 
-func (o *GetFileResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetFileResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetFileResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
+}
+
+func (g *GetFileResponse) GetObject() *GetFileResponseBody {
+	if g == nil {
+		return nil
+	}
+	return g.Object
 }

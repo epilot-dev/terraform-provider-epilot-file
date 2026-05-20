@@ -18,29 +18,29 @@ func (f FileRelationItem) MarshalJSON() ([]byte, error) {
 }
 
 func (f *FileRelationItem) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, []string{"entity_id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *FileRelationItem) GetSchema() *string {
-	if o == nil {
+func (f *FileRelationItem) GetSchema() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Schema
+	return f.Schema
 }
 
-func (o *FileRelationItem) GetTags() []string {
-	if o == nil {
+func (f *FileRelationItem) GetTags() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Tags
+	return f.Tags
 }
 
-func (o *FileRelationItem) GetEntityID() string {
-	if o == nil {
+func (f *FileRelationItem) GetEntityID() string {
+	if f == nil {
 		return ""
 	}
-	return o.EntityID
+	return f.EntityID
 }

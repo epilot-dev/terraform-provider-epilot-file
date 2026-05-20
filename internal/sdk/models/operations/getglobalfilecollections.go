@@ -8,15 +8,37 @@ import (
 )
 
 type GetGlobalFileCollectionsRequest struct {
-	// The schema slug (e.g., order, opportunity)
+	// The entity schema slug (e.g., order, opportunity, contact)
 	SchemaSlug string `pathParam:"style=simple,explode=false,name=schemaSlug"`
 }
 
-func (o *GetGlobalFileCollectionsRequest) GetSchemaSlug() string {
-	if o == nil {
+func (g *GetGlobalFileCollectionsRequest) GetSchemaSlug() string {
+	if g == nil {
 		return ""
 	}
-	return o.SchemaSlug
+	return g.SchemaSlug
+}
+
+// GetGlobalFileCollectionsResponseBody - A generic error returned by the API
+type GetGlobalFileCollectionsResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (g *GetGlobalFileCollectionsResponseBody) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GetGlobalFileCollectionsResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
 }
 
 type GetGlobalFileCollectionsResponse struct {
@@ -28,32 +50,41 @@ type GetGlobalFileCollectionsResponse struct {
 	RawResponse *http.Response
 	// List of global collections for the schema
 	Classes []shared.FileCollectionItem
+	// Authentication required or invalid credentials
+	Object *GetGlobalFileCollectionsResponseBody
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetGlobalFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
-	if o == nil {
+func (g *GetGlobalFileCollectionsResponse) GetClasses() []shared.FileCollectionItem {
+	if g == nil {
 		return nil
 	}
-	return o.Classes
+	return g.Classes
+}
+
+func (g *GetGlobalFileCollectionsResponse) GetObject() *GetGlobalFileCollectionsResponseBody {
+	if g == nil {
+		return nil
+	}
+	return g.Object
 }

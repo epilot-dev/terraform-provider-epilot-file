@@ -14,6 +14,14 @@ type SaveFileRequest struct {
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
 	Async *bool `default:"false" queryParam:"style=form,explode=true,name=async"`
+	// When true, only adds a new file version and updates the entity's
+	// s3ref to point to the new version, without overwriting the entity's
+	// existing top-level metadata. The entity's filename, type, and other
+	// fields are preserved as-is. The new version entry in the versions
+	// array will contain the file-level metadata (filename, mime_type, etc).
+	// Only applies when updating an existing entity (_id or file_entity_id is set).
+	//
+	VersionOnly *bool `default:"false" queryParam:"style=form,explode=true,name=version_only"`
 }
 
 func (s SaveFileRequest) MarshalJSON() ([]byte, error) {
@@ -27,25 +35,54 @@ func (s *SaveFileRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFileRequest) GetSaveFilePayload() *shared.SaveFilePayload {
-	if o == nil {
+func (s *SaveFileRequest) GetSaveFilePayload() *shared.SaveFilePayload {
+	if s == nil {
 		return nil
 	}
-	return o.SaveFilePayload
+	return s.SaveFilePayload
 }
 
-func (o *SaveFileRequest) GetActivityID() *string {
-	if o == nil {
+func (s *SaveFileRequest) GetActivityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ActivityID
+	return s.ActivityID
 }
 
-func (o *SaveFileRequest) GetAsync() *bool {
-	if o == nil {
+func (s *SaveFileRequest) GetAsync() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Async
+	return s.Async
+}
+
+func (s *SaveFileRequest) GetVersionOnly() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.VersionOnly
+}
+
+// SaveFileResponseBody - A generic error returned by the API
+type SaveFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (s *SaveFileResponseBody) GetError() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Error
+}
+
+func (s *SaveFileResponseBody) GetStatus() *int64 {
+	if s == nil {
+		return nil
+	}
+	return s.Status
 }
 
 type SaveFileResponse struct {
@@ -57,32 +94,41 @@ type SaveFileResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *SaveFileResponseBody
 }
 
-func (o *SaveFileResponse) GetContentType() string {
-	if o == nil {
+func (s *SaveFileResponse) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SaveFileResponse) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (s *SaveFileResponse) GetFileEntity() *shared.FileEntity {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.FileEntity
 }
 
-func (o *SaveFileResponse) GetStatusCode() int {
-	if o == nil {
+func (s *SaveFileResponse) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SaveFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SaveFileResponse) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
+}
+
+func (s *SaveFileResponse) GetObject() *SaveFileResponseBody {
+	if s == nil {
+		return nil
+	}
+	return s.Object
 }

@@ -3,13 +3,104 @@
 package operations
 
 import (
+	"errors"
+	"fmt"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"net/http"
 )
 
+type SaveFileV2RequestBodyType string
+
+const (
+	SaveFileV2RequestBodyTypeSaveFilePayloadV2                  SaveFileV2RequestBodyType = "SaveFilePayloadV2"
+	SaveFileV2RequestBodyTypeArrayOfBatchSaveFileVersionPayload SaveFileV2RequestBodyType = "arrayOfBatchSaveFileVersionPayload"
+)
+
+type SaveFileV2RequestBody struct {
+	SaveFilePayloadV2                  *shared.SaveFilePayloadV2            `queryParam:"inline" union:"member"`
+	ArrayOfBatchSaveFileVersionPayload []shared.BatchSaveFileVersionPayload `queryParam:"inline" union:"member"`
+
+	Type SaveFileV2RequestBodyType
+}
+
+func CreateSaveFileV2RequestBodySaveFilePayloadV2(saveFilePayloadV2 shared.SaveFilePayloadV2) SaveFileV2RequestBody {
+	typ := SaveFileV2RequestBodyTypeSaveFilePayloadV2
+
+	return SaveFileV2RequestBody{
+		SaveFilePayloadV2: &saveFilePayloadV2,
+		Type:              typ,
+	}
+}
+
+func CreateSaveFileV2RequestBodyArrayOfBatchSaveFileVersionPayload(arrayOfBatchSaveFileVersionPayload []shared.BatchSaveFileVersionPayload) SaveFileV2RequestBody {
+	typ := SaveFileV2RequestBodyTypeArrayOfBatchSaveFileVersionPayload
+
+	return SaveFileV2RequestBody{
+		ArrayOfBatchSaveFileVersionPayload: arrayOfBatchSaveFileVersionPayload,
+		Type:                               typ,
+	}
+}
+
+func (u *SaveFileV2RequestBody) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var saveFilePayloadV2 shared.SaveFilePayloadV2 = shared.SaveFilePayloadV2{}
+	if err := utils.UnmarshalJSON(data, &saveFilePayloadV2, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFileV2RequestBodyTypeSaveFilePayloadV2,
+			Value: &saveFilePayloadV2,
+		})
+	}
+
+	var arrayOfBatchSaveFileVersionPayload []shared.BatchSaveFileVersionPayload = []shared.BatchSaveFileVersionPayload{}
+	if err := utils.UnmarshalJSON(data, &arrayOfBatchSaveFileVersionPayload, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  SaveFileV2RequestBodyTypeArrayOfBatchSaveFileVersionPayload,
+			Value: arrayOfBatchSaveFileVersionPayload,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFileV2RequestBody", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFileV2RequestBody", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(SaveFileV2RequestBodyType)
+	switch best.Type {
+	case SaveFileV2RequestBodyTypeSaveFilePayloadV2:
+		u.SaveFilePayloadV2 = best.Value.(*shared.SaveFilePayloadV2)
+		return nil
+	case SaveFileV2RequestBodyTypeArrayOfBatchSaveFileVersionPayload:
+		u.ArrayOfBatchSaveFileVersionPayload = best.Value.([]shared.BatchSaveFileVersionPayload)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for SaveFileV2RequestBody", string(data))
+}
+
+func (u SaveFileV2RequestBody) MarshalJSON() ([]byte, error) {
+	if u.SaveFilePayloadV2 != nil {
+		return utils.MarshalJSON(u.SaveFilePayloadV2, "", true)
+	}
+
+	if u.ArrayOfBatchSaveFileVersionPayload != nil {
+		return utils.MarshalJSON(u.ArrayOfBatchSaveFileVersionPayload, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type SaveFileV2RequestBody: all fields are null")
+}
+
 type SaveFileV2Request struct {
-	FileEntity *shared.FileEntityInput `request:"mediaType=application/json"`
+	RequestBody *SaveFileV2RequestBody `request:"mediaType=application/json"`
 	// Activity to include in event feed
 	ActivityID *string `queryParam:"style=form,explode=true,name=activity_id"`
 	// Don't wait for updated entity to become available in Search API. Useful for large migrations
@@ -22,6 +113,14 @@ type SaveFileV2Request struct {
 	FillActivity *bool `default:"false" queryParam:"style=form,explode=true,name=fill_activity"`
 	// When passed true, the response will contain only fields that match the schema, with non-matching fields included in `__additional`
 	Strict *bool `default:"false" queryParam:"style=form,explode=true,name=strict"`
+	// When true, only adds a new file version and updates the entity's
+	// s3ref to point to the new version, without overwriting the entity's
+	// existing top-level metadata. The entity's filename, type, and other
+	// fields are preserved as-is. The new version entry in the versions
+	// array will contain the file-level metadata (filename, mime_type, etc).
+	// Only applies when updating an existing entity (_id or file_entity_id is set).
+	//
+	VersionOnly *bool `default:"false" queryParam:"style=form,explode=true,name=version_only"`
 }
 
 func (s SaveFileV2Request) MarshalJSON() ([]byte, error) {
@@ -35,83 +134,130 @@ func (s *SaveFileV2Request) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFileV2Request) GetFileEntity() *shared.FileEntityInput {
-	if o == nil {
+func (s *SaveFileV2Request) GetRequestBody() *SaveFileV2RequestBody {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.RequestBody
 }
 
-func (o *SaveFileV2Request) GetActivityID() *string {
-	if o == nil {
+func (s *SaveFileV2Request) GetActivityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ActivityID
+	return s.ActivityID
 }
 
-func (o *SaveFileV2Request) GetAsync() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetAsync() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Async
+	return s.Async
 }
 
-func (o *SaveFileV2Request) GetDeleteTempFile() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetDeleteTempFile() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.DeleteTempFile
+	return s.DeleteTempFile
 }
 
-func (o *SaveFileV2Request) GetFillActivity() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetFillActivity() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.FillActivity
+	return s.FillActivity
 }
 
-func (o *SaveFileV2Request) GetStrict() *bool {
-	if o == nil {
+func (s *SaveFileV2Request) GetStrict() *bool {
+	if s == nil {
 		return nil
 	}
-	return o.Strict
+	return s.Strict
 }
+
+func (s *SaveFileV2Request) GetVersionOnly() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.VersionOnly
+}
+
+// #region class-body-savefilev2request
+// #endregion class-body-savefilev2request
+
+// SaveFileV2ResponseBody - A generic error returned by the API
+type SaveFileV2ResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (s *SaveFileV2ResponseBody) GetError() *string {
+	if s == nil {
+		return nil
+	}
+	return s.Error
+}
+
+func (s *SaveFileV2ResponseBody) GetStatus() *int64 {
+	if s == nil {
+		return nil
+	}
+	return s.Status
+}
+
+// #region class-body-savefilev2responsebody
+// #endregion class-body-savefilev2responsebody
 
 type SaveFileV2Response struct {
 	// HTTP response content type for this operation
 	ContentType string
-	// Created File Entity
+	// Created or updated File Entity
 	FileEntity *shared.FileEntity
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *SaveFileV2ResponseBody
 }
 
-func (o *SaveFileV2Response) GetContentType() string {
-	if o == nil {
+func (s *SaveFileV2Response) GetContentType() string {
+	if s == nil {
 		return ""
 	}
-	return o.ContentType
+	return s.ContentType
 }
 
-func (o *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
-	if o == nil {
+func (s *SaveFileV2Response) GetFileEntity() *shared.FileEntity {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntity
+	return s.FileEntity
 }
 
-func (o *SaveFileV2Response) GetStatusCode() int {
-	if o == nil {
+func (s *SaveFileV2Response) GetStatusCode() int {
+	if s == nil {
 		return 0
 	}
-	return o.StatusCode
+	return s.StatusCode
 }
 
-func (o *SaveFileV2Response) GetRawResponse() *http.Response {
-	if o == nil {
+func (s *SaveFileV2Response) GetRawResponse() *http.Response {
+	if s == nil {
 		return nil
 	}
-	return o.RawResponse
+	return s.RawResponse
 }
+
+func (s *SaveFileV2Response) GetObject() *SaveFileV2ResponseBody {
+	if s == nil {
+		return nil
+	}
+	return s.Object
+}
+
+// #region class-body-savefilev2response
+// #endregion class-body-savefilev2response

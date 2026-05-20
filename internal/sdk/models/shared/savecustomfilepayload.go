@@ -67,86 +67,86 @@ func (s *SaveCustomFilePayload) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveCustomFilePayload) GetAdditionalProperties() any {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetAdditionalProperties() any {
+	if s == nil {
 		return nil
 	}
-	return o.AdditionalProperties
+	return s.AdditionalProperties
 }
 
-func (o *SaveCustomFilePayload) GetID() *string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ID
+	return s.ID
 }
 
-func (o *SaveCustomFilePayload) GetManifest() []string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetManifest() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Manifest
+	return s.Manifest
 }
 
-func (o *SaveCustomFilePayload) GetPurpose() []string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetPurpose() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Purpose
+	return s.Purpose
 }
 
-func (o *SaveCustomFilePayload) GetTags() []string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetTags() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Tags
+	return s.Tags
 }
 
-func (o *SaveCustomFilePayload) GetAccessControl() *SaveCustomFilePayloadAccessControl {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetAccessControl() *SaveCustomFilePayloadAccessControl {
+	if s == nil {
 		return nil
 	}
-	return o.AccessControl
+	return s.AccessControl
 }
 
-func (o *SaveCustomFilePayload) GetCustomDownloadURL() *string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetCustomDownloadURL() *string {
+	if s == nil {
 		return nil
 	}
-	return o.CustomDownloadURL
+	return s.CustomDownloadURL
 }
 
-func (o *SaveCustomFilePayload) GetFileEntityID() *string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetFileEntityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return s.FileEntityID
 }
 
-func (o *SaveCustomFilePayload) GetFilename() *string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetFilename() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Filename
+	return s.Filename
 }
 
-func (o *SaveCustomFilePayload) GetMimeType() *string {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetMimeType() *string {
+	if s == nil {
 		return nil
 	}
-	return o.MimeType
+	return s.MimeType
 }
 
-func (o *SaveCustomFilePayload) GetRelations() []FileRelationItem {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetRelations() []FileRelationItem {
+	if s == nil {
 		return nil
 	}
-	return o.Relations
+	return s.Relations
 }
 
-func (o *SaveCustomFilePayload) GetType() *FileType {
-	if o == nil {
+func (s *SaveCustomFilePayload) GetType() *FileType {
+	if s == nil {
 		return nil
 	}
-	return o.Type
+	return s.Type
 }

@@ -68,93 +68,96 @@ func (s *SaveS3FilePayload) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveS3FilePayload) GetAdditionalProperties() any {
-	if o == nil {
+func (s *SaveS3FilePayload) GetAdditionalProperties() any {
+	if s == nil {
 		return nil
 	}
-	return o.AdditionalProperties
+	return s.AdditionalProperties
 }
 
-func (o *SaveS3FilePayload) GetID() *string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ID
+	return s.ID
 }
 
-func (o *SaveS3FilePayload) GetManifest() []string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetManifest() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Manifest
+	return s.Manifest
 }
 
-func (o *SaveS3FilePayload) GetPurpose() []string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetPurpose() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Purpose
+	return s.Purpose
 }
 
-func (o *SaveS3FilePayload) GetTags() []string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetTags() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Tags
+	return s.Tags
 }
 
-func (o *SaveS3FilePayload) GetAccessControl() *SaveS3FilePayloadAccessControl {
-	if o == nil {
+func (s *SaveS3FilePayload) GetAccessControl() *SaveS3FilePayloadAccessControl {
+	if s == nil {
 		return nil
 	}
-	return o.AccessControl
+	return s.AccessControl
 }
 
-func (o *SaveS3FilePayload) GetCustomDownloadURL() *string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetCustomDownloadURL() *string {
+	if s == nil {
 		return nil
 	}
-	return o.CustomDownloadURL
+	return s.CustomDownloadURL
 }
 
-func (o *SaveS3FilePayload) GetFileEntityID() *string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetFileEntityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return s.FileEntityID
 }
 
-func (o *SaveS3FilePayload) GetFilename() *string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetFilename() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Filename
+	return s.Filename
 }
 
-func (o *SaveS3FilePayload) GetMimeType() *string {
-	if o == nil {
+func (s *SaveS3FilePayload) GetMimeType() *string {
+	if s == nil {
 		return nil
 	}
-	return o.MimeType
+	return s.MimeType
 }
 
-func (o *SaveS3FilePayload) GetRelations() []FileRelationItem {
-	if o == nil {
+func (s *SaveS3FilePayload) GetRelations() []FileRelationItem {
+	if s == nil {
 		return nil
 	}
-	return o.Relations
+	return s.Relations
 }
 
-func (o *SaveS3FilePayload) GetS3ref() *S3Ref {
-	if o == nil {
+func (s *SaveS3FilePayload) GetS3ref() *S3Ref {
+	if s == nil {
 		return nil
 	}
-	return o.S3ref
+	return s.S3ref
 }
 
-func (o *SaveS3FilePayload) GetType() *FileType {
-	if o == nil {
+func (s *SaveS3FilePayload) GetType() *FileType {
+	if s == nil {
 		return nil
 	}
-	return o.Type
+	return s.Type
 }
+
+// #region class-body-saves3filepayload
+// #endregion class-body-saves3filepayload

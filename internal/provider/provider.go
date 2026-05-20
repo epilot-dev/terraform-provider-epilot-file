@@ -6,8 +6,11 @@ import (
 	"context"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk"
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
+	"github.com/hashicorp/terraform-plugin-framework/function"
+	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -16,7 +19,9 @@ import (
 )
 
 var _ provider.Provider = (*EpilotFileProvider)(nil)
+var _ provider.ProviderWithActions = (*EpilotFileProvider)(nil)
 var _ provider.ProviderWithEphemeralResources = (*EpilotFileProvider)(nil)
+var _ provider.ProviderWithFunctions = (*EpilotFileProvider)(nil)
 
 type EpilotFileProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -41,21 +46,61 @@ func (p *EpilotFileProvider) Schema(ctx context.Context, req provider.SchemaRequ
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"cookie_auth": schema.StringAttribute{
-				MarkdownDescription: `Cookie with epilot OAuth2 token.`,
-				Optional:            true,
-				Sensitive:           true,
+				MarkdownDescription: `Cookie-based session authentication for browser applications.` + "\n" +
+					`` + "\n" +
+					`**When to use:** Browser-based applications that need to:` + "\n" +
+					`- Embed file previews directly in ` + "`" + `<img>` + "`" + ` tags` + "\n" +
+					`- Download files without JavaScript token handling` + "\n" +
+					`- Access files from HTML elements that cannot set custom headers` + "\n" +
+					`` + "\n" +
+					`**How to establish a session:**` + "\n" +
+					`1. Obtain a Bearer token via EpilotAuth` + "\n" +
+					`2. Call ` + "`" + `GET /v1/files/session` + "`" + ` with the Bearer token` + "\n" +
+					`3. The server sets an HTTP-only cookie named ` + "`" + `token` + "`" + `` + "\n" +
+					`4. Subsequent requests automatically include the cookie` + "\n" +
+					`` + "\n" +
+					`**Security note:** The cookie is HTTP-only and secure, protecting against XSS attacks.` + "\n" +
+					`.`,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"epilot_auth": schema.StringAttribute{
-				MarkdownDescription: `Authorization header with epilot OAuth2 bearer token.`,
-				Optional:            true,
-				Sensitive:           true,
+				MarkdownDescription: `Bearer token authentication using epilot OAuth2 JWT tokens.` + "\n" +
+					`` + "\n" +
+					`**When to use:** Server-to-server integrations, API clients, and programmatic access.` + "\n" +
+					`` + "\n" +
+					`**How to obtain a token:**` + "\n" +
+					`1. Use the epilot Auth API to authenticate` + "\n" +
+					`2. Include the token in the ` + "`" + `Authorization` + "`" + ` header: ` + "`" + `Authorization: Bearer <token>` + "`" + `` + "\n" +
+					`` + "\n" +
+					`**Example:**` + "\n" +
+					`` + "```" + `` + "\n" +
+					`Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...` + "\n" +
+					`` + "```" + `` + "\n" +
+					`` + "\n" +
+					`**Token contents:** The JWT contains user identity, organization ID, and permissions.` + "\n" +
+					`.`,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"server_url": schema.StringAttribute{
 				Description: `Server URL (defaults to https://file.sls.epilot.io)`,
 				Optional:    true,
 			},
 		},
-		MarkdownDescription: `File API: Upload and manage epilot Files` + "\n" +
+		MarkdownDescription: `File API: The File API enables you to upload, store, manage, and share files within the epilot platform.` + "\n" +
+			`` + "\n" +
+			`## Key Features` + "\n" +
+			`- **Upload files** to temporary storage and save them permanently as File entities` + "\n" +
+			`- **Generate previews** (thumbnails) for images and documents` + "\n" +
+			`- **Create public links** to share private files externally` + "\n" +
+			`- **Organize files** into collections for better management` + "\n" +
+			`- **Version control** with automatic file versioning on updates` + "\n" +
+			`` + "\n" +
+			`## File Upload Workflow` + "\n" +
+			`1. Call ` + "`" + `uploadFileV2` + "`" + ` to get a pre-signed S3 URL` + "\n" +
+			`2. Upload your file directly to S3 using the pre-signed URL (PUT request)` + "\n" +
+			`3. Call ` + "`" + `saveFileV2` + "`" + ` with the S3 reference to create a permanent File entity` + "\n" +
 			`` + "\n" +
 			`## Changelog` + "\n" +
 			`<a href="changelog">View API Changelog</a>`,
@@ -102,25 +147,35 @@ func (p *EpilotFileProvider) Configure(ctx context.Context, req provider.Configu
 	}
 
 	client := sdk.New(opts...)
+	resp.ActionData = client
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
+	resp.ListResourceData = client
 	resp.ResourceData = client
 }
 
+func (p *EpilotFileProvider) Functions(_ context.Context) []func() function.Function {
+	return []func() function.Function{}
+}
+
+func (p *EpilotFileProvider) Actions(_ context.Context) []func() action.Action {
+	return []func() action.Action{}
+}
+
 func (p *EpilotFileProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewFileResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *EpilotFileProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewFileDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func (p *EpilotFileProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{}
+}
+
+func (p *EpilotFileProvider) ListResources(ctx context.Context) []func() list.ListResource {
+	return []func() list.ListResource{}
 }
 
 func New(version string) func() provider.Provider {

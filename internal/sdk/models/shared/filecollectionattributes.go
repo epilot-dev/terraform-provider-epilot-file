@@ -7,6 +7,10 @@ import (
 )
 
 type FileCollectionAttributes struct {
+	// List of location slugs where the collection is enabled. If empty, enabled for all.
+	EnabledLocations []string `json:"enabled_locations,omitempty"`
+	// List of purpose IDs where the collection is enabled. If empty, enabled for all.
+	EnabledPurposes []string `json:"enabled_purposes,omitempty"`
 	// Name of the collection
 	Name *string `json:"name,omitempty"`
 	// Array of parent collection slugs, empty array if top-level collection
@@ -26,23 +30,37 @@ func (f *FileCollectionAttributes) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FileCollectionAttributes) GetName() *string {
-	if o == nil {
+func (f *FileCollectionAttributes) GetEnabledLocations() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Name
+	return f.EnabledLocations
 }
 
-func (o *FileCollectionAttributes) GetParents() []string {
-	if o == nil {
+func (f *FileCollectionAttributes) GetEnabledPurposes() []string {
+	if f == nil {
 		return nil
 	}
-	return o.Parents
+	return f.EnabledPurposes
 }
 
-func (o *FileCollectionAttributes) GetStarred() *bool {
-	if o == nil {
+func (f *FileCollectionAttributes) GetName() *string {
+	if f == nil {
 		return nil
 	}
-	return o.Starred
+	return f.Name
+}
+
+func (f *FileCollectionAttributes) GetParents() []string {
+	if f == nil {
+		return nil
+	}
+	return f.Parents
+}
+
+func (f *FileCollectionAttributes) GetStarred() *bool {
+	if f == nil {
+		return nil
+	}
+	return f.Starred
 }

@@ -121,25 +121,60 @@ Available configuration:
 
 | Provider Attribute | Description |
 |---|---|
-| `cookie_auth` | Cookie with epilot OAuth2 token. |
-| `epilot_auth` | Authorization header with epilot OAuth2 bearer token. |
+| `cookie_auth` | Cookie-based session authentication for browser applications.
+
+**When to use:** Browser-based applications that need to:
+- Embed file previews directly in `<img>` tags
+- Download files without JavaScript token handling
+- Access files from HTML elements that cannot set custom headers
+
+**How to establish a session:**
+1. Obtain a Bearer token via EpilotAuth
+2. Call `GET /v1/files/session` with the Bearer token
+3. The server sets an HTTP-only cookie named `token`
+4. Subsequent requests automatically include the cookie
+
+**Security note:** The cookie is HTTP-only and secure, protecting against XSS attacks.
+. |
+| `epilot_auth` | Bearer token authentication using epilot OAuth2 JWT tokens.
+
+**When to use:** Server-to-server integrations, API clients, and programmatic access.
+
+**How to obtain a token:**
+1. Use the epilot Auth API to authenticate
+2. Include the token in the `Authorization` header: `Authorization: Bearer <token>`
+
+**Example:**
+```
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Token contents:** The JWT contains user identity, organization ID, and permissions.
+. |
 <!-- End Authentication [security] -->
 
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Resources
 
-* [epilot-file_file](docs/resources/file.md)
-### Data Sources
-
-* [epilot-file_file](docs/data-sources/file.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Summary [summary] -->
 ## Summary
 
-File API: Upload and manage epilot Files
+File API: The File API enables you to upload, store, manage, and share files within the epilot platform.
+
+## Key Features
+- **Upload files** to temporary storage and save them permanently as File entities
+- **Generate previews** (thumbnails) for images and documents
+- **Create public links** to share private files externally
+- **Organize files** into collections for better management
+- **Version control** with automatic file versioning on updates
+
+## File Upload Workflow
+1. Call `uploadFileV2` to get a pre-signed S3 URL
+2. Upload your file directly to S3 using the pre-signed URL (PUT request)
+3. Call `saveFileV2` with the S3 reference to create a permanent File entity
 
 ## Changelog
 <a href="changelog">View API Changelog</a>
@@ -153,6 +188,8 @@ File API: Upload and manage epilot Files
   * [Testing the provider locally](#testing-the-provider-locally)
   * [Authentication](#authentication)
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
+  * [Key Features](#key-features)
+  * [File Upload Workflow](#file-upload-workflow)
   * [Changelog](#changelog)
 
 <!-- End Table of Contents [toc] -->

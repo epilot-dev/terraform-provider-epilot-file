@@ -3,62 +3,114 @@
 package operations
 
 import (
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"net/http"
 )
 
 type AccessPublicLinkRequest struct {
-	Filename string  `pathParam:"style=simple,explode=false,name=filename"`
-	Hash     *string `queryParam:"style=form,explode=true,name=hash"`
-	ID       string  `pathParam:"style=simple,explode=false,name=id"`
+	// The filename (for user-friendly URLs)
+	Filename string `pathParam:"style=simple,explode=false,name=filename"`
+	// Optional cache-busting hash to force re-download
+	Hash *string `queryParam:"style=form,explode=true,name=hash"`
+	// The UUID of the public link (not the file entity ID)
+	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *AccessPublicLinkRequest) GetFilename() string {
-	if o == nil {
+func (a *AccessPublicLinkRequest) GetFilename() string {
+	if a == nil {
 		return ""
 	}
-	return o.Filename
+	return a.Filename
 }
 
-func (o *AccessPublicLinkRequest) GetHash() *string {
-	if o == nil {
+func (a *AccessPublicLinkRequest) GetHash() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Hash
+	return a.Hash
 }
 
-func (o *AccessPublicLinkRequest) GetID() string {
-	if o == nil {
+func (a *AccessPublicLinkRequest) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
+}
+
+// AccessPublicLinkResponseBody - A generic error returned by the API
+type AccessPublicLinkResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (a *AccessPublicLinkResponseBody) GetError() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Error
+}
+
+func (a *AccessPublicLinkResponseBody) GetStatus() *int64 {
+	if a == nil {
+		return nil
+	}
+	return a.Status
 }
 
 type AccessPublicLinkResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
+	// Public link not found or has been revoked
+	ErrorObject *shared.ErrorObject
+	Headers     map[string][]string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// An unexpected error occurred on the server
+	Object *AccessPublicLinkResponseBody
 }
 
-func (o *AccessPublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (a *AccessPublicLinkResponse) GetContentType() string {
+	if a == nil {
 		return ""
 	}
-	return o.ContentType
+	return a.ContentType
 }
 
-func (o *AccessPublicLinkResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *AccessPublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (a *AccessPublicLinkResponse) GetErrorObject() *shared.ErrorObject {
+	if a == nil {
 		return nil
 	}
-	return o.RawResponse
+	return a.ErrorObject
+}
+
+func (a *AccessPublicLinkResponse) GetHeaders() map[string][]string {
+	if a == nil {
+		return map[string][]string{}
+	}
+	return a.Headers
+}
+
+func (a *AccessPublicLinkResponse) GetStatusCode() int {
+	if a == nil {
+		return 0
+	}
+	return a.StatusCode
+}
+
+func (a *AccessPublicLinkResponse) GetRawResponse() *http.Response {
+	if a == nil {
+		return nil
+	}
+	return a.RawResponse
+}
+
+func (a *AccessPublicLinkResponse) GetObject() *AccessPublicLinkResponseBody {
+	if a == nil {
+		return nil
+	}
+	return a.Object
 }
