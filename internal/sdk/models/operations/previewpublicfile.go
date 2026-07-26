@@ -4,18 +4,20 @@ package operations
 
 import (
 	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/internal/utils"
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"net/http"
 )
 
 type PreviewPublicFileRequest struct {
-	// height
-	H  *int64 `queryParam:"style=form,explode=true,name=h"`
+	// Desired height in pixels
+	H *int64 `queryParam:"style=form,explode=true,name=h"`
+	// The UUID of the public file entity
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// Org id
+	// Organization ID that owns the file
 	OrgID *string `queryParam:"style=form,explode=true,name=org_id"`
-	// index of file version
+	// Index of the file version to preview (0 = latest)
 	Version *int64 `default:"0" queryParam:"style=form,explode=true,name=version"`
-	// width
+	// Desired width in pixels
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
@@ -24,73 +26,139 @@ func (p PreviewPublicFileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PreviewPublicFileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &p, "", false, []string{"id"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *PreviewPublicFileRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewPublicFileRequest) GetID() string {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetID() string {
+	if p == nil {
 		return ""
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PreviewPublicFileRequest) GetOrgID() *string {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetOrgID() *string {
+	if p == nil {
 		return nil
 	}
-	return o.OrgID
+	return p.OrgID
 }
 
-func (o *PreviewPublicFileRequest) GetVersion() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetVersion() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Version
+	return p.Version
 }
 
-func (o *PreviewPublicFileRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewPublicFileRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
+}
+
+// PreviewPublicFileResponseBody - A generic error returned by the API
+type PreviewPublicFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (p *PreviewPublicFileResponseBody) GetError() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Error
+}
+
+func (p *PreviewPublicFileResponseBody) GetStatus() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Status
 }
 
 type PreviewPublicFileResponse struct {
+	// Generated thumbnail image for a public file
+	TwoHundredImageJpegBytes []byte
+	// Generated thumbnail image for a public file
+	TwoHundredImagePngBytes []byte
 	// HTTP response content type for this operation
 	ContentType string
+	// File is not public
+	ErrorObject *shared.ErrorObject
+	Headers     map[string][]string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// The requested resource was not found
+	Object *PreviewPublicFileResponseBody
 }
 
-func (o *PreviewPublicFileResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *PreviewPublicFileResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *PreviewPublicFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewPublicFileResponse) GetTwoHundredImageJpegBytes() []byte {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.TwoHundredImageJpegBytes
+}
+
+func (p *PreviewPublicFileResponse) GetTwoHundredImagePngBytes() []byte {
+	if p == nil {
+		return nil
+	}
+	return p.TwoHundredImagePngBytes
+}
+
+func (p *PreviewPublicFileResponse) GetContentType() string {
+	if p == nil {
+		return ""
+	}
+	return p.ContentType
+}
+
+func (p *PreviewPublicFileResponse) GetErrorObject() *shared.ErrorObject {
+	if p == nil {
+		return nil
+	}
+	return p.ErrorObject
+}
+
+func (p *PreviewPublicFileResponse) GetHeaders() map[string][]string {
+	if p == nil {
+		return map[string][]string{}
+	}
+	return p.Headers
+}
+
+func (p *PreviewPublicFileResponse) GetStatusCode() int {
+	if p == nil {
+		return 0
+	}
+	return p.StatusCode
+}
+
+func (p *PreviewPublicFileResponse) GetRawResponse() *http.Response {
+	if p == nil {
+		return nil
+	}
+	return p.RawResponse
+}
+
+func (p *PreviewPublicFileResponse) GetObject() *PreviewPublicFileResponseBody {
+	if p == nil {
+		return nil
+	}
+	return p.Object
 }

@@ -3,55 +3,57 @@
 package operations
 
 import (
+	"github.com/epilot-dev/terraform-provider-epilot-file/internal/sdk/models/shared"
 	"net/http"
 )
 
 type RevokePublicLinkRequest struct {
+	// The UUID of the public link to revoke
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *RevokePublicLinkRequest) GetID() string {
-	if o == nil {
+func (r *RevokePublicLinkRequest) GetID() string {
+	if r == nil {
 		return ""
 	}
-	return o.ID
+	return r.ID
 }
 
 type RevokePublicLinkResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
+	// Not implemented
+	ErrorObject *shared.ErrorObject
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Revokes a public link successfully.
-	String *string
 }
 
-func (o *RevokePublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetContentType() string {
+	if r == nil {
 		return ""
 	}
-	return o.ContentType
+	return r.ContentType
 }
 
-func (o *RevokePublicLinkResponse) GetStatusCode() int {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetErrorObject() *shared.ErrorObject {
+	if r == nil {
+		return nil
+	}
+	return r.ErrorObject
+}
+
+func (r *RevokePublicLinkResponse) GetStatusCode() int {
+	if r == nil {
 		return 0
 	}
-	return o.StatusCode
+	return r.StatusCode
 }
 
-func (o *RevokePublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (r *RevokePublicLinkResponse) GetRawResponse() *http.Response {
+	if r == nil {
 		return nil
 	}
-	return o.RawResponse
-}
-
-func (o *RevokePublicLinkResponse) GetString() *string {
-	if o == nil {
-		return nil
-	}
-	return o.String
+	return r.RawResponse
 }

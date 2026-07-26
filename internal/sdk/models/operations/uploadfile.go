@@ -13,18 +13,40 @@ type UploadFileRequest struct {
 	FileEntityID *string `queryParam:"style=form,explode=true,name=file_entity_id"`
 }
 
-func (o *UploadFileRequest) GetUploadFilePayload() *shared.UploadFilePayload {
-	if o == nil {
+func (u *UploadFileRequest) GetUploadFilePayload() *shared.UploadFilePayload {
+	if u == nil {
 		return nil
 	}
-	return o.UploadFilePayload
+	return u.UploadFilePayload
 }
 
-func (o *UploadFileRequest) GetFileEntityID() *string {
-	if o == nil {
+func (u *UploadFileRequest) GetFileEntityID() *string {
+	if u == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return u.FileEntityID
+}
+
+// UploadFileDeprecatedResponseBody - A generic error returned by the API
+type UploadFileDeprecatedResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (u *UploadFileDeprecatedResponseBody) GetError() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Error
+}
+
+func (u *UploadFileDeprecatedResponseBody) GetStatus() *int64 {
+	if u == nil {
+		return nil
+	}
+	return u.Status
 }
 
 type S3ref struct {
@@ -32,19 +54,22 @@ type S3ref struct {
 	Key    string `json:"key"`
 }
 
-func (o *S3ref) GetBucket() string {
-	if o == nil {
+func (s *S3ref) GetBucket() string {
+	if s == nil {
 		return ""
 	}
-	return o.Bucket
+	return s.Bucket
 }
 
-func (o *S3ref) GetKey() string {
-	if o == nil {
+func (s *S3ref) GetKey() string {
+	if s == nil {
 		return ""
 	}
-	return o.Key
+	return s.Key
 }
+
+// #region class-body-s3ref
+// #endregion class-body-s3ref
 
 // UploadFileResponseBody - Pre-signed URL for POST / PUT upload
 type UploadFileResponseBody struct {
@@ -54,25 +79,25 @@ type UploadFileResponseBody struct {
 	UploadURL *string `json:"upload_url,omitempty"`
 }
 
-func (o *UploadFileResponseBody) GetPublicURL() *string {
-	if o == nil {
+func (u *UploadFileResponseBody) GetPublicURL() *string {
+	if u == nil {
 		return nil
 	}
-	return o.PublicURL
+	return u.PublicURL
 }
 
-func (o *UploadFileResponseBody) GetS3ref() *S3ref {
-	if o == nil {
+func (u *UploadFileResponseBody) GetS3ref() *S3ref {
+	if u == nil {
 		return nil
 	}
-	return o.S3ref
+	return u.S3ref
 }
 
-func (o *UploadFileResponseBody) GetUploadURL() *string {
-	if o == nil {
+func (u *UploadFileResponseBody) GetUploadURL() *string {
+	if u == nil {
 		return nil
 	}
-	return o.UploadURL
+	return u.UploadURL
 }
 
 type UploadFileResponse struct {
@@ -84,32 +109,41 @@ type UploadFileResponse struct {
 	RawResponse *http.Response
 	// Pre-signed URL for POST / PUT upload
 	Object *UploadFileResponseBody
+	// Invalid request parameters or payload
+	Object1 *UploadFileDeprecatedResponseBody
 }
 
-func (o *UploadFileResponse) GetContentType() string {
-	if o == nil {
+func (u *UploadFileResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UploadFileResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UploadFileResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UploadFileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UploadFileResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UploadFileResponse) GetObject() *UploadFileResponseBody {
-	if o == nil {
+func (u *UploadFileResponse) GetObject() *UploadFileResponseBody {
+	if u == nil {
 		return nil
 	}
-	return o.Object
+	return u.Object
+}
+
+func (u *UploadFileResponse) GetObject1() *UploadFileDeprecatedResponseBody {
+	if u == nil {
+		return nil
+	}
+	return u.Object1
 }

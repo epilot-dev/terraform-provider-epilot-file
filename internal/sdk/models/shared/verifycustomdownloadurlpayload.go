@@ -7,9 +7,9 @@ type VerifyCustomDownloadURLPayload struct {
 	CustomDownloadURL string `json:"custom_download_url"`
 }
 
-func (o *VerifyCustomDownloadURLPayload) GetCustomDownloadURL() string {
-	if o == nil {
+func (v *VerifyCustomDownloadURLPayload) GetCustomDownloadURL() string {
+	if v == nil {
 		return ""
 	}
-	return o.CustomDownloadURL
+	return v.CustomDownloadURL
 }

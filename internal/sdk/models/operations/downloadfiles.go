@@ -6,23 +6,47 @@ import (
 	"net/http"
 )
 
+// DownloadFilesResponseBody - A generic error returned by the API
+type DownloadFilesResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (d *DownloadFilesResponseBody) GetError() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Error
+}
+
+func (d *DownloadFilesResponseBody) GetStatus() *int64 {
+	if d == nil {
+		return nil
+	}
+	return d.Status
+}
+
 type ResponseBody struct {
-	DownloadURL  *string `json:"download_url,omitempty"`
+	// Pre-signed S3 URL for downloading the file
+	DownloadURL *string `json:"download_url,omitempty"`
+	// The file entity ID (matches the requested ID)
 	FileEntityID *string `json:"file_entity_id,omitempty"`
 }
 
-func (o *ResponseBody) GetDownloadURL() *string {
-	if o == nil {
+func (r *ResponseBody) GetDownloadURL() *string {
+	if r == nil {
 		return nil
 	}
-	return o.DownloadURL
+	return r.DownloadURL
 }
 
-func (o *ResponseBody) GetFileEntityID() *string {
-	if o == nil {
+func (r *ResponseBody) GetFileEntityID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return r.FileEntityID
 }
 
 type DownloadFilesResponse struct {
@@ -32,34 +56,43 @@ type DownloadFilesResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Generated download urls
+	// Generated download URLs for each requested file
 	Classes []ResponseBody
+	// Invalid request parameters or payload
+	Object *DownloadFilesResponseBody
 }
 
-func (o *DownloadFilesResponse) GetContentType() string {
-	if o == nil {
+func (d *DownloadFilesResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DownloadFilesResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DownloadFilesResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DownloadFilesResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DownloadFilesResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DownloadFilesResponse) GetClasses() []ResponseBody {
-	if o == nil {
+func (d *DownloadFilesResponse) GetClasses() []ResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Classes
+	return d.Classes
+}
+
+func (d *DownloadFilesResponse) GetObject() *DownloadFilesResponseBody {
+	if d == nil {
+		return nil
+	}
+	return d.Object
 }

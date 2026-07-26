@@ -8,10 +8,18 @@ import (
 )
 
 type DownloadS3FileRequest struct {
-	// Controls the Content-Disposition header to control browser behaviour. Set to true to trigger download.
-	Attachment *bool  `default:"true" queryParam:"style=form,explode=true,name=attachment"`
-	S3Bucket   string `queryParam:"style=form,explode=true,name=s3_bucket"`
-	S3Key      string `queryParam:"style=form,explode=true,name=s3_key"`
+	// Controls the Content-Disposition header. Set to `true` to trigger browser download dialog, `false` to display inline.
+	Attachment *bool `default:"true" queryParam:"style=form,explode=true,name=attachment"`
+	// The S3 bucket name
+	S3Bucket string `queryParam:"style=form,explode=true,name=s3_bucket"`
+	// The S3 object key, as returned in `s3ref.key` of the file entity.
+	//
+	// Note: object keys store the filename segment percent-encoded. For example, a file named
+	// `Straße 1.pdf` is stored under the key `.../Stra%C3%9Fe%201.pdf`, and that is the value
+	// `s3ref.key` contains. Pass it exactly as returned by the API and make sure your HTTP client
+	// URL-encodes the query parameter value, so a literal `%` arrives encoded as `%25`.
+	//
+	S3Key string `queryParam:"style=form,explode=true,name=s3_key"`
 }
 
 func (d DownloadS3FileRequest) MarshalJSON() ([]byte, error) {
@@ -19,44 +27,76 @@ func (d DownloadS3FileRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (d *DownloadS3FileRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &d, "", false, []string{"s3_bucket", "s3_key"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &d, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *DownloadS3FileRequest) GetAttachment() *bool {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetAttachment() *bool {
+	if d == nil {
 		return nil
 	}
-	return o.Attachment
+	return d.Attachment
 }
 
-func (o *DownloadS3FileRequest) GetS3Bucket() string {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetS3Bucket() string {
+	if d == nil {
 		return ""
 	}
-	return o.S3Bucket
+	return d.S3Bucket
 }
 
-func (o *DownloadS3FileRequest) GetS3Key() string {
-	if o == nil {
+func (d *DownloadS3FileRequest) GetS3Key() string {
+	if d == nil {
 		return ""
 	}
-	return o.S3Key
+	return d.S3Key
 }
 
-// DownloadS3FileResponseBody - Generated thumbnail image
+// #region class-body-downloads3filerequest
+// #endregion class-body-downloads3filerequest
+
+// DownloadS3FileFileResponseBody - A generic error returned by the API
+type DownloadS3FileFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (d *DownloadS3FileFileResponseBody) GetError() *string {
+	if d == nil {
+		return nil
+	}
+	return d.Error
+}
+
+func (d *DownloadS3FileFileResponseBody) GetStatus() *int64 {
+	if d == nil {
+		return nil
+	}
+	return d.Status
+}
+
+// #region class-body-downloads3filefileresponsebody
+// #endregion class-body-downloads3filefileresponsebody
+
+// DownloadS3FileResponseBody - Pre-signed download URL
 type DownloadS3FileResponseBody struct {
+	// Pre-signed S3 URL valid for downloading the file
 	DownloadURL *string `json:"download_url,omitempty"`
 }
 
-func (o *DownloadS3FileResponseBody) GetDownloadURL() *string {
-	if o == nil {
+func (d *DownloadS3FileResponseBody) GetDownloadURL() *string {
+	if d == nil {
 		return nil
 	}
-	return o.DownloadURL
+	return d.DownloadURL
 }
+
+// #region class-body-downloads3fileresponsebody
+// #endregion class-body-downloads3fileresponsebody
 
 type DownloadS3FileResponse struct {
 	// HTTP response content type for this operation
@@ -65,34 +105,46 @@ type DownloadS3FileResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Generated thumbnail image
+	// Pre-signed download URL
 	Object *DownloadS3FileResponseBody
+	// Invalid request parameters or payload
+	Object1 *DownloadS3FileFileResponseBody
 }
 
-func (o *DownloadS3FileResponse) GetContentType() string {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DownloadS3FileResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DownloadS3FileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DownloadS3FileResponse) GetObject() *DownloadS3FileResponseBody {
-	if o == nil {
+func (d *DownloadS3FileResponse) GetObject() *DownloadS3FileResponseBody {
+	if d == nil {
 		return nil
 	}
-	return o.Object
+	return d.Object
 }
+
+func (d *DownloadS3FileResponse) GetObject1() *DownloadS3FileFileResponseBody {
+	if d == nil {
+		return nil
+	}
+	return d.Object1
+}
+
+// #region class-body-downloads3fileresponse
+// #endregion class-body-downloads3fileresponse
