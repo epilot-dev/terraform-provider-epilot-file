@@ -6,51 +6,79 @@ import (
 	"net/http"
 )
 
+// UploadFilePublicFileResponseBody - A generic error returned by the API
+type UploadFilePublicFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (u *UploadFilePublicFileResponseBody) GetError() *string {
+	if u == nil {
+		return nil
+	}
+	return u.Error
+}
+
+func (u *UploadFilePublicFileResponseBody) GetStatus() *int64 {
+	if u == nil {
+		return nil
+	}
+	return u.Status
+}
+
+// UploadFilePublicS3ref - S3 reference to use when saving the file permanently
 type UploadFilePublicS3ref struct {
 	Bucket string `json:"bucket"`
 	Key    string `json:"key"`
 }
 
-func (o *UploadFilePublicS3ref) GetBucket() string {
-	if o == nil {
+func (u *UploadFilePublicS3ref) GetBucket() string {
+	if u == nil {
 		return ""
 	}
-	return o.Bucket
+	return u.Bucket
 }
 
-func (o *UploadFilePublicS3ref) GetKey() string {
-	if o == nil {
+func (u *UploadFilePublicS3ref) GetKey() string {
+	if u == nil {
 		return ""
 	}
-	return o.Key
+	return u.Key
 }
 
-// UploadFilePublicResponseBody - Pre-signed URL for POST / PUT upload
+// #region class-body-uploadfilepublics3ref
+// #endregion class-body-uploadfilepublics3ref
+
+// UploadFilePublicResponseBody - Pre-signed URL for uploading the file
 type UploadFilePublicResponseBody struct {
-	Error     *string                `json:"error,omitempty"`
-	S3ref     *UploadFilePublicS3ref `json:"s3ref,omitempty"`
-	UploadURL *string                `json:"upload_url,omitempty"`
+	// Error message if the upload preparation failed
+	Error *string                `json:"error,omitempty"`
+	S3ref *UploadFilePublicS3ref `json:"s3ref,omitempty"`
+	// Pre-signed URL for uploading the file via PUT request
+	UploadURL *string `json:"upload_url,omitempty"`
 }
 
-func (o *UploadFilePublicResponseBody) GetError() *string {
-	if o == nil {
+func (u *UploadFilePublicResponseBody) GetError() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Error
+	return u.Error
 }
 
-func (o *UploadFilePublicResponseBody) GetS3ref() *UploadFilePublicS3ref {
-	if o == nil {
+func (u *UploadFilePublicResponseBody) GetS3ref() *UploadFilePublicS3ref {
+	if u == nil {
 		return nil
 	}
-	return o.S3ref
+	return u.S3ref
 }
 
-func (o *UploadFilePublicResponseBody) GetUploadURL() *string {
-	if o == nil {
+func (u *UploadFilePublicResponseBody) GetUploadURL() *string {
+	if u == nil {
 		return nil
 	}
-	return o.UploadURL
+	return u.UploadURL
 }
 
 type UploadFilePublicResponse struct {
@@ -60,34 +88,43 @@ type UploadFilePublicResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Pre-signed URL for POST / PUT upload
+	// Pre-signed URL for uploading the file
 	Object *UploadFilePublicResponseBody
+	// Invalid request parameters or payload
+	Object1 *UploadFilePublicFileResponseBody
 }
 
-func (o *UploadFilePublicResponse) GetContentType() string {
-	if o == nil {
+func (u *UploadFilePublicResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UploadFilePublicResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UploadFilePublicResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UploadFilePublicResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UploadFilePublicResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UploadFilePublicResponse) GetObject() *UploadFilePublicResponseBody {
-	if o == nil {
+func (u *UploadFilePublicResponse) GetObject() *UploadFilePublicResponseBody {
+	if u == nil {
 		return nil
 	}
-	return o.Object
+	return u.Object
+}
+
+func (u *UploadFilePublicResponse) GetObject1() *UploadFilePublicFileResponseBody {
+	if u == nil {
+		return nil
+	}
+	return u.Object1
 }

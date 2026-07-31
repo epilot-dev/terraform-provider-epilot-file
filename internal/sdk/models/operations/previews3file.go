@@ -9,59 +9,117 @@ import (
 
 type PreviewS3FileRequest struct {
 	S3Ref *shared.S3Ref `request:"mediaType=application/json"`
-	// height
+	// Desired height in pixels
 	H *int64 `queryParam:"style=form,explode=true,name=h"`
-	// width
+	// Desired width in pixels
 	W *int64 `queryParam:"style=form,explode=true,name=w"`
 }
 
-func (o *PreviewS3FileRequest) GetS3Ref() *shared.S3Ref {
-	if o == nil {
+func (p *PreviewS3FileRequest) GetS3Ref() *shared.S3Ref {
+	if p == nil {
 		return nil
 	}
-	return o.S3Ref
+	return p.S3Ref
 }
 
-func (o *PreviewS3FileRequest) GetH() *int64 {
-	if o == nil {
+func (p *PreviewS3FileRequest) GetH() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.H
+	return p.H
 }
 
-func (o *PreviewS3FileRequest) GetW() *int64 {
-	if o == nil {
+func (p *PreviewS3FileRequest) GetW() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.W
+	return p.W
 }
+
+// #region class-body-previews3filerequest
+// #endregion class-body-previews3filerequest
+
+// PreviewS3FileResponseBody - A generic error returned by the API
+type PreviewS3FileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (p *PreviewS3FileResponseBody) GetError() *string {
+	if p == nil {
+		return nil
+	}
+	return p.Error
+}
+
+func (p *PreviewS3FileResponseBody) GetStatus() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Status
+}
+
+// #region class-body-previews3fileresponsebody
+// #endregion class-body-previews3fileresponsebody
 
 type PreviewS3FileResponse struct {
+	// Generated thumbnail image
+	TwoHundredImageJpegBytes []byte
+	// Generated thumbnail image
+	TwoHundredImagePngBytes []byte
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Invalid request parameters or payload
+	Object *PreviewS3FileResponseBody
 }
 
-func (o *PreviewS3FileResponse) GetContentType() string {
-	if o == nil {
-		return ""
-	}
-	return o.ContentType
-}
-
-func (o *PreviewS3FileResponse) GetStatusCode() int {
-	if o == nil {
-		return 0
-	}
-	return o.StatusCode
-}
-
-func (o *PreviewS3FileResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PreviewS3FileResponse) GetTwoHundredImageJpegBytes() []byte {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.TwoHundredImageJpegBytes
 }
+
+func (p *PreviewS3FileResponse) GetTwoHundredImagePngBytes() []byte {
+	if p == nil {
+		return nil
+	}
+	return p.TwoHundredImagePngBytes
+}
+
+func (p *PreviewS3FileResponse) GetContentType() string {
+	if p == nil {
+		return ""
+	}
+	return p.ContentType
+}
+
+func (p *PreviewS3FileResponse) GetStatusCode() int {
+	if p == nil {
+		return 0
+	}
+	return p.StatusCode
+}
+
+func (p *PreviewS3FileResponse) GetRawResponse() *http.Response {
+	if p == nil {
+		return nil
+	}
+	return p.RawResponse
+}
+
+func (p *PreviewS3FileResponse) GetObject() *PreviewS3FileResponseBody {
+	if p == nil {
+		return nil
+	}
+	return p.Object
+}
+
+// #region class-body-previews3fileresponse
+// #endregion class-body-previews3fileresponse

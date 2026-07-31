@@ -44,6 +44,8 @@ type SaveFileFromSourceURLPayload struct {
 	AccessControl *SaveFileFromSourceURLPayloadAccessControl `default:"private" json:"access_control"`
 	// Custom external download url used for the file
 	CustomDownloadURL *string `json:"custom_download_url,omitempty"`
+	// Authorization mode for the custom_download_url. `presigned` (the default) uses an HMAC-signed URL; `token` authorizes the download via the caller's bearer token, matched against the exact stored custom_download_url. In token mode the File API returns the unsigned custom_download_url (no expires_at/signature query params) so the stored url matches exactly.
+	CustomDownloadURLAuth *CustomDownloadURLAuth `default:"presigned" json:"custom_download_url_auth"`
 	// Deprecated, use _id instead
 	//
 	// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
@@ -69,93 +71,100 @@ func (s *SaveFileFromSourceURLPayload) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *SaveFileFromSourceURLPayload) GetAdditionalProperties() any {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetAdditionalProperties() any {
+	if s == nil {
 		return nil
 	}
-	return o.AdditionalProperties
+	return s.AdditionalProperties
 }
 
-func (o *SaveFileFromSourceURLPayload) GetID() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.ID
+	return s.ID
 }
 
-func (o *SaveFileFromSourceURLPayload) GetManifest() []string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetManifest() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Manifest
+	return s.Manifest
 }
 
-func (o *SaveFileFromSourceURLPayload) GetPurpose() []string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetPurpose() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Purpose
+	return s.Purpose
 }
 
-func (o *SaveFileFromSourceURLPayload) GetTags() []string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetTags() []string {
+	if s == nil {
 		return nil
 	}
-	return o.Tags
+	return s.Tags
 }
 
-func (o *SaveFileFromSourceURLPayload) GetAccessControl() *SaveFileFromSourceURLPayloadAccessControl {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetAccessControl() *SaveFileFromSourceURLPayloadAccessControl {
+	if s == nil {
 		return nil
 	}
-	return o.AccessControl
+	return s.AccessControl
 }
 
-func (o *SaveFileFromSourceURLPayload) GetCustomDownloadURL() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetCustomDownloadURL() *string {
+	if s == nil {
 		return nil
 	}
-	return o.CustomDownloadURL
+	return s.CustomDownloadURL
 }
 
-func (o *SaveFileFromSourceURLPayload) GetFileEntityID() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetCustomDownloadURLAuth() *CustomDownloadURLAuth {
+	if s == nil {
 		return nil
 	}
-	return o.FileEntityID
+	return s.CustomDownloadURLAuth
 }
 
-func (o *SaveFileFromSourceURLPayload) GetFilename() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetFileEntityID() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Filename
+	return s.FileEntityID
 }
 
-func (o *SaveFileFromSourceURLPayload) GetMimeType() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetFilename() *string {
+	if s == nil {
 		return nil
 	}
-	return o.MimeType
+	return s.Filename
 }
 
-func (o *SaveFileFromSourceURLPayload) GetRelations() []FileRelationItem {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetMimeType() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Relations
+	return s.MimeType
 }
 
-func (o *SaveFileFromSourceURLPayload) GetSourceURL() *string {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetRelations() []FileRelationItem {
+	if s == nil {
 		return nil
 	}
-	return o.SourceURL
+	return s.Relations
 }
 
-func (o *SaveFileFromSourceURLPayload) GetType() *FileType {
-	if o == nil {
+func (s *SaveFileFromSourceURLPayload) GetSourceURL() *string {
+	if s == nil {
 		return nil
 	}
-	return o.Type
+	return s.SourceURL
+}
+
+func (s *SaveFileFromSourceURLPayload) GetType() *FileType {
+	if s == nil {
+		return nil
+	}
+	return s.Type
 }

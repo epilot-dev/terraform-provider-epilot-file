@@ -7,14 +7,37 @@ import (
 )
 
 type GeneratePublicLinkRequest struct {
+	// The UUID of the file entity to share
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 }
 
-func (o *GeneratePublicLinkRequest) GetID() string {
-	if o == nil {
+func (g *GeneratePublicLinkRequest) GetID() string {
+	if g == nil {
 		return ""
 	}
-	return o.ID
+	return g.ID
+}
+
+// GeneratePublicLinkResponseBody - A generic error returned by the API
+type GeneratePublicLinkResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (g *GeneratePublicLinkResponseBody) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GeneratePublicLinkResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
 }
 
 type GeneratePublicLinkResponse struct {
@@ -24,34 +47,43 @@ type GeneratePublicLinkResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Returns the public link which can be used to access the file later
+	// Authentication required or invalid credentials
+	Object *GeneratePublicLinkResponseBody
+	// Public link generated successfully
 	String *string
 }
 
-func (o *GeneratePublicLinkResponse) GetContentType() string {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GeneratePublicLinkResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GeneratePublicLinkResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GeneratePublicLinkResponse) GetString() *string {
-	if o == nil {
+func (g *GeneratePublicLinkResponse) GetObject() *GeneratePublicLinkResponseBody {
+	if g == nil {
 		return nil
 	}
-	return o.String
+	return g.Object
+}
+
+func (g *GeneratePublicLinkResponse) GetString() *string {
+	if g == nil {
+		return nil
+	}
+	return g.String
 }

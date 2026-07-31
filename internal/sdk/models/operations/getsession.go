@@ -6,32 +6,71 @@ import (
 	"net/http"
 )
 
+// GetSessionResponseBody - A generic error returned by the API
+type GetSessionResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (g *GetSessionResponseBody) GetError() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Error
+}
+
+func (g *GetSessionResponseBody) GetStatus() *int64 {
+	if g == nil {
+		return nil
+	}
+	return g.Status
+}
+
 type GetSessionResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
+	Headers     map[string][]string
 	// HTTP response status code for this operation
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Authentication required or invalid credentials
+	Object *GetSessionResponseBody
 }
 
-func (o *GetSessionResponse) GetContentType() string {
-	if o == nil {
+func (g *GetSessionResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetSessionResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetSessionResponse) GetHeaders() map[string][]string {
+	if g == nil {
+		return map[string][]string{}
+	}
+	return g.Headers
+}
+
+func (g *GetSessionResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetSessionResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetSessionResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
+}
+
+func (g *GetSessionResponse) GetObject() *GetSessionResponseBody {
+	if g == nil {
+		return nil
+	}
+	return g.Object
 }

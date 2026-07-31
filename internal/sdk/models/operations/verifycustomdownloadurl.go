@@ -6,16 +6,39 @@ import (
 	"net/http"
 )
 
-// VerifyCustomDownloadURLResponseBody - Download Url matches signature and has not expired
+// VerifyCustomDownloadURLFileResponseBody - A generic error returned by the API
+type VerifyCustomDownloadURLFileResponseBody struct {
+	// The error message
+	Error *string `json:"error,omitempty"`
+	// The HTTP status code of the error
+	Status *int64 `json:"status,omitempty"`
+}
+
+func (v *VerifyCustomDownloadURLFileResponseBody) GetError() *string {
+	if v == nil {
+		return nil
+	}
+	return v.Error
+}
+
+func (v *VerifyCustomDownloadURLFileResponseBody) GetStatus() *int64 {
+	if v == nil {
+		return nil
+	}
+	return v.Status
+}
+
+// VerifyCustomDownloadURLResponseBody - Verification result
 type VerifyCustomDownloadURLResponseBody struct {
+	// Whether the URL is valid and not expired
 	Valid *bool `json:"valid,omitempty"`
 }
 
-func (o *VerifyCustomDownloadURLResponseBody) GetValid() *bool {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponseBody) GetValid() *bool {
+	if v == nil {
 		return nil
 	}
-	return o.Valid
+	return v.Valid
 }
 
 type VerifyCustomDownloadURLResponse struct {
@@ -25,34 +48,43 @@ type VerifyCustomDownloadURLResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Download Url matches signature and has not expired
+	// Verification result
 	Object *VerifyCustomDownloadURLResponseBody
+	// Invalid request parameters or payload
+	Object1 *VerifyCustomDownloadURLFileResponseBody
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetContentType() string {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetContentType() string {
+	if v == nil {
 		return ""
 	}
-	return o.ContentType
+	return v.ContentType
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetStatusCode() int {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetStatusCode() int {
+	if v == nil {
 		return 0
 	}
-	return o.StatusCode
+	return v.StatusCode
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetRawResponse() *http.Response {
+	if v == nil {
 		return nil
 	}
-	return o.RawResponse
+	return v.RawResponse
 }
 
-func (o *VerifyCustomDownloadURLResponse) GetObject() *VerifyCustomDownloadURLResponseBody {
-	if o == nil {
+func (v *VerifyCustomDownloadURLResponse) GetObject() *VerifyCustomDownloadURLResponseBody {
+	if v == nil {
 		return nil
 	}
-	return o.Object
+	return v.Object
+}
+
+func (v *VerifyCustomDownloadURLResponse) GetObject1() *VerifyCustomDownloadURLFileResponseBody {
+	if v == nil {
+		return nil
+	}
+	return v.Object1
 }

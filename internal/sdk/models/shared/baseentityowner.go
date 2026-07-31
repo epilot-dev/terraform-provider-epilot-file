@@ -10,16 +10,16 @@ type BaseEntityOwner struct {
 	UserID *string `json:"user_id,omitempty"`
 }
 
-func (o *BaseEntityOwner) GetOrgID() string {
-	if o == nil {
+func (b *BaseEntityOwner) GetOrgID() string {
+	if b == nil {
 		return ""
 	}
-	return o.OrgID
+	return b.OrgID
 }
 
-func (o *BaseEntityOwner) GetUserID() *string {
-	if o == nil {
+func (b *BaseEntityOwner) GetUserID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.UserID
+	return b.UserID
 }
